@@ -2,7 +2,7 @@
 
 #include <string>
 #include <unordered_map>
-#include "graphics/DiligentCommon.h"
+#include "graphics/Diligent.h"
 
 
 class Shader 

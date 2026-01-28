@@ -5,10 +5,66 @@
 #include <vector>
 
 #include "core/Common.h"
+#include "graphics/Diligent.h"
 
 
-namespace RDG
+/**
+struct GBufferPass : RenderPass
 {
+	void OnExecution() override
+	{
+		for(v in Renderables)
+		{
+
+		}
+	}
+
+	RenderTarget2D* Color;
+	RenderTarget2D* Position;
+	RenderTarget2D* Normals;
+	
+}
+
+class SceneRenderer : Renderer
+{
+	RenderGraph* BuildRenderGraph() override
+	{
+		RenderGraphFactory builder;
+
+		builder.AddPass([&]() {
+			CommandList.EnqueueDraw(PSO, SRB)
+		})
+	}
+}
+*/
+
+
+Diligent::RefCntAutoPtr<Diligent::IRenderDevice> m_RenderDevice;
+Diligent::RefCntAutoPtr<Diligent::IDeviceContext> m_DeviceContext;
+Diligent::RefCntAutoPtr<Diligent::ISwapChain> m_SwapChain;
+Diligent::RefCntAutoPtr<Diligent::IPipelineState> m_PipelineState;
+
+
+/**
+ * @brief Render passes are the individual steps executed to render each frame
+ */
+struct RenderPass
+{
+	virtual void Run(Diligent::IRenderDevice *renderDevice, Diligent::IDeviceContext* deviceContext) = 0;
+
+	Diligent::ITextureView* RenderTargetView = nullptr;
+	Diligent::ITextureView* DepthStencilView = nullptr;
+};
+
+
+struct GBufferPass : public RenderPass
+{
+	void Run(Diligent::IRenderDevice *renderDevice, Diligent::IDeviceContext *deviceContext) override
+	{
+		
+	}
+};
+
 
 /**
  * @brief The render graph of a scene organizes & optimizes the execution of render passes involved in rendering each frame
@@ -16,7 +72,7 @@ namespace RDG
 class RenderGraph
 {
 public:
-	RenderGraph() = default;
+	RenderGraph();
 
 	void Execute();
 
@@ -30,33 +86,34 @@ private:
  */
 class RenderGraphFactory
 {
-public:
-	RenderGraphFactory();
+public: 
+	RenderGraphFactory() = default;
 
-	std::shared_ptr<RenderGraph> Compile();
+	void Compile(RenderGraph* result);
 
-	FORCEINLINE void AddPass(RenderPass* pass)
+	Diligent::ITexture* DeclareTexture2D(
+		std::string name, 
+		unsigned int width, 
+		unsigned int height, 
+		Diligent::TEXTURE_FORMAT format,
+		Diligent::TextureData* data = nullptr);
+
+	FORCEINLINE void AddPass(RenderPass pass)
 	{
-		m_Passes.emplace(pass);
+		m_Passes.push_back(pass);
 	}
 
 private:
-	std::queue<RenderPass> m_Passes;
+	std::vector<RenderPass> m_Passes;
 };
 
 
-/**
- * @brief Render passes are the individual steps executed to render each frame
- * 
- */
-class RenderPass
+void Test()
 {
-public:
-	RenderPass() = default;
-	
-	virtual ~RenderPass() = default;
+	RenderGraphFactory rdgBuilder;
 
-	virtual void OnExecution() = 0;
-};	
+	auto texture = rdgBuilder.DeclareTexture2D("Color", 1920, 1080, Diligent::TEX_FORMAT_RGBA8_SINT);
 
+	RenderGraph renderer;
+	rdgBuilder.Compile(&renderer);
 }

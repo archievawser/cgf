@@ -34,31 +34,19 @@
 #define VULKAN_SUPPORTED 1
 #endif
 
-#include "graphics/DiligentCommon.h"
+#include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 
 static const char *VSSource = R"(
 struct PSInput 
 { 
     float4 Pos   : SV_POSITION; 
-    float3 Color : COLOR; 
 };
 
-void Main(in  uint    VertId : SV_VertexID,
+void Main(in float2 position : POSITION,
           out PSInput PSIn) 
 {
-    float4 Pos[3];
-    Pos[0] = float4(-0.5, -0.5, 0.0, 1.0);
-    Pos[1] = float4( 0.0, +0.5, 0.0, 1.0);
-    Pos[2] = float4(+0.5, -0.5, 0.0, 1.0);
-
-    float3 Col[3];
-    Col[0] = float3(1.0, 0.0, 0.0); // red
-    Col[1] = float3(0.0, 1.0, 0.0); // green
-    Col[2] = float3(0.0, 0.0, 1.0); // blue
-
-    PSIn.Pos   = Pos[VertId];
-    PSIn.Color = Col[VertId];
+    PSIn.Pos = float4(position, 1.0, 1.0);
 }
 )";
 
@@ -66,7 +54,6 @@ static const char* PSSource = R"(
 struct PSInput 
 { 
     float4 Pos   : SV_POSITION; 
-    float3 Color : COLOR; 
 };
 
 struct PSOutput
@@ -200,17 +187,14 @@ public:
 		PSOCreateInfo.pVS = vs->GetHandle();
 		PSOCreateInfo.pPS = ps->GetHandle();
 
-		Diligent::ShaderResourceVariableDesc Vars[] =
+		Diligent::LayoutElement LayoutElems[] =
 		{
-			{
-				Diligent::SHADER_TYPE_PIXEL,
-				"Abcdef",
-				Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE
-			}
+			{ "POSITION", 0, 0, 2, Diligent::VT_FLOAT32 }
 		};
 
-		PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
-		PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = 1;
+		PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = LayoutElems;
+		PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = 1;
+
 		RenderDevice->CreateGraphicsPipelineState(PSOCreateInfo, &PipelineState);
 
 		PipelineState->CreateShaderResourceBinding(&binding);
@@ -228,7 +212,28 @@ public:
 		bufferDesc.BindFlags = Diligent::BIND_FLAGS::BIND_UNIFORM_BUFFER;
 		RenderDevice->CreateBuffer(bufferDesc, &data, &buffer);
 
-		binding->GetVariableByName(Diligent::SHADER_TYPE::SHADER_TYPE_PIXEL, "Abcdef")->Set(buffer);
+		float vertexData[] {
+			0.5f, 0.5f,
+			-0.5f, 0.5f,
+			-0.5f, -0.5f,
+			-0.5f, -0.5f,
+			0.5f, -0.5f,
+			0.5f, 0.5f
+		};
+
+		Diligent::BufferData vdata (vertexData, sizeof(vertexData));
+		Diligent::BufferDesc vbufferDesc;
+		vbufferDesc.Name = "test";
+		vbufferDesc.Size = sizeof(vertexData);
+		vbufferDesc.Usage = Diligent::USAGE_IMMUTABLE;
+		vbufferDesc.BindFlags = Diligent::BIND_VERTEX_BUFFER;
+		RenderDevice->CreateBuffer(vbufferDesc, &vdata, &vbuffer);
+
+		binding->GetVariableByName(Diligent::SHADER_TYPE::SHADER_TYPE_PIXEL, "Abcdef")->Set(buffer);		
+		
+		Diligent::IBuffer* yo[] { vbuffer };
+		DeviceContext->SetVertexBuffers(0, 1, yo, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION, Diligent::SET_VERTEX_BUFFERS_FLAG_RESET);
+	
 	}
 
 	void Render()
@@ -246,8 +251,9 @@ public:
 
 		DeviceContext->CommitShaderResources(binding, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
+
 		Diligent::DrawAttribs drawAttrs;
-		drawAttrs.NumVertices = 3;
+		drawAttrs.NumVertices = 6;
 		DeviceContext->Draw(drawAttrs);
 
 		SwapChain->Present();
@@ -262,6 +268,7 @@ public:
 	Diligent::RENDER_DEVICE_TYPE GetDeviceType() const { return m_DeviceType; }
 
 	Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
+	Diligent::RefCntAutoPtr<Diligent::IBuffer> vbuffer;
 	std::shared_ptr<Shader> ps;
 	std::shared_ptr<Shader> vs;
 	static Game *Instance;

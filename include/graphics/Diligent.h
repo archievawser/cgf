@@ -10,3 +10,5 @@
 #include "Graphics/GraphicsEngine/interface/SwapChain.h"
 
 #include "Common/interface/RefCntAutoPtr.hpp"
+
+using namespace Diligent;
