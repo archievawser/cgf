@@ -1,43 +1,46 @@
 cmake_minimum_required(VERSION 3.6)
 include(FetchContent)
 
-project(HelloWorld CXX)
+set(CMAKE_CXX_STANDARD 17)
+project(general-engine CXX)
 
 set(SOURCE
 	"src/Main.cpp"
  	"src/graphics/Shader.cpp"
-	"src/core/Game.cpp")
+	"src/graphics/Renderer.cpp"
+	"src/core/Game.cpp"
+)
 
-add_executable(HelloWorld WIN32 ${SOURCE})
+add_executable(general-engine WIN32 ${SOURCE})
 
-target_compile_definitions(HelloWorld PRIVATE UNICODE)
-
-target_compile_definitions(HelloWorld PRIVATE ENGINE_DLL=1)
+target_compile_definitions(general-engine PRIVATE UNICODE)
+target_compile_definitions(general-engine PRIVATE ENGINE_DLL=1)
 
 FetchContent_Declare(
-	DiliCore
+	dcore
 	GIT_REPOSITORY https://github.com/DiligentGraphics/DiligentCore.git
 )
 
-FetchContent_MakeAvailable(DiliCore)
+FetchContent_MakeAvailable(dcore)
 
-target_include_directories(HelloWorld PUBLIC ${dilicore_SOURCE_DIR} PUBLIC "include")
-target_link_libraries(HelloWorld PRIVATE Diligent-BuildSettings)
+target_include_directories(general-engine PUBLIC ${dcore_SOURCE_DIR} PUBLIC "include")
+
+target_link_libraries(general-engine PRIVATE Diligent-BuildSettings)
 
 if(D3D11_SUPPORTED)
-	target_link_libraries(HelloWorld PRIVATE Diligent-GraphicsEngineD3D11-shared)
+	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineD3D11-shared)
 endif()
 
 if(D3D12_SUPPORTED)
-	target_link_libraries(HelloWorld PRIVATE Diligent-GraphicsEngineD3D12-shared)
+	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineD3D12-shared)
 endif()
 
 if(GL_SUPPORTED)
-	target_link_libraries(HelloWorld PRIVATE Diligent-GraphicsEngineOpenGL-shared)
+	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineOpenGL-shared)
 endif()
 
 if(VULKAN_SUPPORTED)
-	target_link_libraries(HelloWorld PRIVATE Diligent-GraphicsEngineVk-shared)
+	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineVk-shared)
 endif()
 
-copy_required_dlls(HelloWorld)
+copy_required_dlls(general-engine)

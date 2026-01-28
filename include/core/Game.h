@@ -37,15 +37,14 @@
 #include "graphics/DiligentCommon.h"
 #include "graphics/Shader.h"
 
-
-static const char* VSSource = R"(
+static const char *VSSource = R"(
 struct PSInput 
 { 
     float4 Pos   : SV_POSITION; 
     float3 Color : COLOR; 
 };
 
-void main(in  uint    VertId : SV_VertexID,
+void Main(in  uint    VertId : SV_VertexID,
           out PSInput PSIn) 
 {
     float4 Pos[3];
@@ -63,7 +62,6 @@ void main(in  uint    VertId : SV_VertexID,
 }
 )";
 
-// Pixel shader simply outputs interpolated vertex color
 static const char* PSSource = R"(
 struct PSInput 
 { 
@@ -76,10 +74,15 @@ struct PSOutput
     float4 Color : SV_TARGET; 
 };
 
-void main(in  PSInput  PSIn,
+cbuffer Abcdef
+{
+	float4 value;
+};
+
+void Main(in  PSInput  PSIn,
           out PSOutput PSOut)
 {
-    PSOut.Color = float4(PSIn.Color.rgb, 1.0);
+    PSOut.Color = value;
 }
 )";
 
@@ -177,86 +180,74 @@ public:
 
 	void CreateResources()
 	{
-		// Pipeline state object encompasses configuration of all GPU stages
+		Diligent::ShaderCreateInfo ShaderCI;
+		ShaderCI.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
+		ShaderCI.Desc.UseCombinedTextureSamplers = true;
+
+		vs = std::shared_ptr<Shader>(new Shader("triangle_vert_shader", VSSource, Diligent::SHADER_TYPE_VERTEX));
+		ps = std::shared_ptr<Shader>(new Shader("triangle_frag_shader", PSSource, Diligent::SHADER_TYPE_PIXEL));
 
 		Diligent::GraphicsPipelineStateCreateInfo PSOCreateInfo;
-
-		// Pipeline state name is used by the engine to report issues.
-		// It is always a good idea to give objects descriptive names.
 		PSOCreateInfo.PSODesc.Name = "Simple triangle PSO";
-
-		// This is a graphics pipeline
 		PSOCreateInfo.PSODesc.PipelineType = Diligent::PIPELINE_TYPE_GRAPHICS;
-
-		// clang-format off
-		// This tutorial will render to a single render target
+		PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE;
 		PSOCreateInfo.GraphicsPipeline.NumRenderTargets = 1;
-		// Set render target format which is the format of the swap chain's color buffer
 		PSOCreateInfo.GraphicsPipeline.RTVFormats[0] = SwapChain->GetDesc().ColorBufferFormat;
-		// Use the depth buffer format from the swap chain
 		PSOCreateInfo.GraphicsPipeline.DSVFormat = SwapChain->GetDesc().DepthBufferFormat;
-		// Primitive topology defines what kind of primitives will be rendered by this pipeline state
 		PSOCreateInfo.GraphicsPipeline.PrimitiveTopology = Diligent::PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-		// No back face culling for this tutorial
 		PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = Diligent::CULL_MODE_NONE;
-		// Disable depth testing
 		PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthEnable = Diligent::False;
-		// clang-format on
+		PSOCreateInfo.pVS = vs->GetHandle();
+		PSOCreateInfo.pPS = ps->GetHandle();
 
-		Diligent::ShaderCreateInfo ShaderCI;
-		// Tell the system that the shader source code is in HLSL.
-		// For OpenGL, the engine will convert this into GLSL under the hood
-		ShaderCI.SourceLanguage = Diligent::SHADER_SOURCE_LANGUAGE_HLSL;
-		// OpenGL backend requires emulated combined HLSL texture samplers (g_Texture + g_Texture_sampler combination)
-		ShaderCI.Desc.UseCombinedTextureSamplers = true;
-		// Create a vertex shader
-		Diligent::RefCntAutoPtr<Diligent::IShader> pVS;
+		Diligent::ShaderResourceVariableDesc Vars[] =
 		{
-			ShaderCI.Desc.ShaderType = Diligent::SHADER_TYPE_VERTEX;
-			ShaderCI.EntryPoint = "main";
-			ShaderCI.Desc.Name = "Triangle vertex shader";
-			ShaderCI.Source = VSSource;
-			RenderDevice->CreateShader(ShaderCI, &pVS);
-		}
+			{
+				Diligent::SHADER_TYPE_PIXEL,
+				"Abcdef",
+				Diligent::SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE
+			}
+		};
 
-		// Create a pixel shader
-		Diligent::RefCntAutoPtr<Diligent::IShader> pPS;
-		{
-			ShaderCI.Desc.ShaderType = Diligent::SHADER_TYPE_PIXEL;
-			ShaderCI.EntryPoint = "main";
-			ShaderCI.Desc.Name = "Triangle pixel shader";
-			ShaderCI.Source = PSSource;
-			RenderDevice->CreateShader(ShaderCI, &pPS);
-		}
-
-		// Finally, create the pipeline state
-		PSOCreateInfo.pVS = pVS;
-		PSOCreateInfo.pPS = pPS;
+		PSOCreateInfo.PSODesc.ResourceLayout.Variables = Vars;
+		PSOCreateInfo.PSODesc.ResourceLayout.NumVariables = 1;
 		RenderDevice->CreateGraphicsPipelineState(PSOCreateInfo, &PipelineState);
+
+		PipelineState->CreateShaderResourceBinding(&binding);
+
+		float e[4] { 
+			0.f, 0.f, 1.f, 1.f 
+		};
+
+		Diligent::BufferData data (e, sizeof(e));
+		Diligent::BufferDesc bufferDesc;
+		bufferDesc.CPUAccessFlags = Diligent::CPU_ACCESS_NONE;
+		bufferDesc.Name = "Abcdef Buffer";
+		bufferDesc.Usage = Diligent::USAGE_DEFAULT;
+		bufferDesc.Size = sizeof(e);
+		bufferDesc.BindFlags = Diligent::BIND_FLAGS::BIND_UNIFORM_BUFFER;
+		RenderDevice->CreateBuffer(bufferDesc, &data, &buffer);
+
+		binding->GetVariableByName(Diligent::SHADER_TYPE::SHADER_TYPE_PIXEL, "Abcdef")->Set(buffer);
 	}
 
 	void Render()
 	{
-		// Set render targets before issuing any draw command.
-		// Note that Present() unbinds the back buffer if it is set as render target.
+		const float ClearColor[] = { 0.f, 0.f, 0.f, 1.0f };
+		
 		auto* pRTV = SwapChain->GetCurrentBackBufferRTV();
 		auto* pDSV = SwapChain->GetDepthBufferDSV();
 		DeviceContext->SetRenderTargets(1, &pRTV, pDSV, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-
-		// Clear the back buffer
-		const float ClearColor[] = { 0.f, 0.f, 0.f, 1.0f };
-		// Let the engine perform required state transitions
+		
 		DeviceContext->ClearRenderTarget(pRTV, ClearColor, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 		DeviceContext->ClearDepthStencil(pDSV, Diligent::CLEAR_DEPTH_FLAG, 1.f, 0, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-		// Set the pipeline state in the immediate context
 		DeviceContext->SetPipelineState(PipelineState);
 
-		// Typically we should now call CommitShaderResources(), however shaders in this example don't
-		// use any resources.
+		DeviceContext->CommitShaderResources(binding, Diligent::RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 		Diligent::DrawAttribs drawAttrs;
-		drawAttrs.NumVertices = 3; // Render 3 vertices
+		drawAttrs.NumVertices = 3;
 		DeviceContext->Draw(drawAttrs);
 
 		SwapChain->Present();
@@ -270,7 +261,11 @@ public:
 
 	Diligent::RENDER_DEVICE_TYPE GetDeviceType() const { return m_DeviceType; }
 
-	static Game* Instance;
+	Diligent::RefCntAutoPtr<Diligent::IBuffer> buffer;
+	std::shared_ptr<Shader> ps;
+	std::shared_ptr<Shader> vs;
+	static Game *Instance;
+	Diligent::RefCntAutoPtr<Diligent::IShaderResourceBinding> binding;
 	Diligent::RefCntAutoPtr<Diligent::IRenderDevice> RenderDevice;
 	Diligent::RefCntAutoPtr<Diligent::IDeviceContext> DeviceContext;
 	Diligent::RefCntAutoPtr<Diligent::ISwapChain> SwapChain;
