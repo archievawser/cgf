@@ -3,6 +3,9 @@
 #include <string>
 #include <filesystem>
 #include <unordered_map>
+#include <fstream>
+
+#include "graphics/Shader.h"
 
 
 /**
@@ -11,7 +14,7 @@
 class AssetLibrary
 {
 public:
-	AssetLibrary();
+	AssetLibrary() = default;
 
 	/**
 	 * @tparam AssetType 
@@ -33,3 +36,11 @@ inline AssetType AssetLibrary::Get(std::string assetName)
 }
 
 
+template<>
+inline Shader* AssetLibrary::Get(std::string sourcePath)
+{
+	std::ifstream file ("shaders/" + sourcePath);
+	std::string source = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
+	
+	return new Shader(sourcePath, source, sourcePath[0] == 'f' ? SHADER_TYPE_PIXEL : SHADER_TYPE_VERTEX);
+}

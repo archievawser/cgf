@@ -20,18 +20,6 @@ virtual void {\bfseries Run} (class \mbox{\hyperlink{class_render_graph}{Render\
 \doxysubsection{Detailed Description}
 Render passes are the individual steps executed to render each frame. 
 
-struct GBuffer\+Pass \+: \doxylink{struct_render_pass}{Render\+Pass} \{ void On\+Execution() override \{ for(v in Renderables) \{
-
-\} \}
-
-Render\+Target2\+D\texorpdfstring{$\ast$}{*} Color; Render\+Target2\+D\texorpdfstring{$\ast$}{*} Position; Render\+Target2\+D\texorpdfstring{$\ast$}{*} Normals;
-
-\}
-
-class Scene\+Renderer \+: \doxylink{class_renderer}{Renderer} \{ Render\+Graph\texorpdfstring{$\ast$}{*} Build\+Render\+Graph() override \{ Render\+Graph\+Factory builder;
-
-builder.\+Add\+Pass(\mbox{[}\&\mbox{]}() \{ Command\+List.\+Enqueue\+Draw(\+PSO, SRB) \}) \} \} 
-
 The documentation for this struct was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
 include/graphics/Renderer.\+h\end{DoxyCompactItemize}

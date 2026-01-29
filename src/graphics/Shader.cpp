@@ -5,7 +5,7 @@
 
 
 Shader::Shader(std::string name,
-	std::string source,
+	std::string& source,
 	SHADER_TYPE type,
 	std::string entryPoint,
 	SHADER_SOURCE_LANGUAGE sourceLanguage)
@@ -24,7 +24,7 @@ Shader::Shader(std::string name,
 }
 
 
-Shader::Shader(std::string name, std::string source, SHADER_TYPE type, SHADER_SOURCE_LANGUAGE sourceLanguage)
+Shader::Shader(std::string name, std::string& source, SHADER_TYPE type, SHADER_SOURCE_LANGUAGE sourceLanguage)
 	: Shader(name, source, type, "Main", sourceLanguage)
 {	
 	

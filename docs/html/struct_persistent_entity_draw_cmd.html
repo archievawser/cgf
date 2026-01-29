@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.7"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>General Engine: Member List</title>
+<title>General Engine: PersistentEntityDrawCmd Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -69,17 +69,39 @@ $(function() {
 
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">Shader Member List</div></div>
+  <div class="summary">
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="struct_persistent_entity_draw_cmd-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">PersistentEntityDrawCmd Struct Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>This is the complete list of members for <a class="el" href="class_shader.html">Shader</a>, including all inherited members.</p>
-<table class="directory">
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>GetHandle</b>() (defined in <a class="el" href="class_shader.html">Shader</a>)</td><td class="entry"><a class="el" href="class_shader.html">Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>GetShaderType</b>() (defined in <a class="el" href="class_shader.html">Shader</a>)</td><td class="entry"><a class="el" href="class_shader.html">Shader</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Shader</b>(std::string name, std::string &amp;source, SHADER_TYPE type, SHADER_SOURCE_LANGUAGE sourceLanguage=SHADER_SOURCE_LANGUAGE_HLSL) (defined in <a class="el" href="class_shader.html">Shader</a>)</td><td class="entry"><a class="el" href="class_shader.html">Shader</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="odd"><td class="entry"><b>Shader</b>(std::string name, std::string &amp;source, SHADER_TYPE type, std::string entry, SHADER_SOURCE_LANGUAGE sourceLanguage=SHADER_SOURCE_LANGUAGE_HLSL) (defined in <a class="el" href="class_shader.html">Shader</a>)</td><td class="entry"><a class="el" href="class_shader.html">Shader</a></td><td class="entry"></td></tr>
-</table></div><!-- contents -->
+<p>Contains the information depended on by a majority of simple draw calls.  
+ <a href="struct_persistent_entity_draw_cmd.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_renderer_8h_source.html">Renderer.h</a>&gt;</code></p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a22a3eca7cd56576674aa3fc62717146d"><td class="memItemLeft" align="right" valign="top"><a id="a22a3eca7cd56576674aa3fc62717146d" name="a22a3eca7cd56576674aa3fc62717146d"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>Valid</b> = true</td></tr>
+<tr class="separator:a22a3eca7cd56576674aa3fc62717146d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7fab595c674c989eddb5e4cef90b1ed6"><td class="memItemLeft" align="right" valign="top"><a id="a7fab595c674c989eddb5e4cef90b1ed6" name="a7fab595c674c989eddb5e4cef90b1ed6"></a>
+RefCntAutoPtr&lt; IBuffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>IndexBuffer</b></td></tr>
+<tr class="separator:a7fab595c674c989eddb5e4cef90b1ed6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93014a1894d3d0d2c7b72be7162332ce"><td class="memItemLeft" align="right" valign="top"><a id="a93014a1894d3d0d2c7b72be7162332ce" name="a93014a1894d3d0d2c7b72be7162332ce"></a>
+RefCntAutoPtr&lt; IBuffer &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>VertexBuffer</b></td></tr>
+<tr class="separator:a93014a1894d3d0d2c7b72be7162332ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2872c4279cf3db214be80da07d46b98"><td class="memItemLeft" align="right" valign="top"><a id="ae2872c4279cf3db214be80da07d46b98" name="ae2872c4279cf3db214be80da07d46b98"></a>
+std::shared_ptr&lt; <a class="el" href="class_material.html">Material</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>Material</b></td></tr>
+<tr class="separator:ae2872c4279cf3db214be80da07d46b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Contains the information depended on by a majority of simple draw calls. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<li>include/graphics/<a class="el" href="_renderer_8h_source.html">Renderer.h</a></li>
+</ul>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.7

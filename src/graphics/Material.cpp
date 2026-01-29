@@ -1,5 +1,4 @@
 #include "graphics/Material.h"
-
 #include "core/Common.h"
 #include "graphics/Renderer.h"
 
@@ -11,8 +10,9 @@ Material::Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps)
 	std::fill_n(m_RenderTargetFormats, _countof(m_RenderTargetFormats), swapChain->GetCurrentBackBufferRTV()->GetDesc().Format);
 	m_DepthStencilFormat = swapChain->GetDepthBufferDSV()->GetDesc().Format;
 
-	m_PipelineState = BuildPipeline();
-	m_PipelineState->CreateShaderResourceBinding(&m_ResourceBinding);
+	m_VertexLayout.push_back(LayoutElement("POSITION", 0, 0, 2, VT_FLOAT32));
+
+	EnsurePipelineValidity();
 }
 
 
@@ -31,6 +31,7 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 
 	PSOCreateInfo.GraphicsPipeline.DSVFormat = m_DepthStencilFormat;
 	PSOCreateInfo.GraphicsPipeline.PrimitiveTopology = m_PrimitiveType;
+	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FillMode = m_FillMode;
 	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = m_CullMode;
 	PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthEnable = m_UseDepth;
 	PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = m_VertexLayout.data();
@@ -41,4 +42,11 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 	RefCntAutoPtr<IPipelineState> pipelineState;
 	Singleton<Renderer>::Get()->GetRenderDevice()->CreateGraphicsPipelineState(PSOCreateInfo, &pipelineState);
 	return pipelineState;
+}
+
+
+MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
+	: m_BaseMaterial(material)
+{
+	m_BaseMaterial->GetPipelineState()->CreateShaderResourceBinding(&m_ResourceBinding);
 }

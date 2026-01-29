@@ -89,12 +89,6 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Run</b> (clas
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Render passes are the individual steps executed to render each frame. </p>
-<p>struct GBufferPass : <a class="el" href="struct_render_pass.html" title="Render passes are the individual steps executed to render each frame.">RenderPass</a> { void OnExecution() override { for(v in Renderables) {</p>
-<p>} }</p>
-<p>RenderTarget2D* Color; RenderTarget2D* Position; RenderTarget2D* Normals;</p>
-<p>}</p>
-<p>class SceneRenderer : <a class="el" href="class_renderer.html">Renderer</a> { RenderGraph* BuildRenderGraph() override { RenderGraphFactory builder;</p>
-<p>builder.AddPass([&amp;]() { CommandList.EnqueueDraw(PSO, SRB) }) } } </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>include/graphics/<a class="el" href="_renderer_8h_source.html">Renderer.h</a></li>
 </ul>

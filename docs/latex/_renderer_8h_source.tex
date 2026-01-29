@@ -8,269 +8,270 @@
 \DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <queue>}}
 \DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <vector>}}
 \DoxyCodeLine{00006\ }
-\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}core/Common.h"{}}}
-\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}graphics/Diligent.h"{}}}
-\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}graphics/Shader.h"{}}}
-\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}graphics/Material.h"{}}}
-\DoxyCodeLine{00011\ }
-\DoxyCodeLine{00012\ \textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *VSSource\ =\ R\textcolor{stringliteral}{"{}(}}
-\DoxyCodeLine{00013\ \textcolor{stringliteral}{struct\ PSInput\ }}
-\DoxyCodeLine{00014\ \textcolor{stringliteral}{\{\ }}
-\DoxyCodeLine{00015\ \textcolor{stringliteral}{\ \ \ \ float4\ Pos\ \ \ :\ SV\_POSITION;\ }}
-\DoxyCodeLine{00016\ \textcolor{stringliteral}{\};}}
-\DoxyCodeLine{00017\ \textcolor{stringliteral}{}}
-\DoxyCodeLine{00018\ \textcolor{stringliteral}{void\ Main(in\ float2\ position\ :\ POSITION,}}
-\DoxyCodeLine{00019\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ out\ PSInput\ PSIn)\ }}
-\DoxyCodeLine{00020\ \textcolor{stringliteral}{\{}}
-\DoxyCodeLine{00021\ \textcolor{stringliteral}{\ \ \ \ PSIn.Pos\ =\ float4(position,\ 1.0,\ 1.0);}}
-\DoxyCodeLine{00022\ \textcolor{stringliteral}{\}}}
-\DoxyCodeLine{00023\ \textcolor{stringliteral}{)"{};}}
-\DoxyCodeLine{00024\ \textcolor{stringliteral}{}}
-\DoxyCodeLine{00025\ \textcolor{stringliteral}{}\textcolor{keyword}{static}\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}\ *PSSource\ =\ R\textcolor{stringliteral}{"{}(}}
-\DoxyCodeLine{00026\ \textcolor{stringliteral}{struct\ PSInput\ }}
-\DoxyCodeLine{00027\ \textcolor{stringliteral}{\{\ }}
-\DoxyCodeLine{00028\ \textcolor{stringliteral}{\ \ \ \ float4\ Pos\ \ \ :\ SV\_POSITION;\ }}
-\DoxyCodeLine{00029\ \textcolor{stringliteral}{\};}}
-\DoxyCodeLine{00030\ \textcolor{stringliteral}{}}
-\DoxyCodeLine{00031\ \textcolor{stringliteral}{struct\ PSOutput}}
-\DoxyCodeLine{00032\ \textcolor{stringliteral}{\{\ }}
-\DoxyCodeLine{00033\ \textcolor{stringliteral}{\ \ \ \ float4\ Color\ :\ SV\_TARGET;\ }}
-\DoxyCodeLine{00034\ \textcolor{stringliteral}{\};}}
-\DoxyCodeLine{00035\ \textcolor{stringliteral}{}}
-\DoxyCodeLine{00036\ \textcolor{stringliteral}{cbuffer\ Abcdef}}
-\DoxyCodeLine{00037\ \textcolor{stringliteral}{\{}}
-\DoxyCodeLine{00038\ \textcolor{stringliteral}{\ \ \ \ float4\ value;}}
-\DoxyCodeLine{00039\ \textcolor{stringliteral}{\};}}
-\DoxyCodeLine{00040\ \textcolor{stringliteral}{}}
-\DoxyCodeLine{00041\ \textcolor{stringliteral}{void\ Main(in\ \ PSInput\ \ PSIn,}}
-\DoxyCodeLine{00042\ \textcolor{stringliteral}{\ \ \ \ \ \ \ \ \ \ out\ PSOutput\ PSOut)}}
-\DoxyCodeLine{00043\ \textcolor{stringliteral}{\{}}
-\DoxyCodeLine{00044\ \textcolor{stringliteral}{\ \ \ \ PSOut.Color\ =\ value;}}
-\DoxyCodeLine{00045\ \textcolor{stringliteral}{\}}}
-\DoxyCodeLine{00046\ \textcolor{stringliteral}{)"{};}}
-\DoxyCodeLine{00047\ \textcolor{stringliteral}{}}
-\DoxyCodeLine{00082\ \textcolor{stringliteral}{}\textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_render_pass}{RenderPass}}}
-\DoxyCodeLine{00083\ \{}
-\DoxyCodeLine{00084\ \ \ \ \ \mbox{\hyperlink{struct_render_pass}{RenderPass}}()\ =\ \textcolor{keywordflow}{default};}
-\DoxyCodeLine{00085\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ Run(\textcolor{keyword}{class}\ \mbox{\hyperlink{class_render_graph}{RenderGraph}}*\ graph)\ =\ 0;}
-\DoxyCodeLine{00086\ \};}
-\DoxyCodeLine{00087\ }
-\DoxyCodeLine{00088\ }
-\DoxyCodeLine{00092\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_render_graph}{RenderGraph}}}
-\DoxyCodeLine{00093\ \{}
-\DoxyCodeLine{00094\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00095\ \ \ \ \ RefCntAutoPtr<ITexture>\ MakeTexture2D(}
-\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ std::string\ name,\ }
-\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ width,\ }
-\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ height,\ }
-\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ TEXTURE\_FORMAT\ format,}
-\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ TextureData*\ data\ =\ \textcolor{keyword}{nullptr});}
-\DoxyCodeLine{00101\ }
-\DoxyCodeLine{00102\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ Execute()}
-\DoxyCodeLine{00103\ \ \ \ \ \{}
-\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (std::shared\_ptr<RenderPass>\ pass\ :\ m\_Passes)}
-\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \ \ \ \ pass-\/>Run(\textcolor{keyword}{this});}
-\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00108\ \ \ \ \ \}}
-\DoxyCodeLine{00109\ }
-\DoxyCodeLine{00110\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ AddPass(std::shared\_ptr<RenderPass>\ pass)}
-\DoxyCodeLine{00111\ \ \ \ \ \{}
-\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ m\_Passes.push\_back(pass);}
-\DoxyCodeLine{00113\ \ \ \ \ \}}
-\DoxyCodeLine{00114\ }
-\DoxyCodeLine{00115\ \textcolor{keyword}{private}:}
-\DoxyCodeLine{00116\ \ \ \ \ std::vector<std::shared\_ptr<RenderPass>>\ m\_Passes;}
-\DoxyCodeLine{00117\ \};}
-\DoxyCodeLine{00118\ }
-\DoxyCodeLine{00119\ }
-\DoxyCodeLine{00120\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_renderer}{Renderer}}}
-\DoxyCodeLine{00121\ \{}
-\DoxyCodeLine{00122\ \textcolor{keyword}{public}:}
-\DoxyCodeLine{00123\ \ \ \ \ \mbox{\hyperlink{class_renderer}{Renderer}}(HWND\ wnd)}
-\DoxyCodeLine{00124\ \ \ \ \ \{}
-\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ InitializeDiligent(wnd);}
-\DoxyCodeLine{00126\ \ \ \ \ \}\ \ \ }
-\DoxyCodeLine{00127\ }
-\DoxyCodeLine{00128\ \ \ \ \ \textcolor{keywordtype}{void}\ Setup()}
-\DoxyCodeLine{00129\ \ \ \ \ \{}
-\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ vs\ =\ std::shared\_ptr<Shader>(\textcolor{keyword}{new}\ \mbox{\hyperlink{class_shader}{Shader}}(\textcolor{stringliteral}{"{}triangle\_vert\_shader"{}},\ VSSource,\ SHADER\_TYPE\_VERTEX));}
-\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ ps\ =\ std::shared\_ptr<Shader>(\textcolor{keyword}{new}\ \mbox{\hyperlink{class_shader}{Shader}}(\textcolor{stringliteral}{"{}triangle\_frag\_shader"{}},\ PSSource,\ SHADER\_TYPE\_PIXEL));}
-\DoxyCodeLine{00132\ }
-\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ material\ =\ std::make\_shared<Material>(vs,\ ps);}
-\DoxyCodeLine{00134\ }
-\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ e[4]\{}
-\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \ \ \ \ 1.f,}
-\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \ \ \ \ 1.f,}
-\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ 1.f,}
-\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ 1.f\};}
-\DoxyCodeLine{00140\ }
-\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ BufferData\ data(e,\ \textcolor{keyword}{sizeof}(e));}
-\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ BufferDesc\ bufferDesc;}
-\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ bufferDesc.CPUAccessFlags\ =\ CPU\_ACCESS\_NONE;}
-\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ bufferDesc.Name\ =\ \textcolor{stringliteral}{"{}Abcdef\ Buffer"{}};}
-\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ bufferDesc.Usage\ =\ USAGE\_DEFAULT;}
-\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ bufferDesc.Size\ =\ \textcolor{keyword}{sizeof}(e);}
-\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ bufferDesc.BindFlags\ =\ BIND\_UNIFORM\_BUFFER;}
-\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ m\_RenderDevice-\/>CreateBuffer(bufferDesc,\ \&data,\ \&buffer);}
-\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ material-\/>GetFragmentVariable(\textcolor{stringliteral}{"{}Abcdef"{}})-\/>Set(buffer);}
-\DoxyCodeLine{00150\ }
-\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ vertexData[]}
-\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \ \ \ \ 0.5f,\ 0.5f,}
-\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \ \ \ \ -\/0.5f,\ 0.5f,}
-\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \ \ \ \ -\/0.5f,\ -\/0.5f,}
-\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \ \ \ \ -\/0.5f,\ -\/0.5f,}
-\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \ \ \ \ 0.5f,\ -\/0.5f,}
-\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \ \ \ \ 0.5f,\ 0.5f}
-\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ \};}
-\DoxyCodeLine{00160\ }
-\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ BufferData\ vdata(vertexData,\ \textcolor{keyword}{sizeof}(vertexData));}
-\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ BufferDesc\ vbufferDesc;}
-\DoxyCodeLine{00163\ \ \ \ \ \ \ \ \ vbufferDesc.Name\ =\ \textcolor{stringliteral}{"{}test"{}};}
-\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ vbufferDesc.Size\ =\ \textcolor{keyword}{sizeof}(vertexData);}
-\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ vbufferDesc.Usage\ =\ USAGE\_IMMUTABLE;}
-\DoxyCodeLine{00166\ \ \ \ \ \ \ \ \ vbufferDesc.BindFlags\ =\ BIND\_VERTEX\_BUFFER;}
-\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ m\_RenderDevice-\/>CreateBuffer(vbufferDesc,\ \&vdata,\ \&vbuffer);}
-\DoxyCodeLine{00168\ }
-\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ IBuffer\ *yo[]\{vbuffer\};}
-\DoxyCodeLine{00170\ \ \ \ \ \ \ \ \ m\_DeviceContext-\/>SetVertexBuffers(0,\ 1,\ yo,\ 0,\ RESOURCE\_STATE\_TRANSITION\_MODE\_TRANSITION,\ SET\_VERTEX\_BUFFERS\_FLAG\_RESET);}
-\DoxyCodeLine{00171\ \ \ \ \ \}}
-\DoxyCodeLine{00172\ \ \ \ \ }
-\DoxyCodeLine{00173\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IRenderDevice>\ GetRenderDevice()}
-\DoxyCodeLine{00174\ \ \ \ \ \{}
-\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_RenderDevice;}
-\DoxyCodeLine{00176\ \ \ \ \ \}}
-\DoxyCodeLine{00177\ }
-\DoxyCodeLine{00178\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IDeviceContext>\ GetDeviceContext()}
-\DoxyCodeLine{00179\ \ \ \ \ \{}
-\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_DeviceContext;}
-\DoxyCodeLine{00181\ \ \ \ \ \}}
-\DoxyCodeLine{00182\ }
-\DoxyCodeLine{00183\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<ISwapChain>\ GetSwapChain()}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}glm/glm.hpp"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}glm/gtc/matrix\_transform.hpp"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}glm/gtc/type\_ptr.hpp"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ "{}core/Common.h"{}}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ "{}core/AssetLibrary.h"{}}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#include\ "{}graphics/Diligent.h"{}}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#include\ "{}graphics/Shader.h"{}}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#include\ "{}graphics/Material.h"{}}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_render_pass}{RenderPass}}}
+\DoxyCodeLine{00022\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \mbox{\hyperlink{struct_render_pass}{RenderPass}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keyword}{virtual}\ \textcolor{keywordtype}{void}\ Run(\textcolor{keyword}{class}\ \mbox{\hyperlink{class_render_graph}{RenderGraph}}*\ graph)\ =\ 0;}
+\DoxyCodeLine{00025\ \};}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_render_graph}{RenderGraph}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00034\ \ \ \ \ RefCntAutoPtr<ITexture>\ MakeTexture2D(}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ std::string\ name,\ }
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ width,\ }
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{unsigned}\ \textcolor{keywordtype}{int}\ height,\ }
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ TEXTURE\_FORMAT\ format,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ TextureData*\ data\ =\ \textcolor{keyword}{nullptr});}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ Execute()}
+\DoxyCodeLine{00042\ \ \ \ \ \{}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{for}\ (std::shared\_ptr<RenderPass>\ pass\ :\ m\_Passes)}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ pass-\/>Run(\textcolor{keyword}{this});}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00047\ \ \ \ \ \}}
+\DoxyCodeLine{00048\ }
+\DoxyCodeLine{00049\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ AddPass(std::shared\_ptr<RenderPass>\ pass)}
+\DoxyCodeLine{00050\ \ \ \ \ \{}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ m\_Passes.push\_back(pass);}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00055\ \ \ \ \ std::vector<std::shared\_ptr<RenderPass>>\ m\_Passes;}
+\DoxyCodeLine{00056\ \};}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00061\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_persistent_entity_draw_cmd}{PersistentEntityDrawCmd}}}
+\DoxyCodeLine{00062\ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keywordtype}{bool}\ Valid\ =\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00064\ \ \ \ \ RefCntAutoPtr<IBuffer>\ IndexBuffer;}
+\DoxyCodeLine{00065\ \ \ \ \ RefCntAutoPtr<IBuffer>\ VertexBuffer;}
+\DoxyCodeLine{00066\ \ \ \ \ std::shared\_ptr<Material>\ \mbox{\hyperlink{class_material}{Material}};}
+\DoxyCodeLine{00067\ \};}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00074\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{struct_persistent_entity_draw_cmd_handle}{PersistentEntityDrawCmdHandle}}}
+\DoxyCodeLine{00075\ \{}
+\DoxyCodeLine{00076\ \ \ \ \ \mbox{\hyperlink{struct_persistent_entity_draw_cmd_handle}{PersistentEntityDrawCmdHandle}}(\mbox{\hyperlink{struct_persistent_entity_draw_cmd}{PersistentEntityDrawCmd}}*\ cmd);}
+\DoxyCodeLine{00077\ \ \ \ \ \mbox{\hyperlink{struct_persistent_entity_draw_cmd_handle}{\string~PersistentEntityDrawCmdHandle}}();}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00079\ \ \ \ \ \mbox{\hyperlink{struct_persistent_entity_draw_cmd}{PersistentEntityDrawCmd}}*\ Command;}
+\DoxyCodeLine{00080\ \};}
+\DoxyCodeLine{00081\ }
+\DoxyCodeLine{00082\ }
+\DoxyCodeLine{00086\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_draw_command_chain}{DrawCommandChain}}}
+\DoxyCodeLine{00087\ \{}
+\DoxyCodeLine{00088\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00089\ \ \ \ \ \mbox{\hyperlink{class_draw_command_chain}{DrawCommandChain}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00090\ }
+\DoxyCodeLine{00091\ \ \ \ \ \mbox{\hyperlink{struct_persistent_entity_draw_cmd}{PersistentEntityDrawCmd}}\ \&\&PushCommand(}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ RefCntAutoPtr<IBuffer>\ indexBuffer,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ RefCntAutoPtr<IBuffer>\ vertexBuffer,}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ std::shared\_ptr<Material>\ material);}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00099\ \ \ \ \ \textcolor{keywordtype}{void}\ \mbox{\hyperlink{class_draw_command_chain_a34f33431b01f0b3bc63dc29695c54ed8}{Execute}}();}
+\DoxyCodeLine{00100\ }
+\DoxyCodeLine{00101\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00102\ \ \ \ \ std::vector<PersistentEntityDrawCmd>\ m\_CommandList;}
+\DoxyCodeLine{00103\ \};}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00110\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_renderer}{Renderer}}}
+\DoxyCodeLine{00111\ \{}
+\DoxyCodeLine{00112\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00113\ \ \ \ \ \mbox{\hyperlink{class_renderer}{Renderer}}(HWND\ wnd)}
+\DoxyCodeLine{00114\ \ \ \ \ \{}
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ InitializeDiligent(wnd);}
+\DoxyCodeLine{00116\ \ \ \ \ \}\ \ \ }
+\DoxyCodeLine{00117\ }
+\DoxyCodeLine{00118\ \ \ \ \ \textcolor{keywordtype}{void}\ Setup()}
+\DoxyCodeLine{00119\ \ \ \ \ \{}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_singleton}{Singleton<AssetLibrary>::Initialize}}();}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ std::shared\_ptr<Shader>\ fs\ (\ \mbox{\hyperlink{struct_singleton}{Singleton<AssetLibrary>::Get}}()-\/>Get<Shader*>(\textcolor{stringliteral}{"{}fPrototype.hlsl"{}})\ );}
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ std::shared\_ptr<Shader>\ vs\ (\ \mbox{\hyperlink{struct_singleton}{Singleton<AssetLibrary>::Get}}()-\/>Get<Shader*>(\textcolor{stringliteral}{"{}vPrototype.hlsl"{}})\ );}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ material\ =\ std::make\_shared<Material>(vs,\ fs);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ BufferDesc\ bufferDesc;}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ bufferDesc.CPUAccessFlags\ =\ CPU\_ACCESS\_NONE;}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ bufferDesc.Name\ =\ \textcolor{stringliteral}{"{}WorldData\ Buffer"{}};}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ bufferDesc.Usage\ =\ USAGE\_DEFAULT;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ bufferDesc.Size\ =\ \textcolor{keyword}{sizeof}(glm::mat4x4);}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ bufferDesc.BindFlags\ =\ BIND\_UNIFORM\_BUFFER;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ m\_RenderDevice-\/>CreateBuffer(bufferDesc,\ \textcolor{keyword}{nullptr},\ \&buffer);}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ material-\/>GetVertexShaderVariable(\textcolor{stringliteral}{"{}WorldData"{}})-\/>Set(buffer);}
+\DoxyCodeLine{00135\ }
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ vertexData[]}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \ \ \ \ 0.5f,\ 0.5f,}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \ \ \ \ -\/0.5f,\ 0.5f,}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \ \ \ \ -\/0.5f,\ -\/0.5f,}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \ \ \ \ -\/0.5f,\ -\/0.5f,}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ 0.5f,\ -\/0.5f,}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ 0.5f,\ 0.5f}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ BufferData\ vdata(vertexData,\ \textcolor{keyword}{sizeof}(vertexData));}
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ BufferDesc\ vbufferDesc;}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ vbufferDesc.Name\ =\ \textcolor{stringliteral}{"{}test"{}};}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ vbufferDesc.Size\ =\ \textcolor{keyword}{sizeof}(vertexData);}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ vbufferDesc.Usage\ =\ USAGE\_IMMUTABLE;}
+\DoxyCodeLine{00151\ \ \ \ \ \ \ \ \ vbufferDesc.BindFlags\ =\ BIND\_VERTEX\_BUFFER;}
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ m\_RenderDevice-\/>CreateBuffer(vbufferDesc,\ \&vdata,\ \&vbuffer);}
+\DoxyCodeLine{00153\ }
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ IBuffer\ *yo[]\{vbuffer\};}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ m\_DeviceContext-\/>SetVertexBuffers(0,\ 1,\ yo,\ 0,\ RESOURCE\_STATE\_TRANSITION\_MODE\_TRANSITION,\ SET\_VERTEX\_BUFFERS\_FLAG\_RESET);}
+\DoxyCodeLine{00156\ }
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ m\_CurrentGraph.AddPass()}
+\DoxyCodeLine{00158\ \ \ \ \ \}}
+\DoxyCodeLine{00159\ \ \ \ \ }
+\DoxyCodeLine{00160\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IRenderDevice>\ GetRenderDevice()}
+\DoxyCodeLine{00161\ \ \ \ \ \{}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_RenderDevice;}
+\DoxyCodeLine{00163\ \ \ \ \ \}}
+\DoxyCodeLine{00164\ }
+\DoxyCodeLine{00165\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IDeviceContext>\ GetDeviceContext()}
+\DoxyCodeLine{00166\ \ \ \ \ \{}
+\DoxyCodeLine{00167\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_DeviceContext;}
+\DoxyCodeLine{00168\ \ \ \ \ \}}
+\DoxyCodeLine{00169\ }
+\DoxyCodeLine{00170\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<ISwapChain>\ GetSwapChain()}
+\DoxyCodeLine{00171\ \ \ \ \ \{}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_SwapChain;}
+\DoxyCodeLine{00173\ \ \ \ \ \}}
+\DoxyCodeLine{00174\ }
+\DoxyCodeLine{00175\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IPipelineState>\ GetPipelineState()}
+\DoxyCodeLine{00176\ \ \ \ \ \{}
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_PipelineState;}
+\DoxyCodeLine{00178\ \ \ \ \ \}}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \textcolor{keywordtype}{void}\ Render();}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \textcolor{keyword}{private}:\ }
+\DoxyCodeLine{00183\ \ \ \ \ \textcolor{keywordtype}{bool}\ InitializeDiligent(HWND\ hWnd)}
 \DoxyCodeLine{00184\ \ \ \ \ \{}
-\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_SwapChain;}
-\DoxyCodeLine{00186\ \ \ \ \ \}}
-\DoxyCodeLine{00187\ }
-\DoxyCodeLine{00188\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IPipelineState>\ GetPipelineState()}
-\DoxyCodeLine{00189\ \ \ \ \ \{}
-\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_PipelineState;}
-\DoxyCodeLine{00191\ \ \ \ \ \}}
-\DoxyCodeLine{00192\ }
-\DoxyCodeLine{00193\ \ \ \ \ \textcolor{keywordtype}{void}\ Render();}
-\DoxyCodeLine{00194\ }
-\DoxyCodeLine{00195\ \textcolor{keyword}{private}:\ }
-\DoxyCodeLine{00196\ \ \ \ \ \textcolor{keywordtype}{bool}\ InitializeDiligent(HWND\ hWnd)}
-\DoxyCodeLine{00197\ \ \ \ \ \{}
-\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ SwapChainDesc\ SCDesc;}
-\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_DeviceType)}
-\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00201\ \textcolor{preprocessor}{\#if\ D3D11\_SUPPORTED}}
-\DoxyCodeLine{00202\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_D3D11:}
-\DoxyCodeLine{00203\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00204\ \ \ \ \ \ \ \ \ \ \ \ \ EngineD3D11CreateInfo\ EngineCI;}
-\DoxyCodeLine{00205\ \textcolor{preprocessor}{\#if\ ENGINE\_DLL}}
-\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Load\ the\ dll\ and\ import\ GetEngineFactoryD3D11()\ function}}
-\DoxyCodeLine{00207\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *GetEngineFactoryD3D11\ =\ LoadGraphicsEngineD3D11();}
-\DoxyCodeLine{00208\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryD3D11\ =\ GetEngineFactoryD3D11();}
-\DoxyCodeLine{00210\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D11-\/>CreateDeviceAndContextsD3D11(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext);}
-\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ Win32NativeWindow\ Window\{hWnd\};}
-\DoxyCodeLine{00212\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D11-\/>CreateSwapChainD3D11(m\_RenderDevice,\ m\_DeviceContext,\ SCDesc,\ FullScreenModeDesc\{\},\ Window,\ \&m\_SwapChain);}
-\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00215\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00216\ }
-\DoxyCodeLine{00217\ \textcolor{preprocessor}{\#if\ D3D12\_SUPPORTED}}
-\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_D3D12:}
-\DoxyCodeLine{00219\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00220\ \textcolor{preprocessor}{\#if\ ENGINE\_DLL}}
-\DoxyCodeLine{00221\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Load\ the\ dll\ and\ import\ GetEngineFactoryD3D12()\ function}}
-\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ GetEngineFactoryD3D12\ =\ LoadGraphicsEngineD3D12();}
-\DoxyCodeLine{00223\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ EngineD3D12CreateInfo\ EngineCI;}
-\DoxyCodeLine{00225\ }
-\DoxyCodeLine{00226\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryD3D12\ =\ GetEngineFactoryD3D12();}
-\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D12-\/>CreateDeviceAndContextsD3D12(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext);}
-\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ Win32NativeWindow\ Window\{hWnd\};}
-\DoxyCodeLine{00229\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D12-\/>CreateSwapChainD3D12(m\_RenderDevice,\ m\_DeviceContext,\ SCDesc,\ FullScreenModeDesc\{\},\ Window,\ \&m\_SwapChain);}
-\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00232\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00233\ }
-\DoxyCodeLine{00234\ \textcolor{preprocessor}{\#if\ GL\_SUPPORTED}}
-\DoxyCodeLine{00235\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_GL:}
-\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ GetEngineFactoryOpenGL\ =\ LoadGraphicsEngineOpenGL();}
-\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryOpenGL\ =\ GetEngineFactoryOpenGL();}
-\DoxyCodeLine{00239\ }
-\DoxyCodeLine{00240\ \ \ \ \ \ \ \ \ \ \ \ \ EngineGLCreateInfo\ EngineCI;}
-\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ EngineCI.Window.hWnd\ =\ hWnd;}
-\DoxyCodeLine{00242\ }
-\DoxyCodeLine{00243\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryOpenGL-\/>CreateDeviceAndSwapChainGL(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext,\ SCDesc,\ \&m\_SwapChain);}
-\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00246\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00247\ }
-\DoxyCodeLine{00248\ \textcolor{preprocessor}{\#if\ VULKAN\_SUPPORTED}}
-\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_VULKAN:}
-\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00251\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ GetEngineFactoryVk\ =\ LoadGraphicsEngineVk();}
-\DoxyCodeLine{00252\ \ \ \ \ \ \ \ \ \ \ \ \ EngineVkCreateInfo\ EngineCI;}
-\DoxyCodeLine{00253\ }
-\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryVk\ =\ GetEngineFactoryVk();}
-\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryVk-\/>CreateDeviceAndContextsVk(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext);}
-\DoxyCodeLine{00256\ }
-\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_SwapChain\ \&\&\ hWnd\ !=\ \textcolor{keyword}{nullptr})}
-\DoxyCodeLine{00258\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
-\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Win32NativeWindow\ Window\{hWnd\};}
-\DoxyCodeLine{00260\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryVk-\/>CreateSwapChainVk(m\_RenderDevice,\ m\_DeviceContext,\ SCDesc,\ Window,\ \&m\_SwapChain);}
-\DoxyCodeLine{00261\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00262\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00263\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00264\ \textcolor{preprocessor}{\#endif}}
-\DoxyCodeLine{00265\ }
-\DoxyCodeLine{00266\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
-\DoxyCodeLine{00267\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Unknown/unsupported\ device\ type"{}};}
-\DoxyCodeLine{00268\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
-\DoxyCodeLine{00269\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
-\DoxyCodeLine{00270\ \ \ \ \ \ \ \ \ \}}
-\DoxyCodeLine{00271\ }
-\DoxyCodeLine{00272\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
-\DoxyCodeLine{00273\ \ \ \ \ \}}
-\DoxyCodeLine{00274\ }
-\DoxyCodeLine{00275\ \ \ \ \ \mbox{\hyperlink{class_render_graph}{RenderGraph}}\ m\_CurrentGraph;}
-\DoxyCodeLine{00276\ \ \ \ \ RefCntAutoPtr<IRenderDevice>\ m\_RenderDevice;}
-\DoxyCodeLine{00277\ \ \ \ \ RefCntAutoPtr<IDeviceContext>\ m\_DeviceContext;}
-\DoxyCodeLine{00278\ \ \ \ \ RefCntAutoPtr<ISwapChain>\ m\_SwapChain;}
-\DoxyCodeLine{00279\ \ \ \ \ RefCntAutoPtr<IPipelineState>\ m\_PipelineState;}
-\DoxyCodeLine{00280\ \ \ \ \ RENDER\_DEVICE\_TYPE\ m\_DeviceType\ =\ RENDER\_DEVICE\_TYPE\_D3D11;}
-\DoxyCodeLine{00281\ \ \ \ \ std::shared\_ptr<Material>\ material;}
-\DoxyCodeLine{00282\ \ \ \ \ RefCntAutoPtr<IBuffer>\ buffer;}
-\DoxyCodeLine{00283\ \ \ \ \ RefCntAutoPtr<IBuffer>\ vbuffer;}
-\DoxyCodeLine{00284\ \};}
-\DoxyCodeLine{00285\ }
-\DoxyCodeLine{00286\ \textcolor{comment}{/*}}
-\DoxyCodeLine{00287\ \textcolor{comment}{void\ Test()}}
-\DoxyCodeLine{00288\ \textcolor{comment}{\{}}
-\DoxyCodeLine{00289\ \textcolor{comment}{\ \ \ \ RenderGraph\ graph;}}
-\DoxyCodeLine{00290\ \textcolor{comment}{}}
-\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ auto\ texture\ =\ graph.MakeTexture2D("{}Color"{},\ 1920,\ 1080,\ TEX\_FORMAT\_RGBA8\_SINT);}}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ SwapChainDesc\ SCDesc;}
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{switch}\ (m\_DeviceType)}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00188\ \textcolor{preprocessor}{\#if\ D3D11\_SUPPORTED}}
+\DoxyCodeLine{00189\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_D3D11:}
+\DoxyCodeLine{00190\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00191\ \ \ \ \ \ \ \ \ \ \ \ \ EngineD3D11CreateInfo\ EngineCI;}
+\DoxyCodeLine{00192\ \textcolor{preprocessor}{\#if\ ENGINE\_DLL}}
+\DoxyCodeLine{00193\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Load\ the\ dll\ and\ import\ GetEngineFactoryD3D11()\ function}}
+\DoxyCodeLine{00194\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *GetEngineFactoryD3D11\ =\ LoadGraphicsEngineD3D11();}
+\DoxyCodeLine{00195\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00196\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryD3D11\ =\ GetEngineFactoryD3D11();}
+\DoxyCodeLine{00197\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D11-\/>CreateDeviceAndContextsD3D11(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext);}
+\DoxyCodeLine{00198\ \ \ \ \ \ \ \ \ \ \ \ \ Win32NativeWindow\ Window\{hWnd\};}
+\DoxyCodeLine{00199\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D11-\/>CreateSwapChainD3D11(m\_RenderDevice,\ m\_DeviceContext,\ SCDesc,\ FullScreenModeDesc\{\},\ Window,\ \&m\_SwapChain);}
+\DoxyCodeLine{00200\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00201\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00202\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00203\ }
+\DoxyCodeLine{00204\ \textcolor{preprocessor}{\#if\ D3D12\_SUPPORTED}}
+\DoxyCodeLine{00205\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_D3D12:}
+\DoxyCodeLine{00206\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00207\ \textcolor{preprocessor}{\#if\ ENGINE\_DLL}}
+\DoxyCodeLine{00208\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Load\ the\ dll\ and\ import\ GetEngineFactoryD3D12()\ function}}
+\DoxyCodeLine{00209\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ GetEngineFactoryD3D12\ =\ LoadGraphicsEngineD3D12();}
+\DoxyCodeLine{00210\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00211\ \ \ \ \ \ \ \ \ \ \ \ \ EngineD3D12CreateInfo\ EngineCI;}
+\DoxyCodeLine{00212\ }
+\DoxyCodeLine{00213\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryD3D12\ =\ GetEngineFactoryD3D12();}
+\DoxyCodeLine{00214\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D12-\/>CreateDeviceAndContextsD3D12(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext);}
+\DoxyCodeLine{00215\ \ \ \ \ \ \ \ \ \ \ \ \ Win32NativeWindow\ Window\{hWnd\};}
+\DoxyCodeLine{00216\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryD3D12-\/>CreateSwapChainD3D12(m\_RenderDevice,\ m\_DeviceContext,\ SCDesc,\ FullScreenModeDesc\{\},\ Window,\ \&m\_SwapChain);}
+\DoxyCodeLine{00217\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00218\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00219\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00220\ }
+\DoxyCodeLine{00221\ \textcolor{preprocessor}{\#if\ GL\_SUPPORTED}}
+\DoxyCodeLine{00222\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_GL:}
+\DoxyCodeLine{00223\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00224\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ GetEngineFactoryOpenGL\ =\ LoadGraphicsEngineOpenGL();}
+\DoxyCodeLine{00225\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryOpenGL\ =\ GetEngineFactoryOpenGL();}
+\DoxyCodeLine{00226\ }
+\DoxyCodeLine{00227\ \ \ \ \ \ \ \ \ \ \ \ \ EngineGLCreateInfo\ EngineCI;}
+\DoxyCodeLine{00228\ \ \ \ \ \ \ \ \ \ \ \ \ EngineCI.Window.hWnd\ =\ hWnd;}
+\DoxyCodeLine{00229\ }
+\DoxyCodeLine{00230\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryOpenGL-\/>CreateDeviceAndSwapChainGL(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext,\ SCDesc,\ \&m\_SwapChain);}
+\DoxyCodeLine{00231\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00232\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00233\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00234\ }
+\DoxyCodeLine{00235\ \textcolor{preprocessor}{\#if\ VULKAN\_SUPPORTED}}
+\DoxyCodeLine{00236\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{case}\ RENDER\_DEVICE\_TYPE\_VULKAN:}
+\DoxyCodeLine{00237\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00238\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ GetEngineFactoryVk\ =\ LoadGraphicsEngineVk();}
+\DoxyCodeLine{00239\ \ \ \ \ \ \ \ \ \ \ \ \ EngineVkCreateInfo\ EngineCI;}
+\DoxyCodeLine{00240\ }
+\DoxyCodeLine{00241\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{auto}\ *pFactoryVk\ =\ GetEngineFactoryVk();}
+\DoxyCodeLine{00242\ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryVk-\/>CreateDeviceAndContextsVk(EngineCI,\ \&m\_RenderDevice,\ \&m\_DeviceContext);}
+\DoxyCodeLine{00243\ }
+\DoxyCodeLine{00244\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (!m\_SwapChain\ \&\&\ hWnd\ !=\ \textcolor{keyword}{nullptr})}
+\DoxyCodeLine{00245\ \ \ \ \ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00246\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ Win32NativeWindow\ Window\{hWnd\};}
+\DoxyCodeLine{00247\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ pFactoryVk-\/>CreateSwapChainVk(m\_RenderDevice,\ m\_DeviceContext,\ SCDesc,\ Window,\ \&m\_SwapChain);}
+\DoxyCodeLine{00248\ \ \ \ \ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00249\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00250\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00251\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00252\ }
+\DoxyCodeLine{00253\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{default}:}
+\DoxyCodeLine{00254\ \ \ \ \ \ \ \ \ \ \ \ \ std::cerr\ <<\ \textcolor{stringliteral}{"{}Unknown/unsupported\ device\ type"{}};}
+\DoxyCodeLine{00255\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00256\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{break};}
+\DoxyCodeLine{00257\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00258\ }
+\DoxyCodeLine{00259\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00260\ \ \ \ \ \}}
+\DoxyCodeLine{00261\ }
+\DoxyCodeLine{00262\ \ \ \ \ \mbox{\hyperlink{class_render_graph}{RenderGraph}}\ m\_CurrentGraph;}
+\DoxyCodeLine{00263\ \ \ \ \ RefCntAutoPtr<IRenderDevice>\ m\_RenderDevice;}
+\DoxyCodeLine{00264\ \ \ \ \ RefCntAutoPtr<IDeviceContext>\ m\_DeviceContext;}
+\DoxyCodeLine{00265\ \ \ \ \ RefCntAutoPtr<ISwapChain>\ m\_SwapChain;}
+\DoxyCodeLine{00266\ \ \ \ \ RefCntAutoPtr<IPipelineState>\ m\_PipelineState;}
+\DoxyCodeLine{00267\ \ \ \ \ RENDER\_DEVICE\_TYPE\ m\_DeviceType\ =\ RENDER\_DEVICE\_TYPE\_D3D11;}
+\DoxyCodeLine{00268\ \ \ \ \ std::shared\_ptr<Material>\ material;}
+\DoxyCodeLine{00269\ \ \ \ \ RefCntAutoPtr<IBuffer>\ buffer;}
+\DoxyCodeLine{00270\ \ \ \ \ RefCntAutoPtr<IBuffer>\ vbuffer;}
+\DoxyCodeLine{00271\ \};}
+\DoxyCodeLine{00272\ }
+\DoxyCodeLine{00273\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00274\ \textcolor{comment}{void\ Test()}}
+\DoxyCodeLine{00275\ \textcolor{comment}{\{}}
+\DoxyCodeLine{00276\ \textcolor{comment}{\ \ \ \ RenderGraph\ graph;}}
+\DoxyCodeLine{00277\ \textcolor{comment}{}}
+\DoxyCodeLine{00278\ \textcolor{comment}{\ \ \ \ auto\ texture\ =\ graph.MakeTexture2D("{}Color"{},\ 1920,\ 1080,\ TEX\_FORMAT\_RGBA8\_SINT);}}
+\DoxyCodeLine{00279\ \textcolor{comment}{}}
+\DoxyCodeLine{00280\ \textcolor{comment}{\ \ \ \ struct\ GBufferPass\ :\ public\ RenderPass}}
+\DoxyCodeLine{00281\ \textcolor{comment}{\ \ \ \ \{}}
+\DoxyCodeLine{00282\ \textcolor{comment}{\ \ \ \ \ \ \ \ void\ Run(RenderGraph\ *graph)\ override}}
+\DoxyCodeLine{00283\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
+\DoxyCodeLine{00284\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00285\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
+\DoxyCodeLine{00286\ \textcolor{comment}{\ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00287\ \textcolor{comment}{\ \ \ \ \ \ \ \ RefCntAutoPtr<ITexture>\ target;}}
+\DoxyCodeLine{00288\ \textcolor{comment}{\ \ \ \ \};}}
+\DoxyCodeLine{00289\ \textcolor{comment}{}}
+\DoxyCodeLine{00290\ \textcolor{comment}{\ \ \ \ std::shared\_ptr<GBufferPass>\ gBufferPass\ (new\ GBufferPass);}}
+\DoxyCodeLine{00291\ \textcolor{comment}{\ \ \ \ gBufferPass-\/>target\ =\ texture;}}
 \DoxyCodeLine{00292\ \textcolor{comment}{}}
-\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ struct\ GBufferPass\ :\ public\ RenderPass}}
-\DoxyCodeLine{00294\ \textcolor{comment}{\ \ \ \ \{}}
-\DoxyCodeLine{00295\ \textcolor{comment}{\ \ \ \ \ \ \ \ void\ Run(RenderGraph\ *graph)\ override}}
-\DoxyCodeLine{00296\ \textcolor{comment}{\ \ \ \ \ \ \ \ \{}}
-\DoxyCodeLine{00297\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ \ \ \ }}
-\DoxyCodeLine{00298\ \textcolor{comment}{\ \ \ \ \ \ \ \ \}}}
-\DoxyCodeLine{00299\ \textcolor{comment}{\ \ \ \ \ \ \ \ }}
-\DoxyCodeLine{00300\ \textcolor{comment}{\ \ \ \ \ \ \ \ RefCntAutoPtr<ITexture>\ target;}}
-\DoxyCodeLine{00301\ \textcolor{comment}{\ \ \ \ \};}}
-\DoxyCodeLine{00302\ \textcolor{comment}{}}
-\DoxyCodeLine{00303\ \textcolor{comment}{\ \ \ \ std::shared\_ptr<GBufferPass>\ gBufferPass\ (new\ GBufferPass);}}
-\DoxyCodeLine{00304\ \textcolor{comment}{\ \ \ \ gBufferPass-\/>target\ =\ texture;}}
-\DoxyCodeLine{00305\ \textcolor{comment}{}}
-\DoxyCodeLine{00306\ \textcolor{comment}{\ \ \ \ graph.AddPass(gBufferPass);}}
-\DoxyCodeLine{00307\ \textcolor{comment}{\}*/}}
+\DoxyCodeLine{00293\ \textcolor{comment}{\ \ \ \ graph.AddPass(gBufferPass);}}
+\DoxyCodeLine{00294\ \textcolor{comment}{\}*/}}
 
 \end{DoxyCode}

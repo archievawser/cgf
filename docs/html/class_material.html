@@ -87,34 +87,149 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a09acd9f03b549178415689a3a802eec5"><td class="memItemLeft" align="right" valign="top"><a id="a09acd9f03b549178415689a3a802eec5" name="a09acd9f03b549178415689a3a802eec5"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>Material</b> (std::shared_ptr&lt; <a class="el" href="class_shader.html">Shader</a> &gt; vs, std::shared_ptr&lt; <a class="el" href="class_shader.html">Shader</a> &gt; ps)</td></tr>
 <tr class="separator:a09acd9f03b549178415689a3a802eec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aedab179cd8db44c131ca1701a9280596"><td class="memItemLeft" align="right" valign="top"><a id="aedab179cd8db44c131ca1701a9280596" name="aedab179cd8db44c131ca1701a9280596"></a>
-FORCEINLINE IShaderResourceVariable *&#160;</td><td class="memItemRight" valign="bottom"><b>GetFragmentVariable</b> (const char *name)</td></tr>
-<tr class="separator:aedab179cd8db44c131ca1701a9280596"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad509f0487a88de393902fbe6c1031be1"><td class="memItemLeft" align="right" valign="top"><a id="ad509f0487a88de393902fbe6c1031be1" name="ad509f0487a88de393902fbe6c1031be1"></a>
-FORCEINLINE RefCntAutoPtr&lt; IShaderResourceBinding &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetResourceBinding</b> () const</td></tr>
-<tr class="separator:ad509f0487a88de393902fbe6c1031be1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe4fb3f2f816fa97540071ed56c523a6"><td class="memItemLeft" align="right" valign="top"><a id="afe4fb3f2f816fa97540071ed56c523a6" name="afe4fb3f2f816fa97540071ed56c523a6"></a>
-FORCEINLINE RefCntAutoPtr&lt; IPipelineState &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>GetPipelineState</b> ()</td></tr>
-<tr class="separator:afe4fb3f2f816fa97540071ed56c523a6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c9b00befa24eaf33e63cd8cc66258ad"><td class="memItemLeft" align="right" valign="top">FORCEINLINE IShaderResourceVariable *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a1c9b00befa24eaf33e63cd8cc66258ad">GetFragmentShaderVariable</a> (const char *name)</td></tr>
+<tr class="separator:a1c9b00befa24eaf33e63cd8cc66258ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a1719191a926c34b7c5db0bf1123961"><td class="memItemLeft" align="right" valign="top">FORCEINLINE IShaderResourceVariable *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a9a1719191a926c34b7c5db0bf1123961">GetVertexShaderVariable</a> (const char *name)</td></tr>
+<tr class="separator:a9a1719191a926c34b7c5db0bf1123961"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99a79c0833f1ef40f8d8193f6e2ff735"><td class="memItemLeft" align="right" valign="top">FORCEINLINE const RefCntAutoPtr&lt; IShaderResourceBinding &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a99a79c0833f1ef40f8d8193f6e2ff735">GetResourceBinding</a> ()</td></tr>
+<tr class="separator:a99a79c0833f1ef40f8d8193f6e2ff735"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa484664a0c8e943199191fe7bc470e8a"><td class="memItemLeft" align="right" valign="top">FORCEINLINE const RefCntAutoPtr&lt; IPipelineState &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#aa484664a0c8e943199191fe7bc470e8a">GetPipelineState</a> ()</td></tr>
+<tr class="separator:aa484664a0c8e943199191fe7bc470e8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fe7b05a09f1efa1440d6dd284ebb455"><td class="memItemLeft" align="right" valign="top"><a id="a0fe7b05a09f1efa1440d6dd284ebb455" name="a0fe7b05a09f1efa1440d6dd284ebb455"></a>
 FORCEINLINE void&#160;</td><td class="memItemRight" valign="bottom"><b>SetVertexLayout</b> (std::vector&lt; LayoutElement &gt; &amp;layout)</td></tr>
+<tr class="memdesc:a0fe7b05a09f1efa1440d6dd284ebb455"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modifies the vertex buffer layout associated with this <a class="el" href="class_material.html" title="A Material object defines the manner and context in which related draw calls are performed.">Material</a>. <br /></td></tr>
 <tr class="separator:a0fe7b05a09f1efa1440d6dd284ebb455"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae79842e72e747598f1c3d7038c2d8a96"><td class="memItemLeft" align="right" valign="top"><a id="ae79842e72e747598f1c3d7038c2d8a96" name="ae79842e72e747598f1c3d7038c2d8a96"></a>
 FORCEINLINE void&#160;</td><td class="memItemRight" valign="bottom"><b>SetCullMode</b> (CULL_MODE mode)</td></tr>
+<tr class="memdesc:ae79842e72e747598f1c3d7038c2d8a96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modifies the faces to be ignored during rendering; one of CULL_MODE_BACK, CULL_MODE_FRONT, and CULL_MODE_NONE. <br /></td></tr>
 <tr class="separator:ae79842e72e747598f1c3d7038c2d8a96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afac9bce39043674ec2dd46d5735ca213"><td class="memItemLeft" align="right" valign="top"><a id="afac9bce39043674ec2dd46d5735ca213" name="afac9bce39043674ec2dd46d5735ca213"></a>
+FORCEINLINE void&#160;</td><td class="memItemRight" valign="bottom"><b>SetFillMode</b> (FILL_MODE mode)</td></tr>
+<tr class="memdesc:afac9bce39043674ec2dd46d5735ca213"><td class="mdescLeft">&#160;</td><td class="mdescRight">Modifies the faces to be ignored during rendering; one of CULL_MODE_BACK, CULL_MODE_FRONT, and CULL_MODE_NONE. <br /></td></tr>
+<tr class="separator:afac9bce39043674ec2dd46d5735ca213"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:aba2c677eb2b8d9ccc5ba834696abb32b"><td class="memItemLeft" align="right" valign="top"><a id="aba2c677eb2b8d9ccc5ba834696abb32b" name="aba2c677eb2b8d9ccc5ba834696abb32b"></a>
 RefCntAutoPtr&lt; IPipelineState &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>BuildPipeline</b> ()</td></tr>
 <tr class="separator:aba2c677eb2b8d9ccc5ba834696abb32b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5255fce39239c0dfd917622ec4718e7"><td class="memItemLeft" align="right" valign="top"><a id="ab5255fce39239c0dfd917622ec4718e7" name="ab5255fce39239c0dfd917622ec4718e7"></a>
-FORCEINLINE void&#160;</td><td class="memItemRight" valign="bottom"><b>OnPipelineMutated</b> ()</td></tr>
-<tr class="separator:ab5255fce39239c0dfd917622ec4718e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9baec525b182640ad0df8444bd235548"><td class="memItemLeft" align="right" valign="top"><a id="a9baec525b182640ad0df8444bd235548" name="a9baec525b182640ad0df8444bd235548"></a>
+FORCEINLINE void&#160;</td><td class="memItemRight" valign="bottom"><b>EnsurePipelineValidity</b> ()</td></tr>
+<tr class="separator:a9baec525b182640ad0df8444bd235548"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e610ba47ee3927136ff4d48d8d2997d"><td class="memItemLeft" align="right" valign="top"><a id="a6e610ba47ee3927136ff4d48d8d2997d" name="a6e610ba47ee3927136ff4d48d8d2997d"></a>
+FORCEINLINE void&#160;</td><td class="memItemRight" valign="bottom"><b>InvalidateCurrentPipeline</b> ()</td></tr>
+<tr class="separator:a6e610ba47ee3927136ff4d48d8d2997d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A <a class="el" href="class_material.html" title="A Material object defines the manner and context in which related draw calls are performed.">Material</a> object defines the manner and context in which related draw calls are performed. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a1c9b00befa24eaf33e63cd8cc66258ad" name="a1c9b00befa24eaf33e63cd8cc66258ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c9b00befa24eaf33e63cd8cc66258ad">&#9670;&#160;</a></span>GetFragmentShaderVariable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FORCEINLINE IShaderResourceVariable * Material::GetFragmentShaderVariable </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A handle to a variable within the fragment shader; nullptr if no matching variable was found </dd></dl>
+
+</div>
+</div>
+<a id="aa484664a0c8e943199191fe7bc470e8a" name="aa484664a0c8e943199191fe7bc470e8a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa484664a0c8e943199191fe7bc470e8a">&#9670;&#160;</a></span>GetPipelineState()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FORCEINLINE const RefCntAutoPtr&lt; IPipelineState &gt; &amp; Material::GetPipelineState </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>The material's current graphics pipeline </dd></dl>
+
+</div>
+</div>
+<a id="a99a79c0833f1ef40f8d8193f6e2ff735" name="a99a79c0833f1ef40f8d8193f6e2ff735"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a99a79c0833f1ef40f8d8193f6e2ff735">&#9670;&#160;</a></span>GetResourceBinding()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FORCEINLINE const RefCntAutoPtr&lt; IShaderResourceBinding &gt; &amp; Material::GetResourceBinding </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>The shader resource binding for this material's current pipeline </dd></dl>
+
+</div>
+</div>
+<a id="a9a1719191a926c34b7c5db0bf1123961" name="a9a1719191a926c34b7c5db0bf1123961"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a1719191a926c34b7c5db0bf1123961">&#9670;&#160;</a></span>GetVertexShaderVariable()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FORCEINLINE IShaderResourceVariable * Material::GetVertexShaderVariable </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A handle to a variable within the fragment shader; nullptr if no matching variable was found </dd></dl>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>include/graphics/<a class="el" href="_material_8h_source.html">Material.h</a></li>
 </ul>
 </div><!-- contents -->

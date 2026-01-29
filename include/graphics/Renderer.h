@@ -4,76 +4,15 @@
 #include <queue>
 #include <vector>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 #include "core/Common.h"
+#include "core/AssetLibrary.h"
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 #include "graphics/Material.h"
-
-static const char *VSSource = R"(
-struct PSInput 
-{ 
-    float4 Pos   : SV_POSITION; 
-};
-
-void Main(in float2 position : POSITION,
-          out PSInput PSIn) 
-{
-    PSIn.Pos = float4(position, 1.0, 1.0);
-}
-)";
-
-static const char *PSSource = R"(
-struct PSInput 
-{ 
-    float4 Pos   : SV_POSITION; 
-};
-
-struct PSOutput
-{ 
-    float4 Color : SV_TARGET; 
-};
-
-cbuffer Abcdef
-{
-	float4 value;
-};
-
-void Main(in  PSInput  PSIn,
-          out PSOutput PSOut)
-{
-    PSOut.Color = value;
-}
-)";
-
-/**
-struct GBufferPass : RenderPass
-{
-	void OnExecution() override
-	{
-		for(v in Renderables)
-		{
-
-		}
-	}
-
-	RenderTarget2D* Color;
-	RenderTarget2D* Position;
-	RenderTarget2D* Normals;
-	
-}
-
-class SceneRenderer : Renderer
-{
-	RenderGraph* BuildRenderGraph() override
-	{
-		RenderGraphFactory builder;
-
-		builder.AddPass([&]() {
-			CommandList.EnqueueDraw(PSO, SRB)
-		})
-	}
-}
-*/
 
 
 /**
@@ -116,7 +55,66 @@ private:
 	std::vector<std::shared_ptr<RenderPass>> m_Passes;
 };
 
+/**
+ * @brief Contains the information depended on by a majority of simple draw calls
+ */
+struct EntityDrawCmd
+{
+	EntityDrawCmd(
+		RefCntAutoPtr<IBuffer> indexBuffer,
+		RefCntAutoPtr<IBuffer> vertexBuffer,
+		std::shared_ptr<MaterialInstance> material,
+		int indexCount);
 
+	int IndexCount;
+	bool Valid = true;
+	RefCntAutoPtr<IBuffer> IndexBuffer;
+	RefCntAutoPtr<IBuffer> VertexBuffer;
+	std::shared_ptr<MaterialInstance> DrawMaterial;
+};
+
+
+/**
+ * @brief A handle which invalidates the associated PersistentEntityDrawCmd upon destruction, effectively
+ * tying their lifetimes.
+ */
+struct EntityDrawCmdHandle
+{
+	EntityDrawCmdHandle(EntityDrawCmd* cmd);
+	~EntityDrawCmdHandle();
+
+	EntityDrawCmd* Command;
+};
+
+
+/**
+ * @brief An unordered list of draw commands, performed upon execution see DrawCommandChain::Execute()
+ */
+class DrawCommandChain
+{
+public:
+	DrawCommandChain() = default;
+
+	std::shared_ptr<EntityDrawCmdHandle> PushCommand(
+		RefCntAutoPtr<IBuffer> indexBuffer,
+		RefCntAutoPtr<IBuffer> vertexBuffer,
+		std::shared_ptr<MaterialInstance> material,
+		int indexCount);
+
+	/**
+	 * @brief Executes all valid commands currently within the chain
+	 */
+	void Execute();
+
+private:
+	std::vector<EntityDrawCmd> m_CommandList;
+};
+
+
+/**
+ * @brief Manages a majority of graphical operations performed by the engine, especially the
+ * frame-by-frame visualization of scenes.
+ */
 class Renderer
 {
 public:
@@ -125,40 +123,57 @@ public:
 		InitializeDiligent(wnd);
 	}	
 
+	void Render();
+
+	void Execute(EntityDrawCmd& cmd);
+
+	/**
+	 * @brief Binds a graphics pipeline if the requested pipeline isn't already bound
+	 */
+	FORCEINLINE void UsePipeline(RefCntAutoPtr<IPipelineState> pipeline)
+	{
+		if (m_PipelineState != pipeline)
+		{
+			m_PipelineState = pipeline;
+			m_DeviceContext->SetPipelineState(pipeline);
+		}
+	}
+
 	void Setup()
 	{
-		auto vs = std::shared_ptr<Shader>(new Shader("triangle_vert_shader", VSSource, SHADER_TYPE_VERTEX));
-		auto ps = std::shared_ptr<Shader>(new Shader("triangle_frag_shader", PSSource, SHADER_TYPE_PIXEL));
+		Singleton<AssetLibrary>::Initialize();
 
-		material = std::make_shared<Material>(vs, ps);
+		std::shared_ptr<Shader> fs ( Singleton<AssetLibrary>::Get()->Get<Shader*>("fPrototype.hlsl") );
+		std::shared_ptr<Shader> vs ( Singleton<AssetLibrary>::Get()->Get<Shader*>("vPrototype.hlsl") );
 
-		float e[4]{
-			1.f,
-			1.f,
-			1.f,
-			1.f};
+		auto basematerial = std::make_shared<Material>(vs, fs);
+		material = std::make_shared<MaterialInstance>(basematerial);
 
-		BufferData data(e, sizeof(e));
 		BufferDesc bufferDesc;
 		bufferDesc.CPUAccessFlags = CPU_ACCESS_NONE;
-		bufferDesc.Name = "Abcdef Buffer";
+		bufferDesc.Name = "WorldData Buffer";
 		bufferDesc.Usage = USAGE_DEFAULT;
-		bufferDesc.Size = sizeof(e);
+		bufferDesc.Size = sizeof(glm::mat4x4);
 		bufferDesc.BindFlags = BIND_UNIFORM_BUFFER;
-		m_RenderDevice->CreateBuffer(bufferDesc, &data, &buffer);
-		material->GetFragmentVariable("Abcdef")->Set(buffer);
+		m_RenderDevice->CreateBuffer(bufferDesc, nullptr, &buffer);
+		material->GetVertexShaderVariable("WorldData")->Set(buffer);
 
 		float vertexData[]
 		{
 			0.5f, 0.5f,
 			-0.5f, 0.5f,
 			-0.5f, -0.5f,
-			-0.5f, -0.5f,
-			0.5f, -0.5f,
-			0.5f, 0.5f
+			 0.5f, -0.5f
 		};
 
-		BufferData vdata(vertexData, sizeof(vertexData));
+		unsigned int indexData[]
+		{
+			0, 1, 2,
+			2, 3, 0
+		};
+
+		RefCntAutoPtr<IBuffer> vbuffer;
+		BufferData vdata (vertexData, sizeof(vertexData));
 		BufferDesc vbufferDesc;
 		vbufferDesc.Name = "test";
 		vbufferDesc.Size = sizeof(vertexData);
@@ -166,8 +181,16 @@ public:
 		vbufferDesc.BindFlags = BIND_VERTEX_BUFFER;
 		m_RenderDevice->CreateBuffer(vbufferDesc, &vdata, &vbuffer);
 
-		IBuffer *yo[]{vbuffer};
-		m_DeviceContext->SetVertexBuffers(0, 1, yo, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
+		RefCntAutoPtr<IBuffer> ibuffer;
+		BufferData idata (indexData, sizeof(indexData));
+		BufferDesc ibufferDesc;
+		ibufferDesc.Name = "test2";
+		ibufferDesc.Size = sizeof(indexData);
+		ibufferDesc.Usage = USAGE_IMMUTABLE;
+		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
+		m_RenderDevice->CreateBuffer(ibufferDesc, &idata, &ibuffer);
+
+		m_eee = m_DrawChain.PushCommand(ibuffer, vbuffer, material, 6);
 	}
 	
 	FORCEINLINE RefCntAutoPtr<IRenderDevice> GetRenderDevice()
@@ -189,8 +212,6 @@ public:
 	{
 		return m_PipelineState;
 	}
-
-	void Render();
 
 private: 
 	bool InitializeDiligent(HWND hWnd)
@@ -272,36 +293,13 @@ private:
 		return true;
 	}
 
-	RenderGraph m_CurrentGraph;
+	std::shared_ptr<EntityDrawCmdHandle> m_eee;
+	DrawCommandChain m_DrawChain;
 	RefCntAutoPtr<IRenderDevice> m_RenderDevice;
 	RefCntAutoPtr<IDeviceContext> m_DeviceContext;
 	RefCntAutoPtr<ISwapChain> m_SwapChain;
 	RefCntAutoPtr<IPipelineState> m_PipelineState;
 	RENDER_DEVICE_TYPE m_DeviceType = RENDER_DEVICE_TYPE_D3D11;
-	std::shared_ptr<Material> material;
+	std::shared_ptr<MaterialInstance> material;
 	RefCntAutoPtr<IBuffer> buffer;
-	RefCntAutoPtr<IBuffer> vbuffer;
 };
-
-/*
-void Test()
-{
-	RenderGraph graph;
-
-	auto texture = graph.MakeTexture2D("Color", 1920, 1080, TEX_FORMAT_RGBA8_SINT);
-
-	struct GBufferPass : public RenderPass
-	{
-		void Run(RenderGraph *graph) override
-		{
-			
-		}
-		
-		RefCntAutoPtr<ITexture> target;
-	};
-
-	std::shared_ptr<GBufferPass> gBufferPass (new GBufferPass);
-	gBufferPass->target = texture;
-
-	graph.AddPass(gBufferPass);
-}*/

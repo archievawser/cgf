@@ -10,6 +10,7 @@ set(SOURCE
 	"src/graphics/Renderer.cpp"
 	"src/graphics/Material.cpp"
 	"src/core/Game.cpp"
+	"src/core/AssetLibrary.cpp"
 )
 
 add_executable(general-engine WIN32 ${SOURCE})
@@ -43,5 +44,19 @@ endif()
 if(VULKAN_SUPPORTED)
 	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineVk-shared)
 endif()
+
+message(${CMAKE_CURRENT_BINARY_DIR})
+
+add_custom_command(
+	TARGET general-engine POST_BUILD
+
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	${CMAKE_SOURCE_DIR}/shaders/fPrototype.hlsl
+	$<TARGET_FILE_DIR:general-engine>/shaders/fPrototype.hlsl
+
+	COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	${CMAKE_SOURCE_DIR}/shaders/vPrototype.hlsl
+	$<TARGET_FILE_DIR:general-engine>/shaders/vPrototype.hlsl
+)
 
 copy_required_dlls(general-engine)

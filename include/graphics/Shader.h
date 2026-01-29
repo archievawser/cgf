@@ -9,12 +9,12 @@ class Shader
 {
 public:
 	Shader(std::string name, 
-		std::string source, 
+		std::string& source, 
 		SHADER_TYPE type, 
 		SHADER_SOURCE_LANGUAGE sourceLanguage = SHADER_SOURCE_LANGUAGE_HLSL);
 
 	Shader(std::string name, 
-		std::string source, 
+		std::string& source, 
 		SHADER_TYPE type, 
 		std::string entry,
 		SHADER_SOURCE_LANGUAGE sourceLanguage = SHADER_SOURCE_LANGUAGE_HLSL);

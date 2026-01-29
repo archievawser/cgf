@@ -19,8 +19,8 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	RegisterClassEx(&wcex);
 
 	// Create a window
-	LONG windowWidth = 1280;
-	LONG windowHeight = 1024;
+	LONG windowWidth = 1600;
+	LONG windowHeight = 900;
 	RECT rc = {0, 0, windowWidth, windowHeight};
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 	HWND wnd = CreateWindow(L"SampleApp", title.c_str(), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, NULL, NULL, hInstance, NULL);
