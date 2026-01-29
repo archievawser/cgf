@@ -1,23 +1,8 @@
 #include <iomanip>
 #include <iostream>
 
+#include "core/Common.h"
 #include "core/Game.h"
-
-class Peener : public Game 
-{
-public:
-	void Tick() override
-	{
-
-	}
-
-	void Draw() override
-	{
-		
-	}
-};
-
-Game* appRef = nullptr;
 
 LRESULT CALLBACK MessageProc(HWND, UINT, WPARAM, LPARAM);
 
@@ -26,8 +11,6 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 #if defined(_DEBUG) || defined(DEBUG)
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-
-	appRef = new Peener;
 
 	std::wstring title = L"Hello, world!";
 
@@ -51,10 +34,7 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 	ShowWindow(wnd, nShowCmd);
 	UpdateWindow(wnd);
 
-	if (!appRef->InitializeDiligent(wnd))
-		return -1;
-
-	appRef->CreateResources();
+	Singleton<Game>::Initialize(wnd);
 
 	// Main message loop
 	MSG msg = {0};
@@ -68,11 +48,9 @@ int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _
 		}
 		else
 		{
-			appRef->Render();
+			Singleton<Game>::Get()->Render();
 		}
 	}
-
-	delete appRef;
 
 	return (int)msg.wParam;
 }
@@ -90,9 +68,9 @@ LRESULT CALLBACK MessageProc(HWND wnd, UINT message, WPARAM wParam, LPARAM lPara
 		return 0;
 	}
 	case WM_SIZE: // Window size has been changed
-		if (appRef)
+		if (Singleton<Game>::Get())
 		{
-			appRef->WindowResize(LOWORD(lParam), HIWORD(lParam));
+			Singleton<Game>::Get()->WindowResize(LOWORD(lParam), HIWORD(lParam));
 		}
 		return 0;
 

@@ -8,6 +8,7 @@ set(SOURCE
 	"src/Main.cpp"
  	"src/graphics/Shader.cpp"
 	"src/graphics/Renderer.cpp"
+	"src/graphics/Material.cpp"
 	"src/core/Game.cpp"
 )
 

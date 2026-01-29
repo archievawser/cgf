@@ -1,0 +1,74 @@
+\doxysection{Material.\+h}
+\hypertarget{_material_8h_source}{}\label{_material_8h_source}\index{include/graphics/Material.h@{include/graphics/Material.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}graphics/Diligent.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}graphics/Shader.h"{}}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00012\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_material}{Material}}}
+\DoxyCodeLine{00013\ \{}
+\DoxyCodeLine{00014\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00015\ \ \ \ \ \mbox{\hyperlink{class_material}{Material}}(std::shared\_ptr<Shader>\ vs,\ std::shared\_ptr<Shader>\ ps);}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \ \ \ \ FORCEINLINE\ IShaderResourceVariable*\ GetFragmentVariable(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ name)}
+\DoxyCodeLine{00018\ \ \ \ \ \{}
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_ResourceBinding-\/>GetVariableByName(SHADER\_TYPE\_PIXEL,\ name);}
+\DoxyCodeLine{00020\ \ \ \ \ \}}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IShaderResourceBinding>\ GetResourceBinding()\textcolor{keyword}{\ const}}
+\DoxyCodeLine{00023\ \textcolor{keyword}{\ \ \ \ }\{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_ResourceBinding;}
+\DoxyCodeLine{00025\ \ \ \ \ \}}
+\DoxyCodeLine{00026\ }
+\DoxyCodeLine{00027\ \ \ \ \ FORCEINLINE\ RefCntAutoPtr<IPipelineState>\ GetPipelineState()}
+\DoxyCodeLine{00028\ \ \ \ \ \{}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}(!m\_PipelineValid)}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \{}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ m\_PipelineState\ =\ BuildPipeline();}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \}}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ m\_PipelineState;}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ SetVertexLayout(std::vector<LayoutElement>\&\ layout)}
+\DoxyCodeLine{00038\ \ \ \ \ \{}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ m\_VertexLayout\ =\ layout;}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ OnPipelineMutated();}
+\DoxyCodeLine{00042\ \ \ \ \ \}}
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ SetCullMode(CULL\_MODE\ mode)}
+\DoxyCodeLine{00045\ \ \ \ \ \{}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ m\_CullMode\ =\ mode;}
+\DoxyCodeLine{00047\ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ OnPipelineMutated();}
+\DoxyCodeLine{00049\ \ \ \ \ \}}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \textcolor{keyword}{protected}:}
+\DoxyCodeLine{00052\ \ \ \ \ RefCntAutoPtr<IPipelineState>\ BuildPipeline();}
+\DoxyCodeLine{00053\ \ \ \ \ }
+\DoxyCodeLine{00054\ \ \ \ \ FORCEINLINE\ \textcolor{keywordtype}{void}\ OnPipelineMutated()}
+\DoxyCodeLine{00055\ \ \ \ \ \{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ m\_PipelineValid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00057\ \ \ \ \ \}}
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00060\ \ \ \ \ std::vector<LayoutElement>\ m\_VertexLayout;}
+\DoxyCodeLine{00061\ \ \ \ \ RefCntAutoPtr<IPipelineState>\ m\_PipelineState;}
+\DoxyCodeLine{00062\ \ \ \ \ RefCntAutoPtr<IShaderResourceBinding>\ m\_ResourceBinding;}
+\DoxyCodeLine{00063\ \ \ \ \ TEXTURE\_FORMAT\ m\_RenderTargetFormats[8];}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keywordtype}{int}\ m\_RenderTargetCount\ =\ 1;}
+\DoxyCodeLine{00065\ \ \ \ \ TEXTURE\_FORMAT\ m\_DepthStencilFormat\ =\ TEX\_FORMAT\_D32\_FLOAT;}
+\DoxyCodeLine{00066\ \ \ \ \ PRIMITIVE\_TOPOLOGY\ m\_PrimitiveType\ =\ PRIMITIVE\_TOPOLOGY\_TRIANGLE\_LIST;}
+\DoxyCodeLine{00067\ \ \ \ \ CULL\_MODE\ m\_CullMode\ =\ CULL\_MODE\_NONE;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_UseDepth\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00069\ \ \ \ \ std::shared\_ptr<Shader>\ m\_PixelShader\ =\ \textcolor{keyword}{nullptr};\ \ \ \ }
+\DoxyCodeLine{00070\ \ \ \ \ std::shared\_ptr<Shader>\ m\_VertexShader\ =\ \textcolor{keyword}{nullptr};\ \ \ }
+\DoxyCodeLine{00071\ \ \ \ \ \textcolor{keywordtype}{bool}\ m\_PipelineValid\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00072\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,51 @@
+\doxysection{Material Class Reference}
+\hypertarget{class_material}{}\label{class_material}\index{Material@{Material}}
+
+
+A \doxylink{class_material}{Material} object defines the manner and context in which related draw calls are performed.  
+
+
+
+
+{\ttfamily \#include $<$Material.\+h$>$}
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_material_a09acd9f03b549178415689a3a802eec5}\label{class_material_a09acd9f03b549178415689a3a802eec5} 
+{\bfseries Material} (std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_shader}{Shader}} $>$ vs, std\+::shared\+\_\+ptr$<$ \mbox{\hyperlink{class_shader}{Shader}} $>$ ps)
+\item 
+\Hypertarget{class_material_aedab179cd8db44c131ca1701a9280596}\label{class_material_aedab179cd8db44c131ca1701a9280596} 
+FORCEINLINE IShader\+Resource\+Variable \texorpdfstring{$\ast$}{*} {\bfseries Get\+Fragment\+Variable} (const char \texorpdfstring{$\ast$}{*}name)
+\item 
+\Hypertarget{class_material_ad509f0487a88de393902fbe6c1031be1}\label{class_material_ad509f0487a88de393902fbe6c1031be1} 
+FORCEINLINE Ref\+Cnt\+Auto\+Ptr$<$ IShader\+Resource\+Binding $>$ {\bfseries Get\+Resource\+Binding} () const
+\item 
+\Hypertarget{class_material_afe4fb3f2f816fa97540071ed56c523a6}\label{class_material_afe4fb3f2f816fa97540071ed56c523a6} 
+FORCEINLINE Ref\+Cnt\+Auto\+Ptr$<$ IPipeline\+State $>$ {\bfseries Get\+Pipeline\+State} ()
+\item 
+\Hypertarget{class_material_a0fe7b05a09f1efa1440d6dd284ebb455}\label{class_material_a0fe7b05a09f1efa1440d6dd284ebb455} 
+FORCEINLINE void {\bfseries Set\+Vertex\+Layout} (std\+::vector$<$ Layout\+Element $>$ \&layout)
+\item 
+\Hypertarget{class_material_ae79842e72e747598f1c3d7038c2d8a96}\label{class_material_ae79842e72e747598f1c3d7038c2d8a96} 
+FORCEINLINE void {\bfseries Set\+Cull\+Mode} (CULL\+\_\+\+MODE mode)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_material_aba2c677eb2b8d9ccc5ba834696abb32b}\label{class_material_aba2c677eb2b8d9ccc5ba834696abb32b} 
+Ref\+Cnt\+Auto\+Ptr$<$ IPipeline\+State $>$ {\bfseries Build\+Pipeline} ()
+\item 
+\Hypertarget{class_material_ab5255fce39239c0dfd917622ec4718e7}\label{class_material_ab5255fce39239c0dfd917622ec4718e7} 
+FORCEINLINE void {\bfseries On\+Pipeline\+Mutated} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+A \doxylink{class_material}{Material} object defines the manner and context in which related draw calls are performed. 
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+include/graphics/Material.\+h\end{DoxyCompactItemize}

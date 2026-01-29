@@ -1,0 +1,33 @@
+\doxysection{Asset\+Library.\+h}
+\hypertarget{_asset_library_8h_source}{}\label{_asset_library_8h_source}\index{include/core/AssetLibrary.h@{include/core/AssetLibrary.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <string>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <filesystem>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <unordered\_map>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00011\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_asset_library}{AssetLibrary}}}
+\DoxyCodeLine{00012\ \{}
+\DoxyCodeLine{00013\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00014\ \ \ \ \ \mbox{\hyperlink{class_asset_library}{AssetLibrary}}();}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{template}<\textcolor{keyword}{typename}\ AssetType>}
+\DoxyCodeLine{00022\ \ \ \ \ AssetType\ \mbox{\hyperlink{class_asset_library_a2aa867ce53e401bd780b98af8bb7ed41}{Get}}(std::string\ assetName);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00025\ \ \ \ \ std::unordered\_map<std::string,\ void*>\ m\_Assets;}
+\DoxyCodeLine{00026\ \};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{keyword}{template}\ <\textcolor{keyword}{typename}\ AssetType>}
+\DoxyCodeLine{00030\ \textcolor{keyword}{inline}\ AssetType\ \mbox{\hyperlink{class_asset_library_a2aa867ce53e401bd780b98af8bb7ed41}{AssetLibrary::Get}}(std::string\ assetName)}
+\DoxyCodeLine{00031\ \{}
+\DoxyCodeLine{00032\ \ \ \ \ \textcolor{keywordflow}{throw}\ \textcolor{stringliteral}{"{}Asset\ type\ not\ recognized"{}};}
+\DoxyCodeLine{00033\ \}}
+\DoxyCodeLine{00034\ }
+\DoxyCodeLine{00035\ }
+
+\end{DoxyCode}

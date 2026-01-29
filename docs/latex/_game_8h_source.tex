@@ -1,0 +1,86 @@
+\doxysection{Game.\+h}
+\hypertarget{_game_8h_source}{}\label{_game_8h_source}\index{include/core/Game.h@{include/core/Game.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ <memory>}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ <iomanip>}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <iostream>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifndef\ NOMINMAX}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ NOMINMAX}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ <Windows.h>}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <crtdbg.h>}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifndef\ PLATFORM\_WIN32}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ PLATFORM\_WIN32\ 1}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#ifndef\ ENGINE\_DLL}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ ENGINE\_DLL\ 1}}
+\DoxyCodeLine{00019\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#ifndef\ D3D11\_SUPPORTED}}
+\DoxyCodeLine{00022\ \textcolor{preprocessor}{\#define\ D3D11\_SUPPORTED\ 1}}
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00024\ }
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#ifndef\ D3D12\_SUPPORTED}}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ D3D12\_SUPPORTED\ 1}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ \textcolor{preprocessor}{\#ifndef\ GL\_SUPPORTED}}
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ GL\_SUPPORTED\ 1}}
+\DoxyCodeLine{00031\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{preprocessor}{\#ifndef\ VULKAN\_SUPPORTED}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ VULKAN\_SUPPORTED\ 1}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#include\ "{}graphics/Diligent.h"{}}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#include\ "{}graphics/Shader.h"{}}}
+\DoxyCodeLine{00039\ \textcolor{preprocessor}{\#include\ "{}graphics/Renderer.h"{}}}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#include\ "{}core/Common.h"{}}}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{class\ }\mbox{\hyperlink{class_game}{Game}}}
+\DoxyCodeLine{00044\ \{}
+\DoxyCodeLine{00045\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00046\ \ \ \ \ \mbox{\hyperlink{class_game}{Game}}(HWND\ window)}
+\DoxyCodeLine{00047\ \ \ \ \ \{}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ Instance\ =\ \textcolor{keyword}{this};}
+\DoxyCodeLine{00049\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_singleton}{Singleton<Renderer>::Initialize}}(window);}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_singleton}{Singleton<Renderer>::Get}}()-\/>Setup();}
+\DoxyCodeLine{00052\ \ \ \ \ \}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \textcolor{keyword}{virtual}\ \mbox{\hyperlink{class_game}{\string~Game}}()\ =\ \textcolor{keywordflow}{default};}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \ \ \ \ \textcolor{keywordtype}{void}\ Render()}
+\DoxyCodeLine{00057\ \ \ \ \ \{}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \mbox{\hyperlink{struct_singleton}{Singleton<Renderer>::Get}}()-\/>Render();}
+\DoxyCodeLine{00059\ \ \ \ \ \}}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keywordtype}{void}\ WindowResize(Uint32\ Width,\ Uint32\ Height)}
+\DoxyCodeLine{00062\ \ \ \ \ \{}
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (SwapChain)}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \ \ \ \ SwapChain-\/>Resize(Width,\ Height);}
+\DoxyCodeLine{00065\ \ \ \ \ \}}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00067\ \ \ \ \ RENDER\_DEVICE\_TYPE\ GetDeviceType()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ m\_DeviceType;\ \}}
+\DoxyCodeLine{00068\ }
+\DoxyCodeLine{00069\ \ \ \ \ RefCntAutoPtr<IBuffer>\ buffer;}
+\DoxyCodeLine{00070\ \ \ \ \ RefCntAutoPtr<IBuffer>\ vbuffer;}
+\DoxyCodeLine{00071\ \ \ \ \ std::shared\_ptr<Shader>\ ps;}
+\DoxyCodeLine{00072\ \ \ \ \ std::shared\_ptr<Shader>\ vs;}
+\DoxyCodeLine{00073\ \ \ \ \ \textcolor{keyword}{static}\ \mbox{\hyperlink{class_game}{Game}}\ *Instance;}
+\DoxyCodeLine{00074\ \ \ \ \ RefCntAutoPtr<IShaderResourceBinding>\ binding;}
+\DoxyCodeLine{00075\ \ \ \ \ RefCntAutoPtr<IRenderDevice>\ RenderDevice;}
+\DoxyCodeLine{00076\ \ \ \ \ RefCntAutoPtr<IDeviceContext>\ DeviceContext;}
+\DoxyCodeLine{00077\ \ \ \ \ RefCntAutoPtr<ISwapChain>\ SwapChain;}
+\DoxyCodeLine{00078\ \ \ \ \ RefCntAutoPtr<IPipelineState>\ PipelineState;}
+\DoxyCodeLine{00079\ \ \ \ \ RENDER\_DEVICE\_TYPE\ m\_DeviceType\ =\ RENDER\_DEVICE\_TYPE\_D3D11;}
+\DoxyCodeLine{00080\ \};}
+
+\end{DoxyCode}

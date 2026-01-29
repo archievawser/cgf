@@ -6,12 +6,12 @@
 
 Shader::Shader(std::string name,
 	std::string source,
-	Diligent::SHADER_TYPE type,
+	SHADER_TYPE type,
 	std::string entryPoint,
-	Diligent::SHADER_SOURCE_LANGUAGE sourceLanguage)
+	SHADER_SOURCE_LANGUAGE sourceLanguage)
 	: m_ShaderType(type)
 {
-	Diligent::ShaderCreateInfo info;
+	ShaderCreateInfo info;
 	info.Desc.Name = name.c_str();
 	info.Desc.ShaderType = type;
 	info.Desc.UseCombinedTextureSamplers = true;
@@ -19,12 +19,12 @@ Shader::Shader(std::string name,
 	info.EntryPoint = entryPoint.c_str();
 	info.SourceLanguage = sourceLanguage;
 
-	Diligent::IDataBlob* data = nullptr;
-	Game::Instance->RenderDevice->CreateShader(info, &m_Handle, &data);
+	RefCntAutoPtr<IDataBlob> data;
+	Singleton<Renderer>::Get()->GetRenderDevice()->CreateShader(info, &m_Handle, &data);
 }
 
 
-Shader::Shader(std::string name, std::string source, Diligent::SHADER_TYPE type, Diligent::SHADER_SOURCE_LANGUAGE sourceLanguage)
+Shader::Shader(std::string name, std::string source, SHADER_TYPE type, SHADER_SOURCE_LANGUAGE sourceLanguage)
 	: Shader(name, source, type, "Main", sourceLanguage)
 {	
 	
