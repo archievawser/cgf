@@ -2,10 +2,12 @@
 
 #include <memory>
 
+#include "core/Common.h"
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 
 
+class Renderer;
 class MaterialInstance;
 
 
@@ -90,6 +92,42 @@ private:
 };
 
 
+template<typename T>
+class DeviceVarBinding
+{
+public:
+	DeviceVarBinding(IShaderResourceVariable* dest)	
+		: m_Destination(dest)
+	{
+		ShaderResourceDesc desc;
+		dest->GetResourceDesc(desc);
+
+		Diligent::BIND_FLAGS target = desc.Type == SHADER_RESOURCE_TYPE_CONSTANT_BUFFER
+										? BIND_UNIFORM_BUFFER
+										: BIND_SHADER_RESOURCE;
+
+		BufferDesc bufferDesc;
+		bufferDesc.CPUAccessFlags = CPU_ACCESS_NONE;
+		bufferDesc.Name = (std::string(desc.Name) + "_buffer").c_str();
+		bufferDesc.Usage = USAGE_DEFAULT;
+		bufferDesc.Size = sizeof(T);
+		bufferDesc.BindFlags = target;
+
+		Singleton<Renderer>::Get()->GetRenderDevice()->CreateBuffer(bufferDesc, nullptr, &m_Buffer);
+	}
+
+	void Set(T& value)
+	{
+		Singleton<Renderer>::Get()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, sizeof(T), &value, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		m_Destination->Set(m_Buffer);
+	}
+
+private:
+	RefCntAutoPtr<IBuffer> m_Buffer;
+	RefCntAutoPtr<IShaderResourceVariable> m_Destination;
+};
+
+
 /**
  * @brief A particular instance of a Material allowing instance-specific resource bindings
  */
@@ -98,20 +136,40 @@ class MaterialInstance
 public:
 	MaterialInstance(std::shared_ptr<Material> material);
 
-	/**
-	 * @return A handle to a variable within the fragment shader; nullptr if no matching variable was found
-	 */
-	FORCEINLINE IShaderResourceVariable* GetFragmentShaderVariable(const char *name)
+	template<typename T>
+	FORCEINLINE DeviceVarBinding<T> CreateFragmentVariableBinding(const char* name)
 	{
-		return m_ResourceBinding->GetVariableByName(SHADER_TYPE_PIXEL, name);
+		auto v = GetFragmentShaderVariable(name);
+
+		GE_ERROR_IF_NULLPTR(v);
+		
+		return DeviceVarBinding<T>(v);
+	}
+
+	template<typename T>
+	FORCEINLINE DeviceVarBinding<T> CreateVertexVariableBinding(const char* name)
+	{
+		auto v = GetVertexShaderVariable(name);
+
+		GE_ERROR_IF_NULLPTR(v);
+
+		return DeviceVarBinding<T>(v);
 	}
 
 	/**
 	 * @return A handle to a variable within the fragment shader; nullptr if no matching variable was found
 	 */
-	FORCEINLINE IShaderResourceVariable* GetVertexShaderVariable(const char *name)
+	FORCEINLINE RefCntAutoPtr<IShaderResourceVariable> GetFragmentShaderVariable(const char *name)
 	{
-		return m_ResourceBinding->GetVariableByName(SHADER_TYPE_VERTEX, name);
+		return RefCntAutoPtr<IShaderResourceVariable>(m_ResourceBinding->GetVariableByName(SHADER_TYPE_PIXEL, name));
+	}
+
+	/**
+	 * @return A handle to a variable within the fragment shader; nullptr if no matching variable was found
+	 */
+	FORCEINLINE RefCntAutoPtr<IShaderResourceVariable> GetVertexShaderVariable(const char *name)
+	{
+		return RefCntAutoPtr<IShaderResourceVariable>(m_ResourceBinding->GetVariableByName(SHADER_TYPE_VERTEX, name));
 	}
 
 	/**

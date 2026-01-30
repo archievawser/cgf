@@ -10,6 +10,7 @@
 
 #include "core/Common.h"
 #include "core/AssetLibrary.h"
+
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 #include "graphics/Material.h"
@@ -55,6 +56,7 @@ private:
 	std::vector<std::shared_ptr<RenderPass>> m_Passes;
 };
 
+
 /**
  * @brief Contains the information depended on by a majority of simple draw calls
  */
@@ -74,28 +76,34 @@ struct EntityDrawCmd
 };
 
 
+class EntityDrawCmdList;
+
+
 /**
  * @brief A handle which invalidates the associated PersistentEntityDrawCmd upon destruction, effectively
  * tying their lifetimes.
  */
 struct EntityDrawCmdHandle
 {
-	EntityDrawCmdHandle(EntityDrawCmd* cmd);
+	EntityDrawCmdHandle(int cmdIndex, EntityDrawCmdList* chain);
 	~EntityDrawCmdHandle();
 
-	EntityDrawCmd* Command;
+	int CmdIndex;
+	EntityDrawCmdList* Chain;
 };
 
 
 /**
  * @brief An unordered list of draw commands, performed upon execution see DrawCommandChain::Execute()
  */
-class DrawCommandChain
+class EntityDrawCmdList
 {
-public:
-	DrawCommandChain() = default;
+	friend class EntityDrawCmdHandle;
 
-	std::shared_ptr<EntityDrawCmdHandle> PushCommand(
+public:
+	EntityDrawCmdList() = default;
+
+	std::shared_ptr<EntityDrawCmdHandle> CreateCommand(
 		RefCntAutoPtr<IBuffer> indexBuffer,
 		RefCntAutoPtr<IBuffer> vertexBuffer,
 		std::shared_ptr<MaterialInstance> material,
@@ -107,7 +115,7 @@ public:
 	void Execute();
 
 private:
-	std::vector<EntityDrawCmd> m_CommandList;
+	std::vector<EntityDrawCmd> m_CmdList;
 };
 
 
@@ -147,21 +155,26 @@ public:
 		std::shared_ptr<Shader> vs ( Singleton<AssetLibrary>::Get()->Get<Shader*>("vPrototype.hlsl") );
 
 		auto basematerial = std::make_shared<Material>(vs, fs);
-		material = std::make_shared<MaterialInstance>(basematerial);
+		material1 = std::make_shared<MaterialInstance>(basematerial);
+		material2 = std::make_shared<MaterialInstance>(basematerial);
 
-		BufferDesc bufferDesc;
-		bufferDesc.CPUAccessFlags = CPU_ACCESS_NONE;
-		bufferDesc.Name = "WorldData Buffer";
-		bufferDesc.Usage = USAGE_DEFAULT;
-		bufferDesc.Size = sizeof(glm::mat4x4);
-		bufferDesc.BindFlags = BIND_UNIFORM_BUFFER;
-		m_RenderDevice->CreateBuffer(bufferDesc, nullptr, &buffer);
-		material->GetVertexShaderVariable("WorldData")->Set(buffer);
+		glm::mat4 proj = glm::perspectiveFov(70.f, 1920.f, 1080.f, 0.1f, 1000.f);
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -10));
+		glm::mat4 model = glm::mat4x4(1.0f);
+
+		glm::mat4x4 mvp1 = proj * view * glm::translate(model, glm::vec3(1, 0, 0));
+		glm::mat4x4 mvp2 = proj * view * glm::translate(model, glm::vec3(-1, 0, 0));
+
+		DeviceVarBinding<glm::mat4> binding1 = material1->CreateVertexVariableBinding<glm::mat4>("WorldData");
+		binding1.Set(mvp1);
+
+		DeviceVarBinding<glm::mat4> binding2 = material2->CreateVertexVariableBinding<glm::mat4>("WorldData");
+		binding2.Set(mvp2);
 
 		float vertexData[]
 		{
-			0.5f, 0.5f,
-			-0.5f, 0.5f,
+			 0.5f,  0.5f,
+			-0.5f,  0.5f,
 			-0.5f, -0.5f,
 			 0.5f, -0.5f
 		};
@@ -190,7 +203,8 @@ public:
 		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
 		m_RenderDevice->CreateBuffer(ibufferDesc, &idata, &ibuffer);
 
-		m_eee = m_DrawChain.PushCommand(ibuffer, vbuffer, material, 6);
+		m_e2ee = m_DrawChain.CreateCommand(ibuffer, vbuffer, material2, 6);
+		m_eee = m_DrawChain.CreateCommand(ibuffer, vbuffer, material1, 6);
 	}
 	
 	FORCEINLINE RefCntAutoPtr<IRenderDevice> GetRenderDevice()
@@ -294,12 +308,15 @@ private:
 	}
 
 	std::shared_ptr<EntityDrawCmdHandle> m_eee;
-	DrawCommandChain m_DrawChain;
+	std::shared_ptr<EntityDrawCmdHandle> m_e2ee;
+	EntityDrawCmdList m_DrawChain;
 	RefCntAutoPtr<IRenderDevice> m_RenderDevice;
 	RefCntAutoPtr<IDeviceContext> m_DeviceContext;
 	RefCntAutoPtr<ISwapChain> m_SwapChain;
 	RefCntAutoPtr<IPipelineState> m_PipelineState;
 	RENDER_DEVICE_TYPE m_DeviceType = RENDER_DEVICE_TYPE_D3D11;
-	std::shared_ptr<MaterialInstance> material;
-	RefCntAutoPtr<IBuffer> buffer;
+	std::shared_ptr<MaterialInstance> material1;
+	std::shared_ptr<MaterialInstance> material2;
+	RefCntAutoPtr<IBuffer> buffer1;
+	RefCntAutoPtr<IBuffer> buffer2;
 };

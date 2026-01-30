@@ -4,6 +4,27 @@
 #include "core/Common.h"
 #include "core/Game.h"
 
+/*
+
+
+
+
+class Rabid : Game
+{
+public:
+	Rabid() = default;
+
+	void Start() override;
+
+	void Update() override;
+}
+
+
+IMPLEMENT_ENTRY_POINT_USING( Rabid )
+
+
+ */
+
 LRESULT CALLBACK MessageProc(HWND, UINT, WPARAM, LPARAM);
 
 int WINAPI WinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPSTR lpCmdLine, _In_ int nShowCmd)

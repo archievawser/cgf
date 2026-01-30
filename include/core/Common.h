@@ -25,3 +25,11 @@ struct Singleton
 
 template <typename T>
 T *Singleton<T>::Instance;
+
+
+#ifdef _DEBUG
+#include <cassert>
+
+#define GE_ASSERT(exp) assert(exp)
+#define GE_ERROR_IF_NULLPTR(exp) GE_ASSERT(exp)
+#endif

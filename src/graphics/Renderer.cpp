@@ -51,53 +51,42 @@ void Renderer::Execute(EntityDrawCmd& cmd)
 	m_DeviceContext->SetIndexBuffer(cmd.IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 	
 	UsePipeline(cmd.DrawMaterial->GetBaseMaterial()->GetPipelineState());
-	
-	glm::mat4 proj = glm::perspectiveFov(70.f, 1920.f, 1080.f, 0.1f, 1000.f);
-	glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -10));
-	glm::mat4 model = glm::mat4x4(1.0f);
-
-	glm::mat4x4 mvp = proj * view * model;
-
-	m_DeviceContext->UpdateBuffer(buffer, 0, sizeof(glm::mat4x4), glm::value_ptr(mvp), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 	m_DeviceContext->CommitShaderResources(cmd.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 	DrawIndexedAttribs drawAttrs;
-	drawAttrs.NumIndices = 6;
+	drawAttrs.NumIndices = cmd.IndexCount;
 	drawAttrs.IndexType = VT_UINT32;
 	m_DeviceContext->DrawIndexed(drawAttrs);
 }
 
-std::shared_ptr<EntityDrawCmdHandle> DrawCommandChain::PushCommand(
+
+std::shared_ptr<EntityDrawCmdHandle> EntityDrawCmdList::CreateCommand(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
 	std::shared_ptr<MaterialInstance> material,
 	int indexCount)
 {
-	m_CommandList.push_back(EntityDrawCmd(indexBuffer, vertexBuffer, material, indexCount));
+	m_CmdList.push_back(EntityDrawCmd(indexBuffer, vertexBuffer, material, indexCount));
 
-	return std::make_shared<EntityDrawCmdHandle>(&m_CommandList.back());
+	return std::make_shared<EntityDrawCmdHandle>(m_CmdList.size() - 1, this);
 }
 
 
-void DrawCommandChain::Execute()
+void EntityDrawCmdList::Execute()
 {
-	for (int i = 0; i < m_CommandList.size(); i++)
+	for (EntityDrawCmd& cmd : m_CmdList)
 	{
-		EntityDrawCmd& cmd = m_CommandList[i];
-
-		if (cmd.Valid)
+		if(cmd.Valid)
 		{
 			Singleton<Renderer>::Get()->Execute(cmd);
-
-			return;
 		}
 	}
 }
 
 
-EntityDrawCmdHandle::EntityDrawCmdHandle(EntityDrawCmd *cmd)
-	: Command(cmd)
+EntityDrawCmdHandle::EntityDrawCmdHandle(int cmdIndex, EntityDrawCmdList *chain)
+	: CmdIndex(cmdIndex), Chain(chain)
 {
 
 }
@@ -105,7 +94,7 @@ EntityDrawCmdHandle::EntityDrawCmdHandle(EntityDrawCmd *cmd)
 
 EntityDrawCmdHandle::~EntityDrawCmdHandle()
 {
-	Command->Valid = false;
+	Chain->m_CmdList[CmdIndex].Valid = false;
 }
 
 EntityDrawCmd::EntityDrawCmd(
