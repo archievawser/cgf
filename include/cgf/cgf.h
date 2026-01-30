@@ -7,17 +7,17 @@
 #define IMPLEMENT_GAME_ENTRY_POINT(gameClass)     \
 	int main()                                    \
 	{                                             \
-		GameBase *yeah = new gameClass;           \
-		yeah->Start();                            \
+		GameBase *game = new gameClass;           \
+		game->Start();                            \
                                                   \
-		while (!yeah->GetWindow()->ShouldClose()) \
+		while (!game->GetWindow()->ShouldClose()) \
 		{                                         \
-			yeah->GetWindow()->Poll();            \
+			game->GetWindow()->Poll();            \
                                                   \
-			yeah->Update();                       \
-			yeah->GetRenderer()->Render();        \
+			game->Update();                       \
+			game->GetRenderer()->Render();        \
 		}                                         \
                                                   \
-		delete yeah;                              \
+		delete game;                              \
 		return 0;                                 \
 	}

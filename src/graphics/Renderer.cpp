@@ -42,6 +42,12 @@ void RenderGraph::AddPass(std::shared_ptr<RenderPass> pass)
 }
 
 
+Renderer::Renderer(Window* window)
+{
+	InitializeDiligent(window);
+}
+
+
 void Renderer::Render()
 {
 	const float ClearColor[] = { 0.f, 0.f, 0.f, 1.0f };
@@ -53,7 +59,7 @@ void Renderer::Render()
 	m_DeviceContext->ClearRenderTarget(pRTV, ClearColor, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 	m_DeviceContext->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-	m_DrawChain.Execute();
+	DrawChain.Execute();
 
 	m_SwapChain->Present();
 }

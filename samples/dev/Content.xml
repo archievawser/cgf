@@ -1,0 +1,12 @@
+<Assets>
+	<Asset>
+		<Name>Prototype</Name>
+		<Type>Material</Type>
+		<FragmentShaderPath>shaders/fPrototype.hlsl</FragmentShaderPath>
+		<VertexShaderPath>shaders/vPrototype.hlsl</VertexShaderPath>
+	</Asset>
+
+	<Asset>
+		<Name></Name>
+	</Asset>
+</Assets>

@@ -30,6 +30,7 @@ public:
 	}
 	
 private:
+	static std::unordered_map<SHADER_TYPE, const char*> m_ShaderEntryPoints;
 	SHADER_TYPE m_ShaderType;
 	RefCntAutoPtr<IShader> m_Handle;
 };

@@ -45,37 +45,25 @@ target_include_directories(cgf
 	PUBLIC ${assimp_SOURCE_DIR}/include 
 	PUBLIC ${glfw_SOURCE_DIR}/include)
 
-target_link_libraries(cgf PRIVATE Diligent-BuildSettings glfw)
+target_link_libraries(cgf PUBLIC Diligent-BuildSettings glfw)
 
 if(D3D11_SUPPORTED)
-	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineD3D11-shared)
+	target_link_libraries(cgf PUBLIC Diligent-GraphicsEngineD3D11-shared)
 endif()
 
 if(D3D12_SUPPORTED)
-	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineD3D12-shared)
+	target_link_libraries(cgf PUBLIC Diligent-GraphicsEngineD3D12-shared)
 endif()
 
 if(GL_SUPPORTED)
-	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineOpenGL-shared)
+	target_link_libraries(cgf PUBLIC Diligent-GraphicsEngineOpenGL-shared)
 endif()
 
 if(VULKAN_SUPPORTED)
-	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineVk-shared)
+	target_link_libraries(cgf PUBLIC Diligent-GraphicsEngineVk-shared)
 endif()
 
 message(${CMAKE_CURRENT_BINARY_DIR})
-
-add_custom_command(
-	TARGET cgf POST_BUILD
-
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	${CMAKE_SOURCE_DIR}/shaders/fPrototype.hlsl
-	$<TARGET_FILE_DIR:cgf>/shaders/fPrototype.hlsl
-
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	${CMAKE_SOURCE_DIR}/shaders/vPrototype.hlsl
-	$<TARGET_FILE_DIR:cgf>/shaders/vPrototype.hlsl
-)
 
 copy_required_dlls(cgf)
 

@@ -6,6 +6,7 @@
 #include <fstream>
 
 #include "graphics/Shader.h"
+#include "graphics/Material.h"
 
 
 /**
@@ -37,10 +38,13 @@ inline AssetType AssetLibrary::Get(std::string assetName)
 
 
 template<>
-inline Shader* AssetLibrary::Get(std::string sourcePath)
+inline Material* AssetLibrary::Get(std::string sourcePath)
 {
 	std::ifstream file ("shaders/" + sourcePath);
 	std::string source = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
 	
-	return new Shader(sourcePath, source, sourcePath[0] == 'f' ? SHADER_TYPE_PIXEL : SHADER_TYPE_VERTEX);
+	auto fs = std::make_shared<Shader>(sourcePath, source, SHADER_TYPE_PIXEL);
+	auto vs = std::make_shared<Shader>(sourcePath, source, SHADER_TYPE_VERTEX);
+
+	return new Material(vs, fs);
 }

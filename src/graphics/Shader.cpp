@@ -5,11 +5,17 @@
 #include "Shader.h"
 
 
+std::unordered_map<SHADER_TYPE, const char*> Shader::m_ShaderEntryPoints = {
+	{ SHADER_TYPE_PIXEL, "ProcessFragment" },
+	{ SHADER_TYPE_VERTEX, "ProcessVertex" },
+};
+
+
 Shader::Shader(std::string name,
-	std::string& source,
-	SHADER_TYPE type,
-	std::string entryPoint,
-	SHADER_SOURCE_LANGUAGE sourceLanguage)
+			   std::string &source,
+			   SHADER_TYPE type,
+			   std::string entryPoint,
+			   SHADER_SOURCE_LANGUAGE sourceLanguage)
 	: m_ShaderType(type)
 {
 	ShaderCreateInfo info;
@@ -17,7 +23,7 @@ Shader::Shader(std::string name,
 	info.Desc.ShaderType = type;
 	info.Desc.UseCombinedTextureSamplers = true;
 	info.Source = source.c_str();
-	info.EntryPoint = entryPoint.c_str();
+	info.EntryPoint = m_ShaderEntryPoints[type];
 	info.SourceLanguage = sourceLanguage;
 
 	RefCntAutoPtr<IDataBlob> data;
