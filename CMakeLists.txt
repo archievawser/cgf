@@ -2,21 +2,21 @@ cmake_minimum_required(VERSION 3.6)
 include(FetchContent)
 
 set(CMAKE_CXX_STANDARD 17)
-project(general-engine CXX)
+project(cgf CXX)
 
 set(SOURCE
-	"src/Main.cpp"
  	"src/graphics/Shader.cpp"
 	"src/graphics/Renderer.cpp"
 	"src/graphics/Material.cpp"
 	"src/core/Game.cpp"
 	"src/core/AssetLibrary.cpp"
+	"src/core/Window.cpp"
 )
 
-add_executable(general-engine WIN32 ${SOURCE})
+add_library(cgf ${SOURCE})
 
-target_compile_definitions(general-engine PRIVATE UNICODE)
-target_compile_definitions(general-engine PRIVATE ENGINE_DLL=1)
+target_compile_definitions(cgf PRIVATE UNICODE)
+target_compile_definitions(cgf PRIVATE ENGINE_DLL=1)
 
 FetchContent_Declare(
 	dcore
@@ -25,38 +25,58 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(dcore)
 
-target_include_directories(general-engine PUBLIC ${dcore_SOURCE_DIR} PUBLIC "include")
+FetchContent_Declare(
+	assimp
+	GIT_REPOSITORY https://github.com/assimp/assimp.git
+)
 
-target_link_libraries(general-engine PRIVATE Diligent-BuildSettings)
+FetchContent_MakeAvailable(assimp)
+
+FetchContent_Declare(
+	glfw
+	GIT_REPOSITORY https://github.com/glfw/glfw.git
+)
+
+FetchContent_MakeAvailable(glfw)
+
+target_include_directories(cgf 
+	PUBLIC "include/cgf" 
+	PUBLIC ${dcore_SOURCE_DIR} 
+	PUBLIC ${assimp_SOURCE_DIR}/include 
+	PUBLIC ${glfw_SOURCE_DIR}/include)
+
+target_link_libraries(cgf PRIVATE Diligent-BuildSettings glfw)
 
 if(D3D11_SUPPORTED)
-	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineD3D11-shared)
+	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineD3D11-shared)
 endif()
 
 if(D3D12_SUPPORTED)
-	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineD3D12-shared)
+	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineD3D12-shared)
 endif()
 
 if(GL_SUPPORTED)
-	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineOpenGL-shared)
+	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineOpenGL-shared)
 endif()
 
 if(VULKAN_SUPPORTED)
-	target_link_libraries(general-engine PRIVATE Diligent-GraphicsEngineVk-shared)
+	target_link_libraries(cgf PRIVATE Diligent-GraphicsEngineVk-shared)
 endif()
 
 message(${CMAKE_CURRENT_BINARY_DIR})
 
 add_custom_command(
-	TARGET general-engine POST_BUILD
+	TARGET cgf POST_BUILD
 
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 	${CMAKE_SOURCE_DIR}/shaders/fPrototype.hlsl
-	$<TARGET_FILE_DIR:general-engine>/shaders/fPrototype.hlsl
+	$<TARGET_FILE_DIR:cgf>/shaders/fPrototype.hlsl
 
 	COMMAND ${CMAKE_COMMAND} -E copy_if_different
 	${CMAKE_SOURCE_DIR}/shaders/vPrototype.hlsl
-	$<TARGET_FILE_DIR:general-engine>/shaders/vPrototype.hlsl
+	$<TARGET_FILE_DIR:cgf>/shaders/vPrototype.hlsl
 )
 
-copy_required_dlls(general-engine)
+copy_required_dlls(cgf)
+
+add_subdirectory(samples/dev/)

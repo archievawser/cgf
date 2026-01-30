@@ -10,6 +10,7 @@
 
 #include "core/Common.h"
 #include "core/AssetLibrary.h"
+#include "core/Game.h"
 
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
@@ -22,6 +23,7 @@
 struct RenderPass
 {
 	RenderPass() = default;
+
 	virtual void Run(class RenderGraph* graph) = 0;
 };
 
@@ -39,18 +41,9 @@ public:
 		TEXTURE_FORMAT format,
 		TextureData* data = nullptr);
 
-	FORCEINLINE void Execute()
-	{
-		for (std::shared_ptr<RenderPass> pass : m_Passes)
-		{
-			pass->Run(this);
-		}
-	}
+	void Execute();
 
-	FORCEINLINE void AddPass(std::shared_ptr<RenderPass> pass)
-	{
-		m_Passes.push_back(pass);
-	}
+	void AddPass(std::shared_ptr<RenderPass> pass);
 
 private:
 	std::vector<std::shared_ptr<RenderPass>> m_Passes;
@@ -98,7 +91,7 @@ struct EntityDrawCmdHandle
  */
 class EntityDrawCmdList
 {
-	friend class EntityDrawCmdHandle;
+	friend struct EntityDrawCmdHandle;
 
 public:
 	EntityDrawCmdList() = default;
@@ -126,10 +119,7 @@ private:
 class Renderer
 {
 public:
-	Renderer(HWND wnd)
-	{
-		InitializeDiligent(wnd);
-	}	
+	Renderer(Window* window);
 
 	void Render();
 
@@ -147,12 +137,14 @@ public:
 		}
 	}
 
+	bool InitializeDiligent(Window* window);
+
 	void Setup()
 	{
-		Singleton<AssetLibrary>::Initialize();
+		GE_ERROR_IF_NULLPTR(Game->GetWindow());
 
-		std::shared_ptr<Shader> fs ( Singleton<AssetLibrary>::Get()->Get<Shader*>("fPrototype.hlsl") );
-		std::shared_ptr<Shader> vs ( Singleton<AssetLibrary>::Get()->Get<Shader*>("vPrototype.hlsl") );
+		std::shared_ptr<Shader> fs ( Game->GetAssetLibrary()->Get<Shader*>("fPrototype.hlsl") );
+		std::shared_ptr<Shader> vs ( Game->GetAssetLibrary()->Get<Shader*>("vPrototype.hlsl") );
 
 		auto basematerial = std::make_shared<Material>(vs, fs);
 		material1 = std::make_shared<MaterialInstance>(basematerial);
@@ -225,86 +217,6 @@ public:
 	FORCEINLINE RefCntAutoPtr<IPipelineState> GetPipelineState()
 	{
 		return m_PipelineState;
-	}
-
-private: 
-	bool InitializeDiligent(HWND hWnd)
-	{
-		SwapChainDesc SCDesc;
-		switch (m_DeviceType)
-		{
-#if D3D11_SUPPORTED
-		case RENDER_DEVICE_TYPE_D3D11:
-		{
-			EngineD3D11CreateInfo EngineCI;
-#if ENGINE_DLL
-			// Load the dll and import GetEngineFactoryD3D11() function
-			auto *GetEngineFactoryD3D11 = LoadGraphicsEngineD3D11();
-#endif
-			auto *pFactoryD3D11 = GetEngineFactoryD3D11();
-			pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_RenderDevice, &m_DeviceContext);
-			Win32NativeWindow Window{hWnd};
-			pFactoryD3D11->CreateSwapChainD3D11(m_RenderDevice, m_DeviceContext, SCDesc, FullScreenModeDesc{}, Window, &m_SwapChain);
-		}
-		break;
-#endif
-
-#if D3D12_SUPPORTED
-		case RENDER_DEVICE_TYPE_D3D12:
-		{
-#if ENGINE_DLL
-			// Load the dll and import GetEngineFactoryD3D12() function
-			auto GetEngineFactoryD3D12 = LoadGraphicsEngineD3D12();
-#endif
-			EngineD3D12CreateInfo EngineCI;
-
-			auto *pFactoryD3D12 = GetEngineFactoryD3D12();
-			pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_RenderDevice, &m_DeviceContext);
-			Win32NativeWindow Window{hWnd};
-			pFactoryD3D12->CreateSwapChainD3D12(m_RenderDevice, m_DeviceContext, SCDesc, FullScreenModeDesc{}, Window, &m_SwapChain);
-		}
-		break;
-#endif
-
-#if GL_SUPPORTED
-		case RENDER_DEVICE_TYPE_GL:
-		{
-			auto GetEngineFactoryOpenGL = LoadGraphicsEngineOpenGL();
-			auto *pFactoryOpenGL = GetEngineFactoryOpenGL();
-
-			EngineGLCreateInfo EngineCI;
-			EngineCI.Window.hWnd = hWnd;
-
-			pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_RenderDevice, &m_DeviceContext, SCDesc, &m_SwapChain);
-		}
-		break;
-#endif
-
-#if VULKAN_SUPPORTED
-		case RENDER_DEVICE_TYPE_VULKAN:
-		{
-			auto GetEngineFactoryVk = LoadGraphicsEngineVk();
-			EngineVkCreateInfo EngineCI;
-
-			auto *pFactoryVk = GetEngineFactoryVk();
-			pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_RenderDevice, &m_DeviceContext);
-
-			if (!m_SwapChain && hWnd != nullptr)
-			{
-				Win32NativeWindow Window{hWnd};
-				pFactoryVk->CreateSwapChainVk(m_RenderDevice, m_DeviceContext, SCDesc, Window, &m_SwapChain);
-			}
-		}
-		break;
-#endif
-
-		default:
-			std::cerr << "Unknown/unsupported device type";
-			return false;
-			break;
-		}
-
-		return true;
 	}
 
 	std::shared_ptr<EntityDrawCmdHandle> m_eee;

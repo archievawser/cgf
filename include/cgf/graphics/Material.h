@@ -3,6 +3,8 @@
 #include <memory>
 
 #include "core/Common.h"
+#include "core/Game.h"
+
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 
@@ -113,12 +115,12 @@ public:
 		bufferDesc.Size = sizeof(T);
 		bufferDesc.BindFlags = target;
 
-		Singleton<Renderer>::Get()->GetRenderDevice()->CreateBuffer(bufferDesc, nullptr, &m_Buffer);
+		Game->GetRenderer()->GetRenderDevice()->CreateBuffer(bufferDesc, nullptr, &m_Buffer);
 	}
 
 	void Set(T& value)
 	{
-		Singleton<Renderer>::Get()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, sizeof(T), &value, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		Game->GetRenderer()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, sizeof(T), &value, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 		m_Destination->Set(m_Buffer);
 	}
 

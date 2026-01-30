@@ -2,6 +2,7 @@
 #include <chrono>
 #include "glm/gtc/matrix_transform.hpp"
 #include "graphics/Material.h"
+#include "core/Window.h"
 
 
 RefCntAutoPtr<ITexture> RenderGraph::MakeTexture2D(
@@ -20,9 +21,24 @@ RefCntAutoPtr<ITexture> RenderGraph::MakeTexture2D(
 	textureDesc.BindFlags = BIND_UNORDERED_ACCESS | BIND_DEPTH_STENCIL | BIND_RENDER_TARGET | BIND_SHADER_RESOURCE;
 
 	RefCntAutoPtr<ITexture> output;
-	Singleton<Renderer>::Get()->GetRenderDevice()->CreateTexture(textureDesc, data, &output);
+	Game->GetRenderer()->GetRenderDevice()->CreateTexture(textureDesc, data, &output);
 
 	return output;
+}
+
+
+void RenderGraph::Execute()
+{
+	for (std::shared_ptr<RenderPass> pass : m_Passes)
+	{
+		pass->Run(this);
+	}
+}
+
+
+void RenderGraph::AddPass(std::shared_ptr<RenderPass> pass)
+{
+	m_Passes.push_back(pass);
 }
 
 
@@ -79,7 +95,7 @@ void EntityDrawCmdList::Execute()
 	{
 		if(cmd.Valid)
 		{
-			Singleton<Renderer>::Get()->Execute(cmd);
+			Game->GetRenderer()->Execute(cmd);
 		}
 	}
 }
@@ -97,6 +113,7 @@ EntityDrawCmdHandle::~EntityDrawCmdHandle()
 	Chain->m_CmdList[CmdIndex].Valid = false;
 }
 
+
 EntityDrawCmd::EntityDrawCmd(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
@@ -105,4 +122,81 @@ EntityDrawCmd::EntityDrawCmd(
 	: IndexBuffer(indexBuffer), VertexBuffer(vertexBuffer), DrawMaterial(material), IndexCount(indexCount)
 {
 
+}
+
+
+bool Renderer::InitializeDiligent(Window* window)
+{
+	auto Window = Game->GetWindow()->GetNativeWindowHandle();
+
+	SwapChainDesc SCDesc;
+
+	switch (m_DeviceType)
+	{
+#if D3D11_SUPPORTED
+	case RENDER_DEVICE_TYPE_D3D11:
+	{
+		EngineD3D11CreateInfo EngineCI;
+
+		auto *GetEngineFactoryD3D11 = LoadGraphicsEngineD3D11();
+		auto *pFactoryD3D11 = GetEngineFactoryD3D11();
+		pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_RenderDevice, &m_DeviceContext);
+		pFactoryD3D11->CreateSwapChainD3D11(m_RenderDevice, m_DeviceContext, SCDesc, FullScreenModeDesc{}, Window, &m_SwapChain);
+	}
+	break;
+#endif
+
+#if D3D12_SUPPORTED
+	case RENDER_DEVICE_TYPE_D3D12:
+	{
+		auto GetEngineFactoryD3D12 = LoadGraphicsEngineD3D12();
+
+		EngineD3D12CreateInfo EngineCI;
+		auto *pFactoryD3D12 = GetEngineFactoryD3D12();
+		pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_RenderDevice, &m_DeviceContext);
+		pFactoryD3D12->CreateSwapChainD3D12(m_RenderDevice, m_DeviceContext, SCDesc, FullScreenModeDesc{}, Window, &m_SwapChain);
+	}
+	break;
+#endif
+
+#if GL_SUPPORTED
+	case RENDER_DEVICE_TYPE_GL:
+	{
+		auto GetEngineFactoryOpenGL = LoadGraphicsEngineOpenGL();
+		auto *pFactoryOpenGL = GetEngineFactoryOpenGL();
+
+		EngineGLCreateInfo EngineCI;
+		EngineCI.Window = Window;
+		pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_RenderDevice, &m_DeviceContext, SCDesc, &m_SwapChain);
+	}
+	break;
+#endif
+
+#if VULKAN_SUPPORTED
+	case RENDER_DEVICE_TYPE_VULKAN:
+	{
+		auto GetEngineFactoryVk = LoadGraphicsEngineVk();
+		EngineVkCreateInfo EngineCI;
+
+		auto *pFactoryVk = GetEngineFactoryVk();
+		pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_RenderDevice, &m_DeviceContext);
+
+		if (!m_SwapChain)
+		{
+			pFactoryVk->CreateSwapChainVk(m_RenderDevice, m_DeviceContext, SCDesc, Window, &m_SwapChain);
+		}
+	}
+	break;
+#endif
+
+	default:
+		std::cerr << "Unknown/unsupported device type";
+		return false;
+		break;
+	}
+
+	if (m_RenderDevice == nullptr || m_SwapChain == nullptr)
+		return false;
+
+	return true;
 }

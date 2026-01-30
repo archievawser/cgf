@@ -1,6 +1,7 @@
 #include "graphics/Shader.h"
 
 #include "core/Game.h"
+#include "graphics/Renderer.h"
 #include "Shader.h"
 
 
@@ -20,7 +21,7 @@ Shader::Shader(std::string name,
 	info.SourceLanguage = sourceLanguage;
 
 	RefCntAutoPtr<IDataBlob> data;
-	Singleton<Renderer>::Get()->GetRenderDevice()->CreateShader(info, &m_Handle, &data);
+	Game->GetRenderer()->GetRenderDevice()->CreateShader(info, &m_Handle, &data);
 }
 
 

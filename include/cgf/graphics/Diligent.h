@@ -12,3 +12,23 @@
 #include "Common/interface/RefCntAutoPtr.hpp"
 
 using namespace Diligent;
+
+#ifndef D3D11_SUPPORTED
+#define D3D11_SUPPORTED 0
+#endif
+
+#ifndef D3D12_SUPPORTED
+#define D3D12_SUPPORTED 0
+#endif
+
+#ifndef GL_SUPPORTED
+#define GL_SUPPORTED 0
+#endif
+
+#ifndef VULKAN_SUPPORTED
+#define VULKAN_SUPPORTED 0
+#endif
+
+#ifndef METAL_SUPPORTED
+#define METAL_SUPPORTED 0
+#endif
