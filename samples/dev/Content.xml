@@ -1,12 +1,6 @@
 <Assets>
-	<Asset>
+	<Material>
 		<Name>Prototype</Name>
-		<Type>Material</Type>
-		<FragmentShaderPath>shaders/fPrototype.hlsl</FragmentShaderPath>
-		<VertexShaderPath>shaders/vPrototype.hlsl</VertexShaderPath>
-	</Asset>
-
-	<Asset>
-		<Name></Name>
-	</Asset>
+		<ShaderPath>C:/Dev/C++/cgf/samples/dev/shaders/prototype.hlsl</ShaderPath>
+	</Material>
 </Assets>

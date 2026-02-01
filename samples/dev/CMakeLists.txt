@@ -19,3 +19,11 @@ add_custom_command(
 	${CMAKE_CURRENT_SOURCE_DIR}/shaders/prototype.hlsl
 	$<TARGET_FILE_DIR:dev_build>/shaders/prototype.hlsl
 )
+
+add_subdirectory(../../buildtool b2/)
+
+compile_cgfb_on_build(
+	dev_build
+	${CMAKE_CURRENT_SOURCE_DIR}/Content.xml
+	$<TARGET_FILE_DIR:dev_build>/Content.cgfb
+)
