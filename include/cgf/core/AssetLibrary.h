@@ -8,6 +8,8 @@
 #include "graphics/Shader.h"
 #include "graphics/Material.h"
 
+#include "buildtool/Assets.h"
+
 
 /**
  * @brief Provides access to assets included in a project
@@ -15,7 +17,7 @@
 class AssetLibrary
 {
 public:
-	AssetLibrary() = default;
+	AssetLibrary(const char* projectFilePath);
 
 	/**
 	 * @tparam AssetType 
@@ -26,7 +28,9 @@ public:
 	AssetType Get(std::string assetName);
 
 private:
-	std::unordered_map<std::string, void*> m_Assets;
+	AssetDataLoader m_AssetDataLoader;
+	char* m_AssetData;
+	int m_AssetDataSize;
 };
 
 
@@ -38,13 +42,16 @@ inline AssetType AssetLibrary::Get(std::string assetName)
 
 
 template<>
-inline Material* AssetLibrary::Get(std::string sourcePath)
+inline Material* AssetLibrary::Get(std::string materialName)
 {
-	std::ifstream file ("shaders/" + sourcePath);
-	std::string source = std::string(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>());
-	
-	auto fs = std::make_shared<Shader>(sourcePath, source, SHADER_TYPE_PIXEL);
-	auto vs = std::make_shared<Shader>(sourcePath, source, SHADER_TYPE_VERTEX);
+	char* rawSource;
+	int rawSourceLength;
+	m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
+
+	std::string source (rawSource, rawSourceLength);
+
+	auto fs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_PIXEL);
+	auto vs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_VERTEX);
 
 	return new Material(vs, fs);
 }

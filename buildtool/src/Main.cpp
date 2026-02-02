@@ -6,8 +6,9 @@
 
 #include "pugixml.hpp"
 
-#include "AssetTypes.h"
-#include "cgfb.h"
+#include "buildtool/Assets.h"
+#include "buildtool/AssetTypes.h"
+#include "cgfb/CGFB.h"
 
 #define LOG(x) std::cout << x << std::endl;
 
@@ -58,41 +59,28 @@ int main(int argc, char* argv[])
 	doc.load_file(contentFilePath);
 
 	std::unordered_map<std::string, int> assetNameToDataLocation;
-	std::vector<char> assetData;
 	
 	std::vector<MaterialAsset> matList;
 	GetAssetListOfType<MaterialAsset>(&matList, doc);
 
 	{
-		CgfbWriter hi (contentBinaryOutputPath);
+		CgfbFileWriter hi (contentBinaryOutputPath);
+		CgfbMemoryWriter dataWriter;
 
 		for(MaterialAsset& v : matList)
 		{
-			assetNameToDataLocation[v.Name] = assetData.size();
+			assetNameToDataLocation[v.Name] = dataWriter.GetBuffer().size();
 
 			char* materialData = nullptr;
 			int materialDataSize = 0;
 
-			v.ToBytes(&materialData, &materialDataSize);
-			
-			assetData.insert(assetData.end(), materialData, materialData + materialDataSize);
+			ReadFileContents(v.ShaderPath.c_str(), &materialData, &materialDataSize);
+
+			dataWriter.Write(materialDataSize);
+			dataWriter.Write(materialData, materialDataSize);
 		}
 
 		hi.Write(assetNameToDataLocation);
-		hi.Write(assetData.data(), assetData.size());
-	}
-
-	{
-		CgfbReader hi(contentBinaryOutputPath);
-
-		std::unordered_map<std::string, int> e;
-		hi.Read(&e);
-
-		std::cout << "----------------" << std::endl;
-		for (const auto &[k, v] : e)
-		{
-			std::cout << k << ": " << v << std::endl;
-		}
-		std::cout << "----------------" << std::endl;
+		hi.Write((char*)dataWriter.GetBuffer().data(), dataWriter.GetBuffer().size());
 	}
 }

@@ -40,7 +40,8 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glfw)
 
 target_include_directories(cgf 
-	PUBLIC "include/cgf" 
+	PUBLIC include/cgf
+	PUBLIC buildtool/include
 	PUBLIC ${dcore_SOURCE_DIR} 
 	PUBLIC ${assimp_SOURCE_DIR}/include 
 	PUBLIC ${glfw_SOURCE_DIR}/include)
@@ -67,4 +68,8 @@ message(${CMAKE_CURRENT_BINARY_DIR})
 
 copy_required_dlls(cgf)
 
-add_subdirectory(samples/dev/)
+add_subdirectory(buildtool)
+
+target_link_libraries(cgf PUBLIC buildtool)
+
+add_subdirectory(samples/dev)

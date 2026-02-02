@@ -4,7 +4,10 @@ include(FetchContent)
 
 project(buildtool)
 
-add_executable(buildtool "Main.cpp" "cgfb.cpp" "utility.cpp")
+add_library(buildtool 
+	"src/Assets.cpp" 
+	"src/cgfb/CGFB.cpp" 
+	"src/Utility.cpp")
 
 FetchContent_Declare(
 	pugixml
@@ -13,13 +16,18 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(pugixml)
 
-target_include_directories(buildtool PUBLIC ${pugixml_SOURCE_DIR}/src)
+target_include_directories(buildtool PUBLIC include PUBLIC ${pugixml_SOURCE_DIR}/src)
 target_link_libraries(buildtool PUBLIC pugixml)
+
+add_executable(cgfb_compiler
+	"src/Main.cpp")
+
+target_link_libraries(cgfb_compiler PUBLIC buildtool)
 
 function(compile_cgfb_on_build TARGET CONTENT_FILE_PATH BINARY_OUTPUT_FILE_PATH)
 	add_custom_command(
 		TARGET ${TARGET} POST_BUILD
 
-		COMMAND $<TARGET_FILE:buildtool> ARGS ${CONTENT_FILE_PATH} ${BINARY_OUTPUT_FILE_PATH}
+		COMMAND $<TARGET_FILE:cgfb_compiler> ARGS ${CONTENT_FILE_PATH} ${BINARY_OUTPUT_FILE_PATH}
 	)
 endfunction()
