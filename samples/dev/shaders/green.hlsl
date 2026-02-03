@@ -25,5 +25,5 @@ void ProcessVertex(in float2 position : POSITION, out PSInput PSIn)
 
 void ProcessFragment(in PSInput PSIn, out PSOutput PSOut)
 {
-    PSOut.Color = float4(1.0, 1.0, 1.0, 1.0);
+    PSOut.Color = float4(0.0, 1.0, 0.0, 1.0);
 }

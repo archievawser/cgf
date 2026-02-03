@@ -2,14 +2,37 @@
 
 #include <memory>
 
+#include "core/Memory.h"
+
 
 class GameDerivative : public GameBase
 {
 public:
 	void Start() override
 	{
-		auto basematerial = std::shared_ptr<Material>(GetAssetLibrary()->Get<Material*>("prototype.hlsl"));
+		{
+			struct Test : ManagedObject
+			{
+				int e = 5;
+			};
+
+			Test* raw = new Test;
+
+			{
+				SharedPtr<Test> test(raw);
+
+				std::cout << test->e << std::endl;
+
+				SharedPtr<Test> abc = test;
+
+				std::cout << abc->e << std::endl;
+			}
+		}
+
+		auto basematerial = GetAssetLibrary()->Load<Material>("Red");
 		auto material1 = std::make_shared<MaterialInstance>(basematerial);
+
+		basematerial = GetAssetLibrary()->Load<Material>("Green");
 		auto material2 = std::make_shared<MaterialInstance>(basematerial);
 
 		glm::mat4 proj = glm::perspectiveFov(70.f, 1920.f, 1080.f, 0.1f, 1000.f);
@@ -45,7 +68,7 @@ public:
 		ibufferDesc.Usage = USAGE_IMMUTABLE;
 		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
 		GetRenderer()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
-
+  
 		m_e2ee = GetRenderer()->DrawChain.CreateCommand(ibuffer, vbuffer, material2, 6);
 		m_eee = GetRenderer()->DrawChain.CreateCommand(ibuffer, vbuffer, material1, 6);
 	}

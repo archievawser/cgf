@@ -45,7 +45,7 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 }
 
 
-MaterialInstance::MaterialInstance(std::shared_ptr<Material> material)
+MaterialInstance::MaterialInstance(SharedPtr<Material> material)
 	: m_BaseMaterial(material)
 {
 	m_BaseMaterial->GetPipelineState()->CreateShaderResourceBinding(&m_ResourceBinding, true);

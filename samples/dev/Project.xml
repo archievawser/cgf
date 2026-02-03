@@ -1,6 +1,10 @@
 <Assets>
 	<Material>
-		<Name>Prototype</Name>
-		<ShaderPath>C:/Dev/C++/cgf/samples/dev/shaders/prototype.hlsl</ShaderPath>
+		<Name>Green</Name>
+		<ShaderPath>C:/Dev/C++/cgf/samples/dev/shaders/green.hlsl</ShaderPath>
+	</Material>
+	<Material>
+		<Name>Red</Name>
+		<ShaderPath>C:/Dev/C++/cgf/samples/dev/shaders/red.hlsl</ShaderPath>
 	</Material>
 </Assets>

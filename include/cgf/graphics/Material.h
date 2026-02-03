@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "core/Common.h"
+#include "core/Memory.h"
 #include "core/Game.h"
 
 #include "graphics/Diligent.h"
@@ -16,7 +17,7 @@ class MaterialInstance;
 /**
  * @brief A Material object defines the manner and context in which related draw calls are performed
  */
-class Material
+class Material : public ManagedObject
 {
 public:
 	Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps);
@@ -136,14 +137,14 @@ private:
 class MaterialInstance
 {
 public:
-	MaterialInstance(std::shared_ptr<Material> material);
+	MaterialInstance(SharedPtr<Material> material);
 
 	template<typename T>
 	FORCEINLINE DeviceVarBinding<T> CreateFragmentVariableBinding(const char* name)
 	{
 		auto v = GetFragmentShaderVariable(name);
 
-		GE_ERROR_IF_NULLPTR(v);
+		CGF_ENSURE_NOT_NULLPTR(v);
 		
 		return DeviceVarBinding<T>(v);
 	}
@@ -153,7 +154,7 @@ public:
 	{
 		auto v = GetVertexShaderVariable(name);
 
-		GE_ERROR_IF_NULLPTR(v);
+		CGF_ENSURE_NOT_NULLPTR(v);
 
 		return DeviceVarBinding<T>(v);
 	}
@@ -182,12 +183,12 @@ public:
 		return m_ResourceBinding;
 	}
 
-	std::shared_ptr<Material> GetBaseMaterial() const 
+	SharedPtr<Material> GetBaseMaterial() const
 	{ 
 		return m_BaseMaterial; 
 	}
 
 private:
 	RefCntAutoPtr<IShaderResourceBinding> m_ResourceBinding;
-	std::shared_ptr<Material> m_BaseMaterial;
+	SharedPtr<Material> m_BaseMaterial;
 };

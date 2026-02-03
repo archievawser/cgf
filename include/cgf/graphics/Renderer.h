@@ -125,6 +125,8 @@ public:
 
 	void Execute(EntityDrawCmd& cmd);
 
+	bool InitializeDiligent(Window* window);
+
 	/**
 	 * @brief Binds a graphics pipeline if the requested pipeline isn't already bound
 	 */
@@ -136,8 +138,6 @@ public:
 			m_DeviceContext->SetPipelineState(pipeline);
 		}
 	}
-
-	bool InitializeDiligent(Window* window);
 	
 	FORCEINLINE RefCntAutoPtr<IRenderDevice> GetRenderDevice()
 	{

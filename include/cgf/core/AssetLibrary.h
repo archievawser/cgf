@@ -5,6 +5,7 @@
 #include <unordered_map>
 #include <fstream>
 
+#include "core/Memory.h"
 #include "graphics/Shader.h"
 #include "graphics/Material.h"
 
@@ -12,7 +13,12 @@
 
 
 /**
- * @brief Provides access to assets included in a project
+ * @brief Provides streamed access to assets included in a project
+ * 
+ * CGF's build tool compiles a project's runtime dependencies into a CGFB (C++ Game Framework Binary).
+ * The AssetLibrary class streams the compiled CGFB and provides an interface to convert arbitrary
+ * asset data into an instance of an asset. The asset data pertaining to a named asset is loaded
+ * via AssetDataLoader upon a corresponding call to Get().
  **/
 class AssetLibrary
 {
@@ -25,7 +31,11 @@ public:
 	 * @return AssetType The requested asset
 	 */
 	template<typename AssetType>
-	AssetType Get(std::string assetName);
+	SharedPtr<AssetType> Load(std::string assetName)
+	{
+		throw "Asset type not recognized";
+	}
+
 
 private:
 	AssetDataLoader m_AssetDataLoader;
@@ -34,19 +44,14 @@ private:
 };
 
 
-template <typename AssetType>
-inline AssetType AssetLibrary::Get(std::string assetName)
-{
-	throw "Asset type not recognized";
-}
-
-
 template<>
-inline Material* AssetLibrary::Get(std::string materialName)
+inline SharedPtr<Material> AssetLibrary::Load(std::string materialName)
 {
 	char* rawSource;
 	int rawSourceLength;
-	m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
+	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
+
+	CGF_ASSERT(success, "Failed to load " + materialName);
 
 	std::string source (rawSource, rawSourceLength);
 

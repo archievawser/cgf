@@ -49,7 +49,6 @@ public:
 	std::enable_if_t<std::is_same_v<T, const char *>> Write(T value)
 	{
 		int len = strlen(value);
-
 		Write(len);
 
 		WriteToStream((char*)value, len);
@@ -70,6 +69,7 @@ public:
 	void Write(const std::vector<T>& vector)
 	{
 		Write(vector.size());
+
 		WriteToStream((char*)vector.data(), vector.size() * sizeof(T));
 	}
 

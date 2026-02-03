@@ -10,7 +10,7 @@ class AssetDataLoader : public CgfbFileReader
 public:
 	AssetDataLoader(const char* contentFile);
 
-	void Load(const char* name, char** buff, int* count);
+	bool Load(const char* name, char** buff, int* count);
 
 private:
 	int m_DataBlockStartLocation;
