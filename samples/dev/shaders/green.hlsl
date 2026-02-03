@@ -21,7 +21,6 @@ cbuffer WorldData
 void ProcessVertex(
 	in float3 position : POSITION, 
 	in float3 normal : NORMAL,
-	in float2 uv : TEXCOORD,
 	out PSInput PSIn)
 {
 	float4 xpos = float4(position, 1.0);
@@ -35,7 +34,7 @@ void ProcessFragment(in PSInput PSIn, out PSOutput PSOut)
 {
 	float3 normal = PSIn.Normal;
 	float3 lightDir = float3(1, 1, 1);
-	float intensity = (0.1, dot(normal, lightDir)) / pow(distance(PSIn.WorldPos, -(lightDir)), 3);
+	float intensity = max(0.01, dot(normal, lightDir) / pow(distance(PSIn.WorldPos, -(lightDir)), 2));
 
     PSOut.Color = float4(float3(intensity, intensity, intensity), 1.0);
 }

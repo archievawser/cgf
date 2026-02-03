@@ -11,6 +11,7 @@ set(SOURCE
 	"src/core/Game.cpp"
 	"src/core/AssetLibrary.cpp"
 	"src/core/Window.cpp"
+	"src/core/Events.cpp"
 )
 
 add_library(cgf ${SOURCE})

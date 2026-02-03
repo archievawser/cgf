@@ -11,10 +11,29 @@
 #include "core/Common.h"
 #include "core/AssetLibrary.h"
 #include "core/Game.h"
+#include "core/Events.h"
 
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 #include "graphics/Material.h"
+
+
+/**
+ * @brief Contains the information depended on by a majority of simple draw calls
+ */
+struct DrawCmdInfo
+{
+	DrawCmdInfo(
+		RefCntAutoPtr<IBuffer> indexBuffer,
+		RefCntAutoPtr<IBuffer> vertexBuffer,
+		SharedPtr<MaterialInstance> material,
+		int indexCount);
+
+	int IndexCount;
+	RefCntAutoPtr<IBuffer> IndexBuffer;
+	RefCntAutoPtr<IBuffer> VertexBuffer;
+	SharedPtr<MaterialInstance> DrawMaterial;
+};
 
 
 /**
@@ -31,7 +50,7 @@ struct RenderPass
 /**
  * @brief The render graph of a scene organizes & optimizes the execution of render passes involved in rendering each frame
  */
-class RenderGraph
+class RenderGraphBuilder
 {
 public:
 	RefCntAutoPtr<ITexture> MakeTexture2D(
@@ -41,74 +60,16 @@ public:
 		TEXTURE_FORMAT format,
 		TextureData* data = nullptr);
 
-	void Execute();
+	void QueuePass(SharedPtr<RenderPass> pass);
 
-	void AddPass(std::shared_ptr<RenderPass> pass);
-
-private:
-	std::vector<std::shared_ptr<RenderPass>> m_Passes;
-};
-
-
-/**
- * @brief Contains the information depended on by a majority of simple draw calls
- */
-struct EntityDrawCmd
-{
-	EntityDrawCmd(
-		RefCntAutoPtr<IBuffer> indexBuffer,
-		RefCntAutoPtr<IBuffer> vertexBuffer,
-		SharedPtr<MaterialInstance> material,
-		int indexCount);
-
-	int IndexCount;
-	bool Valid = true;
-	RefCntAutoPtr<IBuffer> IndexBuffer;
-	RefCntAutoPtr<IBuffer> VertexBuffer;
-	SharedPtr<MaterialInstance> DrawMaterial;
-};
-
-
-class EntityDrawCmdList;
-
-
-/**
- * @brief A handle which invalidates the associated PersistentEntityDrawCmd upon destruction, effectively
- * tying their lifetimes.
- */
-struct EntityDrawCmdHandle
-{
-	EntityDrawCmdHandle(int cmdIndex, EntityDrawCmdList* chain);
-	~EntityDrawCmdHandle();
-
-	int CmdIndex;
-	EntityDrawCmdList* Chain;
-};
-
-
-/**
- * @brief An unordered list of draw commands, performed upon execution see DrawCommandChain::Execute()
- */
-class EntityDrawCmdList
-{
-	friend struct EntityDrawCmdHandle;
-
-public:
-	EntityDrawCmdList() = default;
-
-	SharedPtr<EntityDrawCmdHandle> CreateCommand(
-		RefCntAutoPtr<IBuffer> indexBuffer,
-		RefCntAutoPtr<IBuffer> vertexBuffer,
-		SharedPtr<MaterialInstance> material,
-		int indexCount);
-
-	/**
-	 * @brief Executes all valid commands currently within the chain
-	 */
-	void Execute();
+	FORCEINLINE const std::vector<DrawCmdInfo>& GetDrawCmdInfoList()
+	{
+		return m_DrawCmdInfoList;
+	}
 
 private:
-	std::vector<EntityDrawCmd> m_CmdList;
+	std::vector<DrawCmdInfo> m_DrawCmdInfoList;
+	std::vector<RenderPass> m_Passes;
 };
 
 
@@ -123,7 +84,7 @@ public:
 
 	void Render();
 
-	void Execute(EntityDrawCmd& cmd);
+	void Execute(DrawCmdInfo& cmd);
 
 	bool InitializeDiligent(Window* window);
 
@@ -158,8 +119,8 @@ public:
 	{
 		return m_PipelineState;
 	}
-	
-	EntityDrawCmdList DrawChain;
+
+	Event<RenderGraphBuilder&> OnBuildingRenderGraph;
 
 private:
 	RefCntAutoPtr<IRenderDevice> m_RenderDevice;

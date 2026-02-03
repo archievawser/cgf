@@ -4,37 +4,44 @@
 
 #include "core/Common.h"
 
-#define ENABLE_MANAGED_MEMORY_TRACING true
+#define ENABLE_MANAGED_MEMORY_TRACING true	
+
+
+struct ManagedObjectHandle
+{
+	ManagedObjectHandle(void* object)
+		: Object(object)
+	{
+
+	}
+
+	~ManagedObjectHandle()
+	{
+		delete Object;
+	}
+
+	void IncrementRefCnt()
+	{
+		RefCount++;
+	}
+
+	void DecrementRefCnt()
+	{
+		RefCount--;
+	}
+
+#if ENABLE_MANAGED_MEMORY_TRACING
+	std::string Name;
+#endif
+
+	int RefCount = 0;
+	void* Object;
+};
 
 
 template<typename ManagedT>
 class SharedPtr
-{
-	struct ManagedObjectHandle
-	{
-		ManagedObjectHandle(ManagedT* object)
-			: Object(object)
-		{
-
-		}
-
-		void IncrementRefCnt()
-		{
-			RefCount++;
-		}
-
-		void DecrementRefCnt()
-		{
-			RefCount--;
-		}
-
-#if ENABLE_MANAGED_MEMORY_TRACING
-		std::string Name;
-#endif
-
-		int RefCount = 0;
-		ManagedT* Object;
-	};
+{	
 
 public:
 	SharedPtr()
@@ -45,6 +52,12 @@ public:
 	SharedPtr(ManagedT* object)
 	{
 		m_Ref = new ManagedObjectHandle(object);
+		m_Ref->IncrementRefCnt();
+	}
+
+	SharedPtr(ManagedObjectHandle* handle)
+	{
+		m_Ref = handle;
 		m_Ref->IncrementRefCnt();
 	}
 
@@ -60,6 +73,11 @@ public:
 	~SharedPtr()
 	{
 		m_Ref->DecrementRefCnt();
+
+		if(m_Ref->RefCount <= 0)
+		{
+			delete m_Ref;
+		}
 	}
 	
 	FORCEINLINE bool Valid() const
@@ -69,10 +87,22 @@ public:
 
 	SharedPtr<ManagedT>& operator=(const SharedPtr<ManagedT>& other)
 	{
+		if(m_Ref)
+			m_Ref->DecrementRefCnt();
+
 		m_Ref = other.m_Ref;
 		m_Ref->IncrementRefCnt();
 
 		return *this;
+	}
+
+	template<typename TargetManagedT>
+	operator SharedPtr<TargetManagedT>() const
+	{
+		static_assert(std::is_base_of_v<TargetManagedT, ManagedT>, 
+			"Attempted to convert to an incompatible SharedPtr type, SharedPtr type conversion is only supported from derived to base types");
+
+		return { m_Ref };
 	}
 
 	template<typename... ConstructorArgType>
@@ -102,7 +132,7 @@ public:
 
 	ManagedT* operator->() const
 	{
-		return m_Ref->Object;
+		return (ManagedT*)(m_Ref->Object);
 	}
 
 private:

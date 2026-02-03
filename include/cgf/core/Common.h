@@ -37,3 +37,5 @@ T *Singleton<T>::Instance;
 #define CGF_ENSURE_NOT_NULLPTR(exp) CGF_ASSERT(exp, #exp" is not a valid reference")
 
 #endif
+
+#define CGF_STRINGIFY(x) #x

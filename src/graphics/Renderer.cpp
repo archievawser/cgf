@@ -5,7 +5,7 @@
 #include "core/Window.h"
 
 
-RefCntAutoPtr<ITexture> RenderGraph::MakeTexture2D(
+RefCntAutoPtr<ITexture> RenderGraphBuilder::MakeTexture2D(
 	std::string name, 
 	unsigned int width, 
 	unsigned int height, 
@@ -27,18 +27,9 @@ RefCntAutoPtr<ITexture> RenderGraph::MakeTexture2D(
 }
 
 
-void RenderGraph::Execute()
+void RenderGraphBuilder::QueuePass(SharedPtr<RenderPass> pass)
 {
-	for (std::shared_ptr<RenderPass> pass : m_Passes)
-	{
-		pass->Run(this);
-	}
-}
-
-
-void RenderGraph::AddPass(std::shared_ptr<RenderPass> pass)
-{
-	m_Passes.push_back(pass);
+	
 }
 
 
@@ -59,13 +50,14 @@ void Renderer::Render()
 	m_DeviceContext->ClearRenderTarget(pRTV, ClearColor, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 	m_DeviceContext->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-	DrawChain.Execute();
+	RenderGraphBuilder renderGraph;
+	OnBuildingRenderGraph.Invoke(renderGraph);
 
 	m_SwapChain->Present();
 }
 
 
-void Renderer::Execute(EntityDrawCmd& cmd)
+void Renderer::Execute(DrawCmdInfo& cmd)
 {
 	IBuffer* vbuffers[] { cmd.VertexBuffer };
 
@@ -83,44 +75,7 @@ void Renderer::Execute(EntityDrawCmd& cmd)
 }
 
 
-SharedPtr<EntityDrawCmdHandle> EntityDrawCmdList::CreateCommand(
-	RefCntAutoPtr<IBuffer> indexBuffer,
-	RefCntAutoPtr<IBuffer> vertexBuffer,
-	SharedPtr<MaterialInstance> material,
-	int indexCount)
-{
-	m_CmdList.push_back(EntityDrawCmd(indexBuffer, vertexBuffer, material, indexCount));
-
-	return SharedPtr<EntityDrawCmdHandle>::Create(m_CmdList.size() - 1, this);
-}
-
-
-void EntityDrawCmdList::Execute()
-{
-	for (EntityDrawCmd& cmd : m_CmdList)
-	{
-		if(cmd.Valid)
-		{
-			Game->GetRenderer()->Execute(cmd);
-		}
-	}
-}
-
-
-EntityDrawCmdHandle::EntityDrawCmdHandle(int cmdIndex, EntityDrawCmdList *chain)
-	: CmdIndex(cmdIndex), Chain(chain)
-{
-
-}
-
-
-EntityDrawCmdHandle::~EntityDrawCmdHandle()
-{
-	Chain->m_CmdList[CmdIndex].Valid = false;
-}
-
-
-EntityDrawCmd::EntityDrawCmd(
+DrawCmdInfo::DrawCmdInfo(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
 	SharedPtr<MaterialInstance> material,

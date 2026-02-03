@@ -3,6 +3,8 @@
 #include <memory>
 
 #include "core/Memory.h"
+#include "core/Events.h"
+
 #include "assimp/Importer.hpp" 
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
@@ -13,9 +15,6 @@ class GameDerivative : public GameBase
 public:
 	void Start() override
 	{
-
-
-
 		auto baseMaterial = GetAssetLibrary()->Load<Material>("Red");
 		auto material1 = SharedPtr<MaterialInstance>::Create(baseMaterial);
 
@@ -23,8 +22,8 @@ public:
 		auto material2 = SharedPtr<MaterialInstance>::Create(baseMaterial);
 
 		glm::mat4 proj = glm::perspectiveFov(70.f, 1920.f, 1080.f, 0.1f, 1000.f);
-		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -4));
-		glm::mat4 model = glm::mat4x4(1.0f);
+		glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -10));
+		glm::mat4 model = glm::rotate(glm::mat4x4(1.0f), -0.f, glm::vec3(1.0f, 0.f, 0.f));
 
 		glm::mat4x4 mvp = proj * view * model;
 
@@ -90,11 +89,7 @@ public:
 		ibufferDesc.Usage = USAGE_IMMUTABLE;
 		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
 		GetRenderer()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
-  
-		m_eee = GetRenderer()->DrawChain.CreateCommand(ibuffer, vbuffer, material2, indices.size());
 	}
-
-	SharedPtr<EntityDrawCmdHandle> m_eee;
 };
 
 

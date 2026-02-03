@@ -35,6 +35,7 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 	PSOCreateInfo.GraphicsPipeline.PrimitiveTopology = m_PrimitiveType;
 	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FillMode = m_FillMode;
 	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = m_CullMode;
+	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FrontCounterClockwise = true;
 	PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthEnable = m_UseDepth;
 	PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = m_VertexLayout.data();
 	PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = m_VertexLayout.size();

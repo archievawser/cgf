@@ -86,9 +86,9 @@ private:
 	int m_RenderTargetCount = 1;
 	TEXTURE_FORMAT m_DepthStencilFormat = TEX_FORMAT_D32_FLOAT;
 	PRIMITIVE_TOPOLOGY m_PrimitiveType = PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
-	CULL_MODE m_CullMode = CULL_MODE_NONE;
+	CULL_MODE m_CullMode = CULL_MODE_BACK;
 	FILL_MODE m_FillMode = FILL_MODE_SOLID;
-	bool m_UseDepth = false;
+	bool m_UseDepth = true;
 	std::shared_ptr<Shader> m_PixelShader = nullptr;	
 	std::shared_ptr<Shader> m_VertexShader = nullptr;	
 	bool m_PipelineValid = false;
