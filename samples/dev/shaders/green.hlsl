@@ -1,6 +1,8 @@
 struct PSInput
 {
     float4 Pos   : SV_POSITION;
+    float3 WorldPos   : POSITION;
+    float3 Normal : NORMAL;
 };
 
 
@@ -16,14 +18,24 @@ cbuffer WorldData
 };
 
 
-void ProcessVertex(in float2 position : POSITION, out PSInput PSIn)
+void ProcessVertex(
+	in float3 position : POSITION, 
+	in float3 normal : NORMAL,
+	in float2 uv : TEXCOORD,
+	out PSInput PSIn)
 {
-	float4 xpos = float4(position, 0.0, 1.0);
+	float4 xpos = float4(position, 1.0);
 	PSIn.Pos = mul(mvp, xpos);
+	PSIn.WorldPos = position;
+	PSIn.Normal = normal;
 }
 
 
 void ProcessFragment(in PSInput PSIn, out PSOutput PSOut)
 {
-    PSOut.Color = float4(0.0, 1.0, 0.0, 1.0);
+	float3 normal = PSIn.Normal;
+	float3 lightDir = float3(1, 1, 1);
+	float intensity = (0.1, dot(normal, lightDir)) / pow(distance(PSIn.WorldPos, -(lightDir)), 3);
+
+    PSOut.Color = float4(float3(intensity, intensity, intensity), 1.0);
 }

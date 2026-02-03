@@ -3,6 +3,9 @@
 #include <cassert>
 
 
+using namespace btools;
+
+
 AssetDataLoader::AssetDataLoader(const char *contentFile)
 	: CgfbFileReader(contentFile)
 {

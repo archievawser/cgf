@@ -83,15 +83,15 @@ void Renderer::Execute(EntityDrawCmd& cmd)
 }
 
 
-std::shared_ptr<EntityDrawCmdHandle> EntityDrawCmdList::CreateCommand(
+SharedPtr<EntityDrawCmdHandle> EntityDrawCmdList::CreateCommand(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
-	std::shared_ptr<MaterialInstance> material,
+	SharedPtr<MaterialInstance> material,
 	int indexCount)
 {
 	m_CmdList.push_back(EntityDrawCmd(indexBuffer, vertexBuffer, material, indexCount));
 
-	return std::make_shared<EntityDrawCmdHandle>(m_CmdList.size() - 1, this);
+	return SharedPtr<EntityDrawCmdHandle>::Create(m_CmdList.size() - 1, this);
 }
 
 
@@ -123,7 +123,7 @@ EntityDrawCmdHandle::~EntityDrawCmdHandle()
 EntityDrawCmd::EntityDrawCmd(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
-	std::shared_ptr<MaterialInstance> material,
+	SharedPtr<MaterialInstance> material,
 	int indexCount)
 	: IndexBuffer(indexBuffer), VertexBuffer(vertexBuffer), DrawMaterial(material), IndexCount(indexCount)
 {

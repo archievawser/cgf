@@ -9,7 +9,7 @@ GameBase::GameBase()
 	Game = this;
 
 	m_AssetLibrary = new AssetLibrary("Content.cgfb");
-	m_Window = new Window("Hello", 1920, 1080);
+	m_Window = new Window("cgf", 1920, 1080);
 	m_Renderer = new Renderer(m_Window);
 }
 

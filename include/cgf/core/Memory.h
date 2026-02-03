@@ -4,58 +4,107 @@
 
 #include "core/Common.h"
 
-
-class ManagedObject
-{
-	template<typename T>
-	friend class SharedPtr;
-
-public:
-	ManagedObject() = default;
-	ManagedObject(const ManagedObject& other) = delete;
-
-private:
-	int m_RefCount = 0;
-};
+#define ENABLE_MANAGED_MEMORY_TRACING true
 
 
 template<typename ManagedT>
 class SharedPtr
 {
-	static_assert(std::is_base_of_v<ManagedObject, ManagedT>);
+	struct ManagedObjectHandle
+	{
+		ManagedObjectHandle(ManagedT* object)
+			: Object(object)
+		{
+
+		}
+
+		void IncrementRefCnt()
+		{
+			RefCount++;
+		}
+
+		void DecrementRefCnt()
+		{
+			RefCount--;
+		}
+
+#if ENABLE_MANAGED_MEMORY_TRACING
+		std::string Name;
+#endif
+
+		int RefCount = 0;
+		ManagedT* Object;
+	};
 
 public:
-	SharedPtr(ManagedT* object)
-		: m_Ref(object)
+	SharedPtr()
 	{
-		m_Ref->m_RefCount++;
+		
+	}
+
+	SharedPtr(ManagedT* object)
+	{
+		m_Ref = new ManagedObjectHandle(object);
+		m_Ref->IncrementRefCnt();
 	}
 
 	SharedPtr(const SharedPtr<ManagedT>& other)
 	{
 		if(m_Ref)
-			m_Ref->m_RefCount--;
-		
+			m_Ref->DecrementRefCnt();
+
 		m_Ref = other.m_Ref;
-		other.m_Ref->m_RefCount++;
+		m_Ref->IncrementRefCnt();
 	}
 
 	~SharedPtr()
 	{
-		m_Ref->m_RefCount--;
-
-		if(m_Ref->m_RefCount == 0)
-		{
-			CGF_LOG("Pointer decayed");
-			delete m_Ref;
-		}
+		m_Ref->DecrementRefCnt();
 	}
-
-	ManagedT* operator->() const
+	
+	FORCEINLINE bool Valid() const
 	{
 		return m_Ref;
 	}
 
+	SharedPtr<ManagedT>& operator=(const SharedPtr<ManagedT>& other)
+	{
+		m_Ref = other.m_Ref;
+		m_Ref->IncrementRefCnt();
+
+		return *this;
+	}
+
+	template<typename... ConstructorArgType>
+	static SharedPtr<ManagedT> Create(ConstructorArgType&&... args)
+	{
+		ManagedT* ref = new ManagedT(args...);
+		return SharedPtr<ManagedT>(ref);
+	}
+
+#if ENABLE_MANAGED_MEMORY_TRACING
+	template<typename... ConstructorArgType>
+	static SharedPtr<ManagedT> CreateTraced(std::string&& name, ConstructorArgType&&... args)
+	{
+		ManagedT* ref = new ManagedT(args...);
+		SharedPtr<ManagedT> managedRef = SharedPtr<ManagedT>(ref);
+		managedRef.m_Ref->Name = name;
+
+		return managedRef;
+	}
+#else
+	template <typename... ConstructorArgType>
+	static SharedPtr<ManagedT> CreateTraced(std::string &&name, ConstructorArgType &&...args)
+	{
+		return Create(args...);
+	}
+#endif
+
+	ManagedT* operator->() const
+	{
+		return m_Ref->Object;
+	}
+
 private:
-	ManagedT* m_Ref = nullptr;
+	ManagedObjectHandle* m_Ref = nullptr;
 };

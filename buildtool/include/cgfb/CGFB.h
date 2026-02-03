@@ -6,6 +6,9 @@
 #include <string>
 
 
+namespace cgfb
+{
+
 class AbstractStream
 {
 public:
@@ -312,3 +315,5 @@ protected:
 private:
 	std::vector<char> m_Buffer;
 };
+
+}

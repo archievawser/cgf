@@ -5,7 +5,10 @@
 #include "cgfb/CGFB.h"
 
 
-class AssetDataLoader : public CgfbFileReader
+namespace btools
+{
+
+class AssetDataLoader : public cgfb::CgfbFileReader
 {
 public:
 	AssetDataLoader(const char* contentFile);
@@ -15,4 +18,6 @@ public:
 private:
 	int m_DataBlockStartLocation;
 	std::unordered_map<std::string, int> m_DataLocations;
+};
+
 };

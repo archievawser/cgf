@@ -58,14 +58,14 @@ struct EntityDrawCmd
 	EntityDrawCmd(
 		RefCntAutoPtr<IBuffer> indexBuffer,
 		RefCntAutoPtr<IBuffer> vertexBuffer,
-		std::shared_ptr<MaterialInstance> material,
+		SharedPtr<MaterialInstance> material,
 		int indexCount);
 
 	int IndexCount;
 	bool Valid = true;
 	RefCntAutoPtr<IBuffer> IndexBuffer;
 	RefCntAutoPtr<IBuffer> VertexBuffer;
-	std::shared_ptr<MaterialInstance> DrawMaterial;
+	SharedPtr<MaterialInstance> DrawMaterial;
 };
 
 
@@ -96,10 +96,10 @@ class EntityDrawCmdList
 public:
 	EntityDrawCmdList() = default;
 
-	std::shared_ptr<EntityDrawCmdHandle> CreateCommand(
+	SharedPtr<EntityDrawCmdHandle> CreateCommand(
 		RefCntAutoPtr<IBuffer> indexBuffer,
 		RefCntAutoPtr<IBuffer> vertexBuffer,
-		std::shared_ptr<MaterialInstance> material,
+		SharedPtr<MaterialInstance> material,
 		int indexCount);
 
 	/**

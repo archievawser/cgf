@@ -7,30 +7,49 @@
 #include "utility.h"
 
 
-template<typename T>
+namespace btools
+{
+
 struct BaseAsset
 {
 	virtual void ConsumeXml(pugi::xml_node &xmlNode) = 0;
-	virtual void ToBytes(char** buffer, int* size) = 0;
+	virtual inline const char* GetXmlRootNodeName() const = 0;
 
-	static constexpr const char* RootXmlNodeName = "Unknown";
 	std::string Name;
 };
 
 
-struct MaterialAsset : public BaseAsset<MaterialAsset>
+struct MaterialAsset : public BaseAsset
 {
-	void ToBytes(char** buffer, int* size) override
-	{
-		ReadFileContents(ShaderPath.c_str(), buffer, size);
-	}
-
 	void ConsumeXml(pugi::xml_node& xmlNode) override
 	{
 		Name = xmlNode.child("Name").child_value();
-		ShaderPath = xmlNode.child("ShaderPath").child_value();
+		ShaderPath = xmlNode.child("ShaderFile").child_value();
+	}
+
+	inline const char* GetXmlRootNodeName() const override
+	{
+		return "Material";
 	}
 	
-	static constexpr const char* RootXmlNodeName = "Material";
 	std::string ShaderPath;
 };
+
+
+struct MeshAsset : public BaseAsset
+{
+	void ConsumeXml(pugi::xml_node& xmlNode) override
+	{
+		Name = xmlNode.child("Name").child_value();
+		Path = xmlNode.child("File").child_value();
+	}
+
+	inline const char* GetXmlRootNodeName() const override
+	{
+		return "Mesh";
+	}
+
+	std::string Path;
+};
+
+}

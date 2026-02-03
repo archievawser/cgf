@@ -1,10 +1,14 @@
 <Assets>
 	<Material>
 		<Name>Green</Name>
-		<ShaderPath>C:/Dev/C++/cgf/samples/dev/shaders/green.hlsl</ShaderPath>
+		<ShaderFile>C:/Dev/C++/cgf/samples/dev/shaders/green.hlsl</ShaderFile>
 	</Material>
 	<Material>
 		<Name>Red</Name>
-		<ShaderPath>C:/Dev/C++/cgf/samples/dev/shaders/red.hlsl</ShaderPath>
+		<ShaderFile>C:/Dev/C++/cgf/samples/dev/shaders/red.hlsl</ShaderFile>
 	</Material>
+	<Mesh>
+		<Name>Icosphere</Name>
+		<File>C:/Dev/C++/cgf/samples/dev/models/Icosphere.fbx</File>
+	</Mesh>
 </Assets>

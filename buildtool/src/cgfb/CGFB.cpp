@@ -3,6 +3,9 @@
 #include <cassert>
 
 
+using namespace cgfb;
+
+
 CgfbFileWriter::CgfbFileWriter(const char *filePath)
 	: m_File(filePath, std::ios_base::binary)
 {

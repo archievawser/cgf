@@ -10,7 +10,9 @@ Material::Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps)
 	std::fill_n(m_RenderTargetFormats, _countof(m_RenderTargetFormats), swapChain->GetCurrentBackBufferRTV()->GetDesc().Format);
 	m_DepthStencilFormat = swapChain->GetDepthBufferDSV()->GetDesc().Format;
 
-	m_VertexLayout.push_back(LayoutElement("POSITION", 0, 0, 2, VT_FLOAT32));
+	m_VertexLayout.push_back(LayoutElement("POSITION", 0, 0, 3, VT_FLOAT32));
+	m_VertexLayout.push_back(LayoutElement("NORMAL", 0, 0, 3, VT_FLOAT32));
+	m_VertexLayout.push_back(LayoutElement("TEXCOORD", 0, 0, 2, VT_FLOAT32));
 
 	EnsurePipelineValidity();
 }

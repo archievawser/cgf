@@ -17,7 +17,7 @@ class MaterialInstance;
 /**
  * @brief A Material object defines the manner and context in which related draw calls are performed
  */
-class Material : public ManagedObject
+class Material
 {
 public:
 	Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps);

@@ -4,7 +4,7 @@
 #include <fstream>
 
 
-void ReadFileContents(const char* filePath, char** buff, int* buffSize)
+void btools::ReadFileContents(const char* filePath, char** buff, int* buffSize)
 {
 	static char* fileStreamBuffer = new char[FILE_READ_CHUNK_SIZE];
 	std::ifstream file (filePath, std::ios_base::binary);

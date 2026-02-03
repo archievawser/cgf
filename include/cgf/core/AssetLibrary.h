@@ -38,7 +38,7 @@ public:
 
 
 private:
-	AssetDataLoader m_AssetDataLoader;
+	btools::AssetDataLoader m_AssetDataLoader;
 	char* m_AssetData;
 	int m_AssetDataSize;
 };
@@ -58,5 +58,19 @@ inline SharedPtr<Material> AssetLibrary::Load(std::string materialName)
 	auto fs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_PIXEL);
 	auto vs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_VERTEX);
 
-	return new Material(vs, fs);
+	return SharedPtr<Material>::CreateTraced(materialName + "_Material", vs, fs);
+}
+
+
+template<>
+inline SharedPtr<std::string> AssetLibrary::Load(std::string materialName)
+{
+	char* rawSource;
+	int rawSourceLength;
+	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
+
+	CGF_ASSERT(success, "Failed to load " + materialName);
+
+	std::string source (rawSource, rawSourceLength);
+	return SharedPtr<std::string>::CreateTraced(materialName + "_Source", source);
 }

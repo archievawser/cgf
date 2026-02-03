@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.6)
 include(FetchContent)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 project(cgf CXX)
 
 set(SOURCE
@@ -46,7 +46,7 @@ target_include_directories(cgf
 	PUBLIC ${assimp_SOURCE_DIR}/include 
 	PUBLIC ${glfw_SOURCE_DIR}/include)
 
-target_link_libraries(cgf PUBLIC Diligent-BuildSettings glfw)
+target_link_libraries(cgf PUBLIC Diligent-BuildSettings glfw assimp)
 
 if(D3D11_SUPPORTED)
 	target_link_libraries(cgf PUBLIC Diligent-GraphicsEngineD3D11-shared)
