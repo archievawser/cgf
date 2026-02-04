@@ -1,8 +1,12 @@
-#include "graphics/Renderer.h"
 #include <chrono>
+
 #include "glm/gtc/matrix_transform.hpp"
-#include "graphics/Material.h"
+
 #include "core/Window.h"
+
+#include "graphics/Renderer.h"
+#include "graphics/Context.h"
+#include "graphics/Material.h"
 
 
 RefCntAutoPtr<ITexture> RenderGraphBuilder::MakeTexture2D(
@@ -21,7 +25,7 @@ RefCntAutoPtr<ITexture> RenderGraphBuilder::MakeTexture2D(
 	textureDesc.BindFlags = BIND_UNORDERED_ACCESS | BIND_DEPTH_STENCIL | BIND_RENDER_TARGET | BIND_SHADER_RESOURCE;
 
 	RefCntAutoPtr<ITexture> output;
-	Game->GetRenderer()->GetRenderDevice()->CreateTexture(textureDesc, data, &output);
+	Game->GetGraphicsContext()->GetRenderDevice()->CreateTexture(textureDesc, data, &output);
 
 	return output;
 }
@@ -33,27 +37,22 @@ void RenderGraphBuilder::QueuePass(SharedPtr<RenderPass> pass)
 }
 
 
-Renderer::Renderer(Window* window)
-{
-	InitializeDiligent(window);
-}
-
-
 void Renderer::Render()
 {
 	const float ClearColor[] = { 0.f, 0.f, 0.f, 1.0f };
 
-	auto *pRTV = m_SwapChain->GetCurrentBackBufferRTV();
-	auto *pDSV = m_SwapChain->GetDepthBufferDSV();
-	m_DeviceContext->SetRenderTargets(1, &pRTV, pDSV, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+	GraphicsContext* ctx = Game->GetGraphicsContext();
 
-	m_DeviceContext->ClearRenderTarget(pRTV, ClearColor, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-	m_DeviceContext->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+	auto *pRTV = ctx->GetSwapChain()->GetCurrentBackBufferRTV();
+	auto *pDSV = ctx->GetSwapChain()->GetDepthBufferDSV();
+	ctx->GetDeviceContext()->SetRenderTargets(1, &pRTV, pDSV, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+
+	ctx->GetDeviceContext()->ClearRenderTarget(pRTV, ClearColor, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+	ctx->GetDeviceContext()->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 	RenderGraphBuilder renderGraph;
-	OnBuildingRenderGraph.Invoke(renderGraph);
 
-	m_SwapChain->Present();
+	ctx->GetSwapChain()->Present();
 }
 
 
@@ -61,21 +60,23 @@ void Renderer::Execute(DrawCmdInfo& cmd)
 {
 	IBuffer* vbuffers[] { cmd.VertexBuffer };
 
-	m_DeviceContext->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
-	m_DeviceContext->SetIndexBuffer(cmd.IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-	
-	UsePipeline(cmd.DrawMaterial->GetBaseMaterial()->GetPipelineState());
+	GraphicsContext* ctx = Game->GetGraphicsContext();
 
-	m_DeviceContext->CommitShaderResources(cmd.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+	ctx->GetDeviceContext()->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
+	ctx->GetDeviceContext()->SetIndexBuffer(cmd.IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+	
+	ctx->UsePipeline(cmd.DrawMaterial->GetBaseMaterial()->GetPipelineState());
+
+	ctx->GetDeviceContext()->CommitShaderResources(cmd.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 	DrawIndexedAttribs drawAttrs;
 	drawAttrs.NumIndices = cmd.IndexCount;
 	drawAttrs.IndexType = VT_UINT32;
-	m_DeviceContext->DrawIndexed(drawAttrs);
+	ctx->GetDeviceContext()->DrawIndexed(drawAttrs);
 }
 
 
-DrawCmdInfo::DrawCmdInfo(
+DrawFactoryComponent::DrawFactoryComponent(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
 	SharedPtr<MaterialInstance> material,
@@ -83,81 +84,4 @@ DrawCmdInfo::DrawCmdInfo(
 	: IndexBuffer(indexBuffer), VertexBuffer(vertexBuffer), DrawMaterial(material), IndexCount(indexCount)
 {
 
-}
-
-
-bool Renderer::InitializeDiligent(Window* window)
-{
-	auto Window = Game->GetWindow()->GetNativeWindowHandle();
-
-	SwapChainDesc SCDesc;
-
-	switch (m_DeviceType)
-	{
-#if D3D11_SUPPORTED
-	case RENDER_DEVICE_TYPE_D3D11:
-	{
-		EngineD3D11CreateInfo EngineCI;
-
-		auto *GetEngineFactoryD3D11 = LoadGraphicsEngineD3D11();
-		auto *pFactoryD3D11 = GetEngineFactoryD3D11();
-		pFactoryD3D11->CreateDeviceAndContextsD3D11(EngineCI, &m_RenderDevice, &m_DeviceContext);
-		pFactoryD3D11->CreateSwapChainD3D11(m_RenderDevice, m_DeviceContext, SCDesc, FullScreenModeDesc{}, Window, &m_SwapChain);
-	}
-	break;
-#endif
-
-#if D3D12_SUPPORTED
-	case RENDER_DEVICE_TYPE_D3D12:
-	{
-		auto GetEngineFactoryD3D12 = LoadGraphicsEngineD3D12();
-
-		EngineD3D12CreateInfo EngineCI;
-		auto *pFactoryD3D12 = GetEngineFactoryD3D12();
-		pFactoryD3D12->CreateDeviceAndContextsD3D12(EngineCI, &m_RenderDevice, &m_DeviceContext);
-		pFactoryD3D12->CreateSwapChainD3D12(m_RenderDevice, m_DeviceContext, SCDesc, FullScreenModeDesc{}, Window, &m_SwapChain);
-	}
-	break;
-#endif
-
-#if GL_SUPPORTED
-	case RENDER_DEVICE_TYPE_GL:
-	{
-		auto GetEngineFactoryOpenGL = LoadGraphicsEngineOpenGL();
-		auto *pFactoryOpenGL = GetEngineFactoryOpenGL();
-
-		EngineGLCreateInfo EngineCI;
-		EngineCI.Window = Window;
-		pFactoryOpenGL->CreateDeviceAndSwapChainGL(EngineCI, &m_RenderDevice, &m_DeviceContext, SCDesc, &m_SwapChain);
-	}
-	break;
-#endif
-
-#if VULKAN_SUPPORTED
-	case RENDER_DEVICE_TYPE_VULKAN:
-	{
-		auto GetEngineFactoryVk = LoadGraphicsEngineVk();
-		EngineVkCreateInfo EngineCI;
-
-		auto *pFactoryVk = GetEngineFactoryVk();
-		pFactoryVk->CreateDeviceAndContextsVk(EngineCI, &m_RenderDevice, &m_DeviceContext);
-
-		if (!m_SwapChain)
-		{
-			pFactoryVk->CreateSwapChainVk(m_RenderDevice, m_DeviceContext, SCDesc, Window, &m_SwapChain);
-		}
-	}
-	break;
-#endif
-
-	default:
-		std::cerr << "Unknown/unsupported device type";
-		return false;
-		break;
-	}
-
-	if (m_RenderDevice == nullptr || m_SwapChain == nullptr)
-		return false;
-
-	return true;
 }

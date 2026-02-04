@@ -27,7 +27,7 @@ Shader::Shader(std::string name,
 	info.SourceLanguage = sourceLanguage;
 
 	RefCntAutoPtr<IDataBlob> data;
-	Game->GetRenderer()->GetRenderDevice()->CreateShader(info, &m_Handle, &data);
+	Game->GetGraphicsContext()->GetRenderDevice()->CreateShader(info, &m_Handle, &data);
 }
 
 

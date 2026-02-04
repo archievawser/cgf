@@ -116,12 +116,12 @@ public:
 		bufferDesc.Size = sizeof(T);
 		bufferDesc.BindFlags = target;
 
-		Game->GetRenderer()->GetRenderDevice()->CreateBuffer(bufferDesc, nullptr, &m_Buffer);
+		Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(bufferDesc, nullptr, &m_Buffer);
 	}
 
 	void Set(T& value)
 	{
-		Game->GetRenderer()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, sizeof(T), &value, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		Game->GetGraphicsContext()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, sizeof(T), &value, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 		m_Destination->Set(m_Buffer);
 	}
 

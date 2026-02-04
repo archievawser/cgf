@@ -6,7 +6,7 @@
 Material::Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps)
 	: m_PixelShader(ps), m_VertexShader(vs)
 {
-	auto swapChain = Game->GetRenderer()->GetSwapChain();
+	auto swapChain = Game->GetGraphicsContext()->GetSwapChain();
 	std::fill_n(m_RenderTargetFormats, _countof(m_RenderTargetFormats), swapChain->GetCurrentBackBufferRTV()->GetDesc().Format);
 	m_DepthStencilFormat = swapChain->GetDepthBufferDSV()->GetDesc().Format;
 
@@ -43,7 +43,7 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 	PSOCreateInfo.pPS = m_PixelShader->GetHandle();
 
 	RefCntAutoPtr<IPipelineState> pipelineState;
-	Game->GetRenderer()->GetRenderDevice()->CreateGraphicsPipelineState(PSOCreateInfo, &pipelineState);
+	Game->GetGraphicsContext()->GetRenderDevice()->CreateGraphicsPipelineState(PSOCreateInfo, &pipelineState);
 	return pipelineState;
 }
 

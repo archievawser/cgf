@@ -10,6 +10,9 @@
 #include "assimp/postprocess.h"
 
 
+class 
+
+
 class GameDerivative : public GameBase
 {
 public:
@@ -79,7 +82,7 @@ public:
 		vbufferDesc.Size = vertices.size() * sizeof(Vertex);
 		vbufferDesc.Usage = USAGE_IMMUTABLE;
 		vbufferDesc.BindFlags = BIND_VERTEX_BUFFER;
-		GetRenderer()->GetRenderDevice()->CreateBuffer(vbufferDesc, &vdata, &vbuffer);
+		GetGraphicsContext()->GetRenderDevice()->CreateBuffer(vbufferDesc, &vdata, &vbuffer);
 
 		RefCntAutoPtr<IBuffer> ibuffer;
 		BufferData idata(indices.data(), indices.size() * sizeof(unsigned int));
@@ -88,7 +91,7 @@ public:
 		ibufferDesc.Size = indices.size() * sizeof(unsigned int);
 		ibufferDesc.Usage = USAGE_IMMUTABLE;
 		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
-		GetRenderer()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
+		GetGraphicsContext()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
 	}
 };
 

@@ -8,9 +8,9 @@
 
 
 /**
- * @brief An event compatible with both function & member function pointers.
+ * @brief An event capable of binding both function & member function pointers.
  */
-template<typename... EventArgType>
+template<typename... EventArgT>
 class Event
 {
 public:
@@ -18,7 +18,7 @@ public:
 
 	struct Listener
 	{
-		Listener(Event *owner, std::function<void(EventArgType...)> callback)
+		Listener(Event *owner, std::function<void(EventArgT...)> callback)
 			: Owner(owner), Callback(callback)
 		{
 			
@@ -41,10 +41,10 @@ public:
 		}
 
 		Event* Owner;
-		std::function<void(EventArgType...)> Callback;
+		std::function<void(EventArgT...)> Callback;
 	};
 
-	void Invoke(EventArgType... eventData)
+	void Invoke(EventArgT... eventData)
 	{
 		for (Listener* listener : m_Listeners)
 		{
@@ -52,25 +52,32 @@ public:
 		}
 	}
 
-	[[nodiscard]] SharedPtr<Listener> Connect(void (*callback)(EventArgType...))
+	[[nodiscard]] SharedPtr<Listener> Connect(void (*callback)(EventArgT...))
 	{
-		Listener *newListener = new Listener(this, callback);
+		Listener* newListener = new Listener(this, callback);
 		m_Listeners.push_back(newListener);
+
 		return SharedPtr<Listener>(newListener); 
 	}
 
-	template <typename ObjectType>
-	[[nodiscard]] SharedPtr<Listener> Connect(ObjectType *object, void (ObjectType::*callback)(EventArgType...))
+	template <typename ObjectT>
+	[[nodiscard]] SharedPtr<Listener> Connect(ObjectT *object, void (ObjectT::*callback)(EventArgT...))
 	{
-		Listener* newListener = new Listener(this, [object, callback](EventArgType... data) 
+		Listener* newListener = new Listener(this, [object, callback](EventArgT... data) 
 		{
-			(object->*callback)(data);
+			(object->*callback)(data...);
 		});
 		
 		m_Listeners.push_back(newListener);
 		return SharedPtr<Listener>(newListener);
 	}
 
+	typedef SharedPtr<Listener> ConnectionT;
+
 private:
 	std::vector<Listener*> m_Listeners;
 };
+
+
+typedef Event<> OnStartEvent;
+typedef Event<double> OnUpdateEvent;

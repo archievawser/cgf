@@ -42,7 +42,6 @@ struct ManagedObjectHandle
 template<typename ManagedT>
 class SharedPtr
 {	
-
 public:
 	SharedPtr()
 	{
@@ -90,8 +89,20 @@ public:
 		if(m_Ref)
 			m_Ref->DecrementRefCnt();
 
+		if (other.m_Ref)
+			other.m_Ref->IncrementRefCnt();
+
 		m_Ref = other.m_Ref;
-		m_Ref->IncrementRefCnt();
+
+		return *this;
+	}
+
+	SharedPtr<ManagedT>& operator=(const nullptr_t& other)
+	{
+		if(m_Ref)
+			m_Ref->DecrementRefCnt();
+		
+		m_Ref = nullptr;
 
 		return *this;
 	}
@@ -105,16 +116,16 @@ public:
 		return { m_Ref };
 	}
 
-	template<typename... ConstructorArgType>
-	static SharedPtr<ManagedT> Create(ConstructorArgType&&... args)
+	template<typename... ConstructorArgT>
+	static SharedPtr<ManagedT> Create(ConstructorArgT&&... args)
 	{
 		ManagedT* ref = new ManagedT(args...);
 		return SharedPtr<ManagedT>(ref);
 	}
 
 #if ENABLE_MANAGED_MEMORY_TRACING
-	template<typename... ConstructorArgType>
-	static SharedPtr<ManagedT> CreateTraced(std::string&& name, ConstructorArgType&&... args)
+	template<typename... ConstructorArgT>
+	static SharedPtr<ManagedT> CreateTraced(std::string&& name, ConstructorArgT&&... args)
 	{
 		ManagedT* ref = new ManagedT(args...);
 		SharedPtr<ManagedT> managedRef = SharedPtr<ManagedT>(ref);
@@ -123,8 +134,8 @@ public:
 		return managedRef;
 	}
 #else
-	template <typename... ConstructorArgType>
-	static SharedPtr<ManagedT> CreateTraced(std::string &&name, ConstructorArgType &&...args)
+	template <typename... ConstructorArgT>
+	static SharedPtr<ManagedT> CreateTraced(std::string &&name, ConstructorArgT &&...args)
 	{
 		return Create(args...);
 	}

@@ -1,29 +1,32 @@
 #pragma once
 
 #include <memory>
-#include <queue>
 #include <vector>
+#include <queue>
 
-#include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/type_ptr.hpp"
+#include "glm/glm.hpp"
 
-#include "core/Common.h"
 #include "core/AssetLibrary.h"
-#include "core/Game.h"
+#include "core/Architecture.h"
 #include "core/Events.h"
+#include "core/Window.h"
+#include "core/Common.h"
+#include "core/Game.h"
 
 #include "graphics/Diligent.h"
-#include "graphics/Shader.h"
 #include "graphics/Material.h"
+#include "graphics/Shader.h"
 
 
 /**
- * @brief Contains the information depended on by a majority of simple draw calls
+ * @brief 
  */
-struct DrawCmdInfo
+class DrawFactoryComponent : public ActorComponent
 {
-	DrawCmdInfo(
+public:
+	DrawFactoryComponent(
 		RefCntAutoPtr<IBuffer> indexBuffer,
 		RefCntAutoPtr<IBuffer> vertexBuffer,
 		SharedPtr<MaterialInstance> material,
@@ -33,6 +36,21 @@ struct DrawCmdInfo
 	RefCntAutoPtr<IBuffer> IndexBuffer;
 	RefCntAutoPtr<IBuffer> VertexBuffer;
 	SharedPtr<MaterialInstance> DrawMaterial;
+};
+
+
+class TestDrawActor : public Actor
+{
+public:
+	TestDrawActor(RefCntAutoPtr<IBuffer> indexBuffer,
+		RefCntAutoPtr<IBuffer> vertexBuffer,
+		SharedPtr<MaterialInstance> material,
+		int indexCount)
+	{
+		DrawInfo = SharedPtr<DrawFactoryComponent>::Create()
+	}
+
+	SharedPtr<DrawFactoryComponent> DrawInfo;
 };
 
 
@@ -80,52 +98,7 @@ private:
 class Renderer
 {
 public:
-	Renderer(Window* window);
-
 	void Render();
 
 	void Execute(DrawCmdInfo& cmd);
-
-	bool InitializeDiligent(Window* window);
-
-	/**
-	 * @brief Binds a graphics pipeline if the requested pipeline isn't already bound
-	 */
-	FORCEINLINE void UsePipeline(RefCntAutoPtr<IPipelineState> pipeline)
-	{
-		if (m_PipelineState != pipeline)
-		{
-			m_PipelineState = pipeline;
-			m_DeviceContext->SetPipelineState(pipeline);
-		}
-	}
-	
-	FORCEINLINE RefCntAutoPtr<IRenderDevice> GetRenderDevice()
-	{
-		return m_RenderDevice;
-	}
-
-	FORCEINLINE RefCntAutoPtr<IDeviceContext> GetDeviceContext()
-	{
-		return m_DeviceContext;
-	}
-
-	FORCEINLINE RefCntAutoPtr<ISwapChain> GetSwapChain()
-	{
-		return m_SwapChain;
-	}
-
-	FORCEINLINE RefCntAutoPtr<IPipelineState> GetPipelineState()
-	{
-		return m_PipelineState;
-	}
-
-	Event<RenderGraphBuilder&> OnBuildingRenderGraph;
-
-private:
-	RefCntAutoPtr<IRenderDevice> m_RenderDevice;
-	RefCntAutoPtr<IDeviceContext> m_DeviceContext;
-	RefCntAutoPtr<ISwapChain> m_SwapChain;
-	RefCntAutoPtr<IPipelineState> m_PipelineState;
-	RENDER_DEVICE_TYPE m_DeviceType = RENDER_DEVICE_TYPE_D3D11;
 };

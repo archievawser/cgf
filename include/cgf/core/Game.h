@@ -1,6 +1,10 @@
 #pragma once
 
 #include "core/Common.h"
+#include "core/Memory.h"
+#include "core/Architecture.h"
+
+#include "graphics/Context.h"
 
 
 class AssetLibrary;
@@ -8,6 +12,9 @@ class Renderer;
 class Window;
 
 
+/**
+ * @brief 
+ */
 class GameBase
 {
 public:
@@ -44,10 +51,22 @@ public:
 		return m_Window;
 	}
 
+	FORCEINLINE SharedPtr<Scene> GetCurrentScene()
+	{
+		return m_CurrentScene;
+	}
+
+	FORCEINLINE GraphicsContext* GetGraphicsContext()
+	{
+		return m_GraphicsContext;
+	}
+
 private:
 	Window* m_Window;
 	AssetLibrary* m_AssetLibrary;
 	Renderer* m_Renderer;
+	GraphicsContext* m_GraphicsContext;
+	SharedPtr<Scene> m_CurrentScene;
 };
 
 

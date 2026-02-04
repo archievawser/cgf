@@ -30,8 +30,8 @@ public:
 	 * @param assetName The name of the asset as registered in the project descriptor; not its file path
 	 * @return AssetType The requested asset
 	 */
-	template<typename AssetType>
-	SharedPtr<AssetType> Load(std::string assetName)
+	template<typename AssetT>
+	SharedPtr<AssetT> Load(std::string assetName)
 	{
 		throw "Asset type not recognized";
 	}

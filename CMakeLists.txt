@@ -8,10 +8,12 @@ set(SOURCE
  	"src/graphics/Shader.cpp"
 	"src/graphics/Renderer.cpp"
 	"src/graphics/Material.cpp"
+	"src/graphics/Context.cpp"
 	"src/core/Game.cpp"
 	"src/core/AssetLibrary.cpp"
 	"src/core/Window.cpp"
 	"src/core/Events.cpp"
+	"src/core/Architecture.cpp"
 )
 
 add_library(cgf ${SOURCE})
