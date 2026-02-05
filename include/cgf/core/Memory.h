@@ -4,44 +4,64 @@
 
 #include "core/Common.h"
 
-#define ENABLE_MANAGED_MEMORY_TRACING true	
+#define ENABLE_SMART_PTR_TRACING true
 
+#if ENABLE_SMART_PTR_TRACING
 
-struct ManagedObjectHandle
-{
-	ManagedObjectHandle(void* object)
-		: Object(object)
-	{
+#define CGF_LOG_WITH_IDENTIFIER(name, msg) CGF_INFO("[" + name + "] " msg)
 
-	}
+#else
 
-	~ManagedObjectHandle()
-	{
-		delete Object;
-	}
+#define CGF_LOG_WITH_IDENTIFIER(name, msg) CGF_INFO(msg)
 
-	void IncrementRefCnt()
-	{
-		RefCount++;
-	}
-
-	void DecrementRefCnt()
-	{
-		RefCount--;
-	}
-
-#if ENABLE_MANAGED_MEMORY_TRACING
-	std::string Name;
 #endif
-
-	int RefCount = 0;
-	void* Object;
-};
 
 
 template<typename ManagedT>
 class SharedPtr
 {	
+	struct ManagedObjectHandle
+	{
+		ManagedObjectHandle(ManagedT* object)
+			: Object(object)
+		{
+
+		}
+
+#if ENABLE_SMART_PTR_TRACING
+		ManagedObjectHandle(ManagedT* object, std::string name)
+			: Object(object), Name(name)
+		{
+
+		}
+#endif
+
+		~ManagedObjectHandle()
+		{
+			CGF_LOG_WITH_IDENTIFIER(Name, "Destroyed ref");
+			delete Object;
+		}
+
+		void IncrementRefCnt()
+		{
+			CGF_LOG_WITH_IDENTIFIER(Name, "Gained ref");
+			RefCount++;
+		}
+
+		void DecrementRefCnt()
+		{
+			CGF_LOG_WITH_IDENTIFIER(Name, "Lost ref");
+			RefCount--;
+		}
+
+#if ENABLE_SMART_PTR_TRACING
+		std::string Name = "?";
+#endif
+
+		int RefCount = 0;
+		ManagedT* Object;
+	};
+
 public:
 	SharedPtr()
 	{
@@ -53,6 +73,14 @@ public:
 		m_Ref = new ManagedObjectHandle(object);
 		m_Ref->IncrementRefCnt();
 	}
+
+#if ENABLE_SMART_PTR_TRACING
+	SharedPtr(ManagedT* object, std::string name)
+	{
+		m_Ref = new ManagedObjectHandle(object, name);
+		m_Ref->IncrementRefCnt();
+	}
+#endif
 
 	SharedPtr(ManagedObjectHandle* handle)
 	{
@@ -71,11 +99,14 @@ public:
 
 	~SharedPtr()
 	{
-		m_Ref->DecrementRefCnt();
-
-		if(m_Ref->RefCount <= 0)
+		if(m_Ref)
 		{
-			delete m_Ref;
+			m_Ref->DecrementRefCnt();
+
+			if(m_Ref->RefCount <= 0)
+			{
+				delete m_Ref;
+			}
 		}
 	}
 	
@@ -107,11 +138,23 @@ public:
 		return *this;
 	}
 
+	ManagedT& operator*()
+	{
+		CGF_ASSERT(Valid(), "Cannot dereference nullptr");
+		
+		return *(ManagedT*)m_Ref->Object;
+	}
+
+	FORCEINLINE ManagedT* GetRaw()
+	{
+		return m_Ref->Object;
+	}
+
 	template<typename TargetManagedT>
 	operator SharedPtr<TargetManagedT>() const
 	{
 		static_assert(std::is_base_of_v<TargetManagedT, ManagedT>, 
-			"Attempted to convert to an incompatible SharedPtr type, SharedPtr type conversion is only supported from derived to base types");
+			"Cannot convert to an underived type");
 
 		return { m_Ref };
 	}
@@ -123,13 +166,12 @@ public:
 		return SharedPtr<ManagedT>(ref);
 	}
 
-#if ENABLE_MANAGED_MEMORY_TRACING
+#if ENABLE_SMART_PTR_TRACING
 	template<typename... ConstructorArgT>
 	static SharedPtr<ManagedT> CreateTraced(std::string&& name, ConstructorArgT&&... args)
 	{
 		ManagedT* ref = new ManagedT(args...);
-		SharedPtr<ManagedT> managedRef = SharedPtr<ManagedT>(ref);
-		managedRef.m_Ref->Name = name;
+		SharedPtr<ManagedT> managedRef = SharedPtr<ManagedT>(ref, name);
 
 		return managedRef;
 	}

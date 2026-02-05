@@ -28,7 +28,7 @@ public:
 	/**
 	 * @brief Called every frame, prior to rendering
 	 */
-	virtual void Update();
+	virtual void Tick(double dT);
 
 	/**
 	 * @return The current Renderer
@@ -51,7 +51,7 @@ public:
 		return m_Window;
 	}
 
-	FORCEINLINE SharedPtr<Scene> GetCurrentScene()
+	FORCEINLINE SharedPtr<Scene>& GetCurrentScene()
 	{
 		return m_CurrentScene;
 	}

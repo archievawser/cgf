@@ -18,10 +18,10 @@ public:
 
 	struct Listener
 	{
-		Listener(Event *owner, std::function<void(EventArgT...)> callback)
+		Listener(Event* owner, std::function<void(EventArgT...)> callback)
 			: Owner(owner), Callback(callback)
 		{
-			
+			CGF_INFO("Listener gained");
 		}
 
 		~Listener()
@@ -31,11 +31,13 @@ public:
 
 		void Disconnect()
 		{
-			for (int i = 0; i < Owner->m_Listeners.size(); i++)
+			CGF_INFO("Listener lost");
+			
+			for (int i = 0; i < Owner->m_Connections.size(); i++)
 			{
-				if (Owner->m_Listeners[i] == this)
+				if (Owner->m_Connections[i] == this)
 				{
-					Owner->m_Listeners.erase(Owner->m_Listeners.begin() + i);
+					Owner->m_Connections.erase(Owner->m_Connections.begin() + i);
 				}
 			}
 		}
@@ -46,38 +48,46 @@ public:
 
 	void Invoke(EventArgT... eventData)
 	{
-		for (Listener* listener : m_Listeners)
+		std::vector<Listener*> connections = m_Connections;
+
+		for (Listener* listener : connections)
 		{
 			listener->Callback(eventData...);
 		}
 	}
 
+	unsigned int GetNumberOfListeners()
+	{
+		return m_Connections.size();
+	}
+
 	[[nodiscard]] SharedPtr<Listener> Connect(void (*callback)(EventArgT...))
 	{
-		Listener* newListener = new Listener(this, callback);
-		m_Listeners.push_back(newListener);
+		SharedPtr<Listener> newListener = SharedPtr<Listener>::CreateTraced("EventListener", this, callback); 
+		m_Connections.push_back(&*newListener);
 
-		return SharedPtr<Listener>(newListener); 
+		return newListener;
 	}
 
 	template <typename ObjectT>
 	[[nodiscard]] SharedPtr<Listener> Connect(ObjectT *object, void (ObjectT::*callback)(EventArgT...))
 	{
-		Listener* newListener = new Listener(this, [object, callback](EventArgT... data) 
+		SharedPtr<Listener> newListener = SharedPtr<Listener>::CreateTraced("EventListenerMemFunc", this, [object, callback](EventArgT... data) 
 		{
 			(object->*callback)(data...);
-		});
+		}); 
 		
-		m_Listeners.push_back(newListener);
-		return SharedPtr<Listener>(newListener);
+		m_Connections.push_back(&*newListener);
+
+		return newListener;
 	}
 
-	typedef SharedPtr<Listener> ConnectionT;
+	typedef SharedPtr<Listener> Connection;
 
 private:
-	std::vector<Listener*> m_Listeners;
+	std::vector<Listener*> m_Connections;
 };
 
 
 typedef Event<> OnStartEvent;
-typedef Event<double> OnUpdateEvent;
+typedef Event<double> OnTickEvent;

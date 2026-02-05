@@ -10,7 +10,34 @@
 #include "assimp/postprocess.h"
 
 
-class 
+struct RuntimeTypeInfo
+{
+	static int TypeCount;
+
+	static int NextTypeIndex()
+	{
+		static int value = 0;
+		return value++;
+	}
+
+	template<typename T>
+	static int GetTypeIndex()
+	{
+		static int i = (numTypes++, NextTypeIndex());
+
+		return i;
+	}
+
+	template<typename... T>
+	static int GetTypeHash()
+	{
+		int out = 0;
+		
+		((out |= 1 << GetTypeIndex<T>()), ...);
+
+		return out;
+	}
+};
 
 
 class GameDerivative : public GameBase
@@ -92,8 +119,39 @@ public:
 		ibufferDesc.Usage = USAGE_IMMUTABLE;
 		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
 		GetGraphicsContext()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
+
+		SharedPtr<Actor> actor = SharedPtr<Actor>::Create();
+		GetCurrentScene()->AddActor(actor);
+
+		tick = GetCurrentScene()->OnEntityTick.Connect([](double) {
+			CGF_INFO("hi");
+		});
+
+		GameBase::Start();
 	}
+
+	void Tick(double dT) override
+	{
+		GameBase::Tick(dT);
+	}
+
+	OnTickEvent::Connection tick;
 };
 
 
-IMPLEMENT_GAME_ENTRY_POINT( GameDerivative )
+int main()
+{
+	GameBase *game = new GameDerivative;
+	game->Start();
+
+	while (!game->GetWindow()->ShouldClose())
+	{
+		game->GetWindow()->Poll();
+
+		game->Tick(0.0);
+		game->GetRenderer()->Render();
+	}
+
+	delete game;
+	return 0;
+}

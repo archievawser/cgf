@@ -14,7 +14,7 @@
 		{                                         \
 			game->GetWindow()->Poll();            \
                                                   \
-			game->Update();                       \
+			game->Tick(0.0);                      \
 			game->GetRenderer()->Render();        \
 		}                                         \
                                                   \

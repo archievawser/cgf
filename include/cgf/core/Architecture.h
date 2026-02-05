@@ -12,23 +12,40 @@ class Actor
 {
 public:
 	Actor();
+
+	~Actor()
+	{
+		
+	}
 	
 	virtual void Start();
 
 	virtual void Tick(double deltaTime);
 
-	void BindEvents(SharedPtr<Scene> scene);
+	void BindEventListeners(SharedPtr<Scene> scene);
+
+	void PollComponentRenderProxies();
 
 	template<typename ComponentT>
 	void AddComponent(SharedPtr<ComponentT> component)
 	{
-		component->BindEvents(this);
+		component->BindEventListeners(this);
 		
-		GetComponentsOfType<ComponentT>.push_back(component);
+	}
+
+	template<typename ComponentT>
+	void RegisterComponent(SharedPtr<ComponentT> component)
+	{
+		GetComponentRegistry<ComponentT>().push_back(component);
+		
+		if constexpr (!std::is_same_v<ComponentT::Super, void>)
+		{
+			RegisterObject<ComponentT::Super>(component);
+		}
 	}
 	
 	template<typename ComponentT>
-	std::vector<SharedPtr<ComponentT>>& GetComponentsOfType()
+	std::vector<SharedPtr<ComponentT>>& GetComponentRegistry()
 	{
 		static std::vector<SharedPtr<ComponentT>> components;
 
@@ -36,11 +53,11 @@ public:
 	}
 
 	OnStartEvent OnComponentStart;
-	OnUpdateEvent OnComponentTick;
+	OnTickEvent OnComponentTick;
 
 private:
-	OnStartEvent::ConnectionT m_StartListener;
-	OnUpdateEvent::ConnectionT m_TickListener;
+	OnStartEvent::Connection m_StartListener;
+	OnTickEvent::Connection m_TickListener;
 };
 
 
@@ -53,13 +70,13 @@ public:
 
 	virtual void TickComponent(double deltaTime);
 
-	void BindEvents(Actor* entity);
+	void BindEventListeners(Actor* entity);
 
 	Actor* Owner;
 
 private:
-	OnStartEvent::ConnectionT m_StartListener;
-	OnUpdateEvent::ConnectionT m_TickListener;
+	OnStartEvent::Connection m_StartListener;
+	OnTickEvent::Connection m_TickListener;
 };
 
 
@@ -71,9 +88,12 @@ public:
 	template<typename ActorT>
 	void AddActor(SharedPtr<ActorT> actor)
 	{
-		actor->BindEvents(this);
+		CGF_INFO("Adding actor");
+
+		actor->BindEventListeners(this);
+		CGF_INFO(OnEntityTick.GetNumberOfListeners());
 		
-		GetActorsOfType<ActorT>.push_back(actor);
+		GetActorsOfType<ActorT>().push_back(actor);
 	}
 	
 	template<typename ActorT>
@@ -81,9 +101,11 @@ public:
 	{
 		static std::vector<SharedPtr<ActorT>> actors;
 
+		CGF_INFO("Registered actor");
+
 		return actors;
 	}
 
 	OnStartEvent OnEntityStart;
-	OnUpdateEvent OnEntityTick;
+	OnTickEvent OnEntityTick;
 };

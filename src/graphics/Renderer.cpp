@@ -7,6 +7,7 @@
 #include "graphics/Renderer.h"
 #include "graphics/Context.h"
 #include "graphics/Material.h"
+#include "graphics/Diligent.h"
 
 
 RefCntAutoPtr<ITexture> RenderGraphBuilder::MakeTexture2D(
@@ -56,9 +57,10 @@ void Renderer::Render()
 }
 
 
-void Renderer::Execute(DrawCmdInfo& cmd)
+void Renderer::Execute()
 {
-	IBuffer* vbuffers[] { cmd.VertexBuffer };
+	/*
+	IBuffer** vbuffers = nullptr;
 
 	GraphicsContext* ctx = Game->GetGraphicsContext();
 
@@ -72,11 +74,11 @@ void Renderer::Execute(DrawCmdInfo& cmd)
 	DrawIndexedAttribs drawAttrs;
 	drawAttrs.NumIndices = cmd.IndexCount;
 	drawAttrs.IndexType = VT_UINT32;
-	ctx->GetDeviceContext()->DrawIndexed(drawAttrs);
+	ctx->GetDeviceContext()->DrawIndexed(drawAttrs);*/
 }
 
 
-DrawFactoryComponent::DrawFactoryComponent(
+MeshDrawFactoryComponent::MeshDrawFactoryComponent(
 	RefCntAutoPtr<IBuffer> indexBuffer,
 	RefCntAutoPtr<IBuffer> vertexBuffer,
 	SharedPtr<MaterialInstance> material,

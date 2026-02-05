@@ -14,17 +14,18 @@ GameBase::GameBase()
 	m_Window = new Window("cgf", 1920, 1080);
 	m_GraphicsContext = new GraphicsContext(m_Window);
 	m_Renderer = new Renderer;
-	m_CurrentScene = new Scene;
+	m_CurrentScene = SharedPtr<Scene>::CreateTraced("Scene");
 }
 
 
 void GameBase::Start()
 {
-	
+	CGF_INFO(m_CurrentScene->OnEntityStart.GetNumberOfListeners());
+	m_CurrentScene->OnEntityStart.Invoke();
 }
 
 
-void GameBase::Update()
+void GameBase::Tick(double dT)
 {
-
+	m_CurrentScene->OnEntityTick.Invoke(0.0);
 }

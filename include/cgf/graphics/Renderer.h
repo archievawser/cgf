@@ -13,6 +13,7 @@
 #include "core/Events.h"
 #include "core/Window.h"
 #include "core/Common.h"
+#include "core/Memory.h"
 #include "core/Game.h"
 
 #include "graphics/Diligent.h"
@@ -23,15 +24,16 @@
 /**
  * @brief 
  */
-class DrawFactoryComponent : public ActorComponent
+class MeshDrawFactoryComponent : public ActorComponent
 {
 public:
-	DrawFactoryComponent(
+	MeshDrawFactoryComponent(
 		RefCntAutoPtr<IBuffer> indexBuffer,
 		RefCntAutoPtr<IBuffer> vertexBuffer,
 		SharedPtr<MaterialInstance> material,
 		int indexCount);
 
+	typedef ActorComponent Super;
 	int IndexCount;
 	RefCntAutoPtr<IBuffer> IndexBuffer;
 	RefCntAutoPtr<IBuffer> VertexBuffer;
@@ -41,16 +43,38 @@ public:
 
 class TestDrawActor : public Actor
 {
+	typedef Actor Super;
+
 public:
 	TestDrawActor(RefCntAutoPtr<IBuffer> indexBuffer,
 		RefCntAutoPtr<IBuffer> vertexBuffer,
 		SharedPtr<MaterialInstance> material,
 		int indexCount)
 	{
-		DrawInfo = SharedPtr<DrawFactoryComponent>::Create()
+		DrawInfo = SharedPtr<MeshDrawFactoryComponent>::Create(indexBuffer, vertexBuffer, material, indexCount);
 	}
 
-	SharedPtr<DrawFactoryComponent> DrawInfo;
+	void Tick(double dT) override
+	{
+		Super::Tick(dT);
+	}
+
+	SharedPtr<MeshDrawFactoryComponent> DrawInfo;
+};
+
+
+struct MeshDrawInfo
+{
+	int IndexCount;
+	RefCntAutoPtr<IBuffer> IndexBuffer;
+	RefCntAutoPtr<IBuffer> VertexBuffer;
+	SharedPtr<MaterialInstance> DrawMaterial;
+};
+
+
+struct ComponentRenderProxy
+{
+
 };
 
 
@@ -80,13 +104,7 @@ public:
 
 	void QueuePass(SharedPtr<RenderPass> pass);
 
-	FORCEINLINE const std::vector<DrawCmdInfo>& GetDrawCmdInfoList()
-	{
-		return m_DrawCmdInfoList;
-	}
-
 private:
-	std::vector<DrawCmdInfo> m_DrawCmdInfoList;
 	std::vector<RenderPass> m_Passes;
 };
 
@@ -99,6 +117,6 @@ class Renderer
 {
 public:
 	void Render();
-
-	void Execute(DrawCmdInfo& cmd);
+	
+	void Execute();
 };
