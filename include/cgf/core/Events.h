@@ -61,28 +61,28 @@ public:
 		return m_Connections.size();
 	}
 
-	[[nodiscard]] SharedPtr<Listener> Connect(void (*callback)(EventArgT...))
+	typedef SharedPtr<Listener> Connection;
+
+	[[nodiscard]] Connection Connect(void (*callback)(EventArgT...))
 	{
-		SharedPtr<Listener> newListener = SharedPtr<Listener>::CreateTraced("EventListener", this, callback); 
-		m_Connections.push_back(&*newListener);
+		Connection newListener = SharedPtr<Listener>::CreateTraced("EventListener", this, callback); 
+		m_Connections.push_back(newListener.GetRaw());
 
 		return newListener;
 	}
 
 	template <typename ObjectT>
-	[[nodiscard]] SharedPtr<Listener> Connect(ObjectT *object, void (ObjectT::*callback)(EventArgT...))
+	[[nodiscard]] Connection Connect(ObjectT *object, void (ObjectT::*callback)(EventArgT...))
 	{
-		SharedPtr<Listener> newListener = SharedPtr<Listener>::CreateTraced("EventListenerMemFunc", this, [object, callback](EventArgT... data) 
+		Connection newListener = SharedPtr<Listener>::CreateTraced("EventListenerMemFunc", this, [object, callback](EventArgT... data) 
 		{
 			(object->*callback)(data...);
 		}); 
 		
-		m_Connections.push_back(&*newListener);
+		m_Connections.push_back(newListener.GetRaw());
 
 		return newListener;
 	}
-
-	typedef SharedPtr<Listener> Connection;
 
 private:
 	std::vector<Listener*> m_Connections;

@@ -8,11 +8,11 @@
 
 #if ENABLE_SMART_PTR_TRACING
 
-#define CGF_LOG_WITH_IDENTIFIER(name, msg) CGF_INFO("[" + name + "] " msg)
+#define CGF_LOG_TRACE(name, msg) CGF_INFO("[" + name + "] " msg)
 
 #else
 
-#define CGF_LOG_WITH_IDENTIFIER(name, msg) CGF_INFO(msg)
+#define CGF_LOG_TRACE(name, msg) 
 
 #endif
 
@@ -38,19 +38,19 @@ class SharedPtr
 
 		~ManagedObjectHandle()
 		{
-			CGF_LOG_WITH_IDENTIFIER(Name, "Destroyed ref");
+			CGF_LOG_TRACE(Name, "Destroyed ref");
 			delete Object;
 		}
 
 		void IncrementRefCnt()
 		{
-			CGF_LOG_WITH_IDENTIFIER(Name, "Gained ref");
+			CGF_LOG_TRACE(Name, "Gained ref");
 			RefCount++;
 		}
 
 		void DecrementRefCnt()
 		{
-			CGF_LOG_WITH_IDENTIFIER(Name, "Lost ref");
+			CGF_LOG_TRACE(Name, "Lost ref");
 			RefCount--;
 		}
 
@@ -68,21 +68,21 @@ public:
 		
 	}
 
-	SharedPtr(ManagedT* object)
+	explicit SharedPtr(ManagedT* object)
 	{
 		m_Ref = new ManagedObjectHandle(object);
 		m_Ref->IncrementRefCnt();
 	}
 
 #if ENABLE_SMART_PTR_TRACING
-	SharedPtr(ManagedT* object, std::string name)
+	explicit SharedPtr(ManagedT* object, std::string name)
 	{
 		m_Ref = new ManagedObjectHandle(object, name);
 		m_Ref->IncrementRefCnt();
 	}
 #endif
 
-	SharedPtr(ManagedObjectHandle* handle)
+	explicit SharedPtr(ManagedObjectHandle* handle)
 	{
 		m_Ref = handle;
 		m_Ref->IncrementRefCnt();

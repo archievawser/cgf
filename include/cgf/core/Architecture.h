@@ -22,9 +22,7 @@ public:
 
 	virtual void Tick(double deltaTime);
 
-	void BindEventListeners(SharedPtr<Scene> scene);
-
-	void PollComponentRenderProxies();
+	void BindEventListeners(Scene* scene);
 
 	template<typename ComponentT>
 	void AddComponent(SharedPtr<ComponentT> component)
@@ -88,10 +86,15 @@ public:
 	template<typename ActorT>
 	void AddActor(SharedPtr<ActorT> actor)
 	{
-		CGF_INFO("Adding actor");
+		static_assert(std::is_base_of_v<Actor, Actor>,
+			"ActorT must publicly derive Actor");
+
+		if(m_InPlay)
+		{
+			actor->Start();
+		}
 
 		actor->BindEventListeners(this);
-		CGF_INFO(OnEntityTick.GetNumberOfListeners());
 		
 		GetActorsOfType<ActorT>().push_back(actor);
 	}
@@ -101,11 +104,12 @@ public:
 	{
 		static std::vector<SharedPtr<ActorT>> actors;
 
-		CGF_INFO("Registered actor");
-
 		return actors;
 	}
 
-	OnStartEvent OnEntityStart;
-	OnTickEvent OnEntityTick;
+	Event<> OnEntityStart;
+	Event<double> OnEntityTick;
+
+private:
+	bool m_InPlay = false;
 };

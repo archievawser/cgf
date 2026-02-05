@@ -23,7 +23,7 @@ struct RuntimeTypeInfo
 	template<typename T>
 	static int GetTypeIndex()
 	{
-		static int i = (numTypes++, NextTypeIndex());
+		static int i = (TypeCount++, NextTypeIndex());
 
 		return i;
 	}
@@ -122,10 +122,6 @@ public:
 
 		SharedPtr<Actor> actor = SharedPtr<Actor>::Create();
 		GetCurrentScene()->AddActor(actor);
-
-		tick = GetCurrentScene()->OnEntityTick.Connect([](double) {
-			CGF_INFO("hi");
-		});
 
 		GameBase::Start();
 	}
