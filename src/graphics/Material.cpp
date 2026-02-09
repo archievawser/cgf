@@ -1,6 +1,7 @@
 #include "graphics/Material.h"
-#include "core/Common.h"
 #include "graphics/Renderer.h"
+#include "core/Common.h"
+#include "core/Game.h"
 
 
 Material::Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps)

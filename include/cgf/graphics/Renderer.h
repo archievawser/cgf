@@ -22,63 +22,6 @@
 
 
 /**
- * @brief 
- */
-class MeshDrawFactoryComponent : public ActorComponent
-{
-public:
-	MeshDrawFactoryComponent(
-		RefCntAutoPtr<IBuffer> indexBuffer,
-		RefCntAutoPtr<IBuffer> vertexBuffer,
-		SharedPtr<MaterialInstance> material,
-		int indexCount);
-
-	typedef ActorComponent Super;
-	int IndexCount;
-	RefCntAutoPtr<IBuffer> IndexBuffer;
-	RefCntAutoPtr<IBuffer> VertexBuffer;
-	SharedPtr<MaterialInstance> DrawMaterial;
-};
-
-
-class TestDrawActor : public Actor
-{
-	typedef Actor Super;
-
-public:
-	TestDrawActor(RefCntAutoPtr<IBuffer> indexBuffer,
-		RefCntAutoPtr<IBuffer> vertexBuffer,
-		SharedPtr<MaterialInstance> material,
-		int indexCount)
-	{
-		DrawInfo = SharedPtr<MeshDrawFactoryComponent>::Create(indexBuffer, vertexBuffer, material, indexCount);
-	}
-
-	void Tick(double dT) override
-	{
-		Super::Tick(dT);
-	}
-
-	SharedPtr<MeshDrawFactoryComponent> DrawInfo;
-};
-
-
-struct MeshDrawInfo
-{
-	int IndexCount;
-	RefCntAutoPtr<IBuffer> IndexBuffer;
-	RefCntAutoPtr<IBuffer> VertexBuffer;
-	SharedPtr<MaterialInstance> DrawMaterial;
-};
-
-
-struct ComponentRenderProxy
-{
-
-};
-
-
-/**
  * @brief Render passes are the individual steps executed to render each frame
  */
 struct RenderPass
@@ -117,6 +60,10 @@ class Renderer
 {
 public:
 	void Render();
+	
+	void Draw(std::vector<MeshDrawInfo>& meshDrawList);
+
+	void Draw(SharedPtr<Scene> scene);
 	
 	void Execute();
 };

@@ -2,7 +2,6 @@
 
 #include "core/Game.h"
 #include "graphics/Renderer.h"
-#include "Shader.h"
 
 
 std::unordered_map<SHADER_TYPE, const char*> Shader::m_ShaderEntryPoints = {

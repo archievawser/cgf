@@ -20,7 +20,6 @@ GameBase::GameBase()
 
 void GameBase::Start()
 {
-	CGF_INFO(m_CurrentScene->OnEntityStart.GetNumberOfListeners());
 	m_CurrentScene->OnEntityStart.Invoke();
 }
 
@@ -28,4 +27,10 @@ void GameBase::Start()
 void GameBase::Tick(double dT)
 {
 	m_CurrentScene->OnEntityTick.Invoke(0.0);
+}
+
+
+void GameBase::Render()
+{
+	m_Renderer->Render();
 }

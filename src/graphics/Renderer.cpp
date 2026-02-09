@@ -51,39 +51,36 @@ void Renderer::Render()
 	ctx->GetDeviceContext()->ClearRenderTarget(pRTV, ClearColor, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 	ctx->GetDeviceContext()->ClearDepthStencil(pDSV, CLEAR_DEPTH_FLAG, 1.f, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-	RenderGraphBuilder renderGraph;
+	Draw(Game->GetCurrentScene());
 
 	ctx->GetSwapChain()->Present();
 }
 
 
-void Renderer::Execute()
+void Renderer::Draw(std::vector<MeshDrawInfo>& meshDrawList)
 {
-	/*
-	IBuffer** vbuffers = nullptr;
+	for(MeshDrawInfo& info : meshDrawList)
+	{
+		IBuffer* vbuffers[] = { info.VertexBuffer };
 
-	GraphicsContext* ctx = Game->GetGraphicsContext();
+		GraphicsContext* ctx = Game->GetGraphicsContext();
 
-	ctx->GetDeviceContext()->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
-	ctx->GetDeviceContext()->SetIndexBuffer(cmd.IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
-	
-	ctx->UsePipeline(cmd.DrawMaterial->GetBaseMaterial()->GetPipelineState());
+		ctx->GetDeviceContext()->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
+		ctx->GetDeviceContext()->SetIndexBuffer(info.IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		
+		ctx->UsePipeline(info.DrawMaterial->GetBaseMaterial()->GetPipelineState());
 
-	ctx->GetDeviceContext()->CommitShaderResources(cmd.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		ctx->GetDeviceContext()->CommitShaderResources(info.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
-	DrawIndexedAttribs drawAttrs;
-	drawAttrs.NumIndices = cmd.IndexCount;
-	drawAttrs.IndexType = VT_UINT32;
-	ctx->GetDeviceContext()->DrawIndexed(drawAttrs);*/
+		DrawIndexedAttribs drawAttrs;
+		drawAttrs.NumIndices = info.IndexCount;
+		drawAttrs.IndexType = VT_UINT32;
+		ctx->GetDeviceContext()->DrawIndexed(drawAttrs);
+	}
 }
 
 
-MeshDrawFactoryComponent::MeshDrawFactoryComponent(
-	RefCntAutoPtr<IBuffer> indexBuffer,
-	RefCntAutoPtr<IBuffer> vertexBuffer,
-	SharedPtr<MaterialInstance> material,
-	int indexCount)
-	: IndexBuffer(indexBuffer), VertexBuffer(vertexBuffer), DrawMaterial(material), IndexCount(indexCount)
+void Renderer::Draw(SharedPtr<Scene> scene)
 {
-
+	Draw(scene->MeshDrawList);
 }

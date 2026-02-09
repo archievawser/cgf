@@ -1,3 +1,5 @@
+#pragma once
+
 #include "core/Common.h"
 #include "core/Game.h"
 #include "core/Window.h"

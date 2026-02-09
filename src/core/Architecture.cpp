@@ -1,30 +1,33 @@
+#include <algorithm>
+
 #include "core/Architecture.h"
 
 
 Actor::Actor()
 {
-
+	m_ComponentBitset = std::vector<bool>(SceneTypeInfo::TypeCount);
 }
 
 
 void Actor::Start()
 {
-	CGF_INFO("Started");
-	//OnComponentStart.Invoke();
+	OnComponentStart.Invoke();
 }
 
 
 void Actor::Tick(double deltaTime)
 {
-	CGF_INFO("Ticked");
-	//OnComponentTick.Invoke(deltaTime);
+	OnComponentTick.Invoke(deltaTime);
 }
 
 
-void Actor::BindEventListeners(Scene* scene)
+void Actor::AttachTo(Scene* scene)
 {
 	m_StartListener = scene->OnEntityStart.Connect(this, &Actor::Start);
 	m_TickListener = scene->OnEntityTick.Connect(this, &Actor::Tick);
+	OnSceneChanged.Invoke(scene);
+
+	m_Scene = scene;
 }
 
 
@@ -46,10 +49,18 @@ void ActorComponent::TickComponent(double deltaTime)
 }
 
 
-void ActorComponent::BindEventListeners(Actor* entity)
+void ActorComponent::OnSceneChanged(Scene* newScene)
 {
-	m_StartListener = entity->OnComponentStart.Connect(this, &ActorComponent::Start);
-	m_TickListener = entity->OnComponentTick.Connect(this, &ActorComponent::TickComponent);
+	
+}
+
+
+void ActorComponent::AttachTo(Actor* actor)
+{
+	Owner = actor;
+	m_StartListener = actor->OnComponentStart.Connect(this, &ActorComponent::Start);
+	m_TickListener = actor->OnComponentTick.Connect(this, &ActorComponent::TickComponent);
+	m_SceneChangeListener = actor->OnSceneChanged.Connect(this, &ActorComponent::OnSceneChanged);
 }
 
 
@@ -57,3 +68,12 @@ Scene::Scene()
 {
 	
 }
+
+
+void PrimitiveComponent::OnSceneChanged(Scene* newScene)
+{
+	
+}
+
+
+int SceneTypeInfo::TypeCount;

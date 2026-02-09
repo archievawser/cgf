@@ -2,7 +2,6 @@
 
 #include "core/Common.h"
 #include "core/Memory.h"
-#include "core/Architecture.h"
 
 #include "graphics/Context.h"
 
@@ -10,6 +9,7 @@
 class AssetLibrary;
 class Renderer;
 class Window;
+class Scene;
 
 
 /**
@@ -29,6 +29,8 @@ public:
 	 * @brief Called every frame, prior to rendering
 	 */
 	virtual void Tick(double dT);
+
+	virtual void Render();
 
 	/**
 	 * @return The current Renderer

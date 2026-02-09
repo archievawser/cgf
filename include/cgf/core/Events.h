@@ -89,5 +89,6 @@ private:
 };
 
 
-typedef Event<> OnStartEvent;
+typedef Event<> Notifier;
+typedef Notifier OnStartEvent;
 typedef Event<double> OnTickEvent;

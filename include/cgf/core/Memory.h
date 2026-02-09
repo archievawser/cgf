@@ -4,7 +4,7 @@
 
 #include "core/Common.h"
 
-#define ENABLE_SMART_PTR_TRACING true
+#define ENABLE_SMART_PTR_TRACING false
 
 #if ENABLE_SMART_PTR_TRACING
 
@@ -94,7 +94,9 @@ public:
 			m_Ref->DecrementRefCnt();
 
 		m_Ref = other.m_Ref;
-		m_Ref->IncrementRefCnt();
+
+		if(m_Ref)
+			m_Ref->IncrementRefCnt();
 	}
 
 	~SharedPtr()
@@ -185,6 +187,8 @@ public:
 
 	ManagedT* operator->() const
 	{
+		CGF_ASSERT(Valid(), "Cannot dereference nullptr");
+		
 		return (ManagedT*)(m_Ref->Object);
 	}
 

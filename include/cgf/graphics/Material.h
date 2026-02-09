@@ -10,10 +10,6 @@
 #include "graphics/Shader.h"
 
 
-class Renderer;
-class MaterialInstance;
-
-
 /**
  * @brief A Material object defines the manner and context in which related draw calls are performed
  */

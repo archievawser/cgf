@@ -4,51 +4,28 @@
 
 #include "core/Memory.h"
 #include "core/Events.h"
+#include "core/Architecture.h"
 
 #include "assimp/Importer.hpp" 
 #include "assimp/scene.h"
 #include "assimp/postprocess.h"
 
 
-struct RuntimeTypeInfo
-{
-	static int TypeCount;
-
-	static int NextTypeIndex()
-	{
-		static int value = 0;
-		return value++;
-	}
-
-	template<typename T>
-	static int GetTypeIndex()
-	{
-		static int i = (TypeCount++, NextTypeIndex());
-
-		return i;
-	}
-
-	template<typename... T>
-	static int GetTypeHash()
-	{
-		int out = 0;
-		
-		((out |= 1 << GetTypeIndex<T>()), ...);
-
-		return out;
-	}
-};
-
-
-class GameDerivative : public GameBase
+class MeshActor : public Actor
 {
 public:
-	void Start() override
+	MeshActor()
 	{
-		auto baseMaterial = GetAssetLibrary()->Load<Material>("Red");
+		prim = SharedPtr<PrimitiveComponent>::Create();
+		AddComponent(prim);
+	}
+
+	void Start()
+	{
+		auto baseMaterial = Game->GetAssetLibrary()->Load<Material>("Red");
 		auto material1 = SharedPtr<MaterialInstance>::Create(baseMaterial);
 
-		baseMaterial = GetAssetLibrary()->Load<Material>("Green");
+		baseMaterial = Game->GetAssetLibrary()->Load<Material>("Green");
 		auto material2 = SharedPtr<MaterialInstance>::Create(baseMaterial);
 
 		glm::mat4 proj = glm::perspectiveFov(70.f, 1920.f, 1080.f, 0.1f, 1000.f);
@@ -70,7 +47,7 @@ public:
 			glm::vec2 UV0;
 		};
 
-		SharedPtr<std::string> icosphereFbxSrc = GetAssetLibrary()->Load<std::string>("Icosphere");
+		SharedPtr<std::string> icosphereFbxSrc = Game->GetAssetLibrary()->Load<std::string>("Icosphere");
 		Assimp::Importer importer;
 		const char *data = icosphereFbxSrc->c_str();
 
@@ -109,7 +86,7 @@ public:
 		vbufferDesc.Size = vertices.size() * sizeof(Vertex);
 		vbufferDesc.Usage = USAGE_IMMUTABLE;
 		vbufferDesc.BindFlags = BIND_VERTEX_BUFFER;
-		GetGraphicsContext()->GetRenderDevice()->CreateBuffer(vbufferDesc, &vdata, &vbuffer);
+		Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(vbufferDesc, &vdata, &vbuffer);
 
 		RefCntAutoPtr<IBuffer> ibuffer;
 		BufferData idata(indices.data(), indices.size() * sizeof(unsigned int));
@@ -118,11 +95,32 @@ public:
 		ibufferDesc.Size = indices.size() * sizeof(unsigned int);
 		ibufferDesc.Usage = USAGE_IMMUTABLE;
 		ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
-		GetGraphicsContext()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
+		Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
 
-		SharedPtr<Actor> actor = SharedPtr<Actor>::Create();
+		prim->PrimitiveInfo.DrawMaterial = material2;
+		prim->PrimitiveInfo.IndexBuffer = ibuffer;
+		prim->PrimitiveInfo.VertexBuffer = vbuffer;
+		prim->PrimitiveInfo.IndexCount = indices.size();
+
+		Actor::Start();
+	}
+
+	SharedPtr<PrimitiveComponent> prim;
+};
+
+
+class GameDerivative : public GameBase
+{
+public:
+	GameDerivative()
+		: GameBase()
+	{
+		SharedPtr<MeshActor> actor = SharedPtr<MeshActor>::Create();
 		GetCurrentScene()->AddActor(actor);
+	}
 
+	void Start() override
+	{
 		GameBase::Start();
 	}
 
@@ -130,8 +128,6 @@ public:
 	{
 		GameBase::Tick(dT);
 	}
-
-	OnTickEvent::Connection tick;
 };
 
 
@@ -145,7 +141,7 @@ int main()
 		game->GetWindow()->Poll();
 
 		game->Tick(0.0);
-		game->GetRenderer()->Render();
+		game->Render();
 	}
 
 	delete game;
