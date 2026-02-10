@@ -1,8 +1,11 @@
 #include <chrono>
 
 #include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 #include "core/Window.h"
+#include "core/Scene.h"
+#include "core/Camera.h"
 
 #include "graphics/Renderer.h"
 #include "graphics/Context.h"
@@ -57,23 +60,33 @@ void Renderer::Render()
 }
 
 
-void Renderer::Draw(std::vector<MeshDrawInfo>& meshDrawList)
+void Renderer::Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList)
 {
-	for(MeshDrawInfo& info : meshDrawList)
+	SharedPtr<Camera> camera = Game->GetCurrentScene()->CurrentCamera;
+	glm::mat4 pv = camera->Projection * camera->Transform.GetViewMatrix();
+	
+	for(SharedPtr<MeshDrawInfo> info : meshDrawList)
 	{
-		IBuffer* vbuffers[] = { info.VertexBuffer };
+		IBuffer* vbuffers[] = { info->Mesh->VertexBuffer };
 
 		GraphicsContext* ctx = Game->GetGraphicsContext();
 
 		ctx->GetDeviceContext()->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
-		ctx->GetDeviceContext()->SetIndexBuffer(info.IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		ctx->GetDeviceContext()->SetIndexBuffer(info->Mesh->IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 		
-		ctx->UsePipeline(info.DrawMaterial->GetBaseMaterial()->GetPipelineState());
+		ctx->UsePipeline(info->DrawMaterial->GetBaseMaterial()->GetPipelineState());
 
-		ctx->GetDeviceContext()->CommitShaderResources(info.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		glm::mat4 pvm = pv * info->Transform;
+		ShaderCommonData data;
+		std::memcpy(data.Model, glm::value_ptr(info->Transform), sizeof(data.Model));
+		std::memcpy(data.MVP, glm::value_ptr(pvm), sizeof(data.MVP));
+
+		info->DrawMaterial->ShaderCommon.Set(data);
+
+		ctx->GetDeviceContext()->CommitShaderResources(info->DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 		DrawIndexedAttribs drawAttrs;
-		drawAttrs.NumIndices = info.IndexCount;
+		drawAttrs.NumIndices = info->Mesh->IndexCount;
 		drawAttrs.IndexType = VT_UINT32;
 		ctx->GetDeviceContext()->DrawIndexed(drawAttrs);
 	}

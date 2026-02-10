@@ -10,6 +10,7 @@ class AssetLibrary;
 class Renderer;
 class Window;
 class Scene;
+class Input;
 
 
 /**
@@ -31,6 +32,8 @@ public:
 	virtual void Tick(double dT);
 
 	virtual void Render();
+
+	virtual void SetCurrentScene(SharedPtr<Scene> nextScene);
 
 	/**
 	 * @return The current Renderer
@@ -63,10 +66,16 @@ public:
 		return m_GraphicsContext;
 	}
 
+	FORCEINLINE Input* GetInput()
+	{
+		return m_Input;
+	}
+
 private:
 	Window* m_Window;
 	AssetLibrary* m_AssetLibrary;
 	Renderer* m_Renderer;
+	Input* m_Input;
 	GraphicsContext* m_GraphicsContext;
 	SharedPtr<Scene> m_CurrentScene;
 };

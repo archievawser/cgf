@@ -9,6 +9,9 @@
 #include "graphics/Diligent.h"
 #include "graphics/Shader.h"
 
+#include "glm/glm.hpp"
+#include "glm/gtc/type_ptr.hpp"
+
 
 /**
  * @brief A Material object defines the manner and context in which related draw calls are performed
@@ -95,6 +98,11 @@ template<typename T>
 class DeviceVarBinding
 {
 public:
+	DeviceVarBinding()
+	{
+
+	}
+
 	DeviceVarBinding(IShaderResourceVariable* dest)	
 		: m_Destination(dest)
 	{
@@ -121,9 +129,22 @@ public:
 		m_Destination->Set(m_Buffer);
 	}
 
+	void SetRaw(void* data, int size)
+	{
+		Game->GetGraphicsContext()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, size, data, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		m_Destination->Set(m_Buffer);
+	}
+
 private:
 	RefCntAutoPtr<IBuffer> m_Buffer;
 	RefCntAutoPtr<IShaderResourceVariable> m_Destination;
+};
+
+
+struct ShaderCommonData
+{
+	float MVP[16];
+	float Model[16];
 };
 
 
@@ -183,6 +204,8 @@ public:
 	{ 
 		return m_BaseMaterial; 
 	}
+
+	DeviceVarBinding<ShaderCommonData> ShaderCommon;
 
 private:
 	RefCntAutoPtr<IShaderResourceBinding> m_ResourceBinding;

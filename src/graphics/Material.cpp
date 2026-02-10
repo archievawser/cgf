@@ -53,4 +53,6 @@ MaterialInstance::MaterialInstance(SharedPtr<Material> material)
 	: m_BaseMaterial(material)
 {
 	m_BaseMaterial->GetPipelineState()->CreateShaderResourceBinding(&m_ResourceBinding, true);
+
+	ShaderCommon = CreateVertexVariableBinding<ShaderCommonData>("ShaderCommon");
 }

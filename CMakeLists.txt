@@ -13,7 +13,14 @@ set(SOURCE
 	"src/core/AssetLibrary.cpp"
 	"src/core/Window.cpp"
 	"src/core/Events.cpp"
-	"src/core/Architecture.cpp"
+	"src/core/Camera.cpp"
+	"src/core/Transform.cpp"
+	"src/core/Actor.cpp"
+	"src/core/Input.cpp"
+	"src/core/Scene.cpp"
+	"src/core/Components.cpp"
+	"src/actors/Spectator.cpp"
+	"src/utility/Timer.cpp"
 )
 
 add_library(cgf ${SOURCE})

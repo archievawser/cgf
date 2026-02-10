@@ -9,11 +9,11 @@
 #include "glm/glm.hpp"
 
 #include "core/AssetLibrary.h"
-#include "core/Architecture.h"
 #include "core/Events.h"
 #include "core/Window.h"
 #include "core/Common.h"
 #include "core/Memory.h"
+#include "core/Components.h"
 #include "core/Game.h"
 
 #include "graphics/Diligent.h"
@@ -61,7 +61,7 @@ class Renderer
 public:
 	void Render();
 	
-	void Draw(std::vector<MeshDrawInfo>& meshDrawList);
+	void Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList);
 
 	void Draw(SharedPtr<Scene> scene);
 	

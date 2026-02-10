@@ -20,6 +20,7 @@
 template<typename ManagedT>
 class SharedPtr
 {	
+public:
 	struct ManagedObjectHandle
 	{
 		ManagedObjectHandle(ManagedT* object)
@@ -62,7 +63,6 @@ class SharedPtr
 		ManagedT* Object;
 	};
 
-public:
 	SharedPtr()
 	{
 		
@@ -85,7 +85,9 @@ public:
 	explicit SharedPtr(ManagedObjectHandle* handle)
 	{
 		m_Ref = handle;
-		m_Ref->IncrementRefCnt();
+
+		if(m_Ref)
+			m_Ref->IncrementRefCnt();
 	}
 
 	SharedPtr(const SharedPtr<ManagedT>& other)
@@ -158,7 +160,7 @@ public:
 		static_assert(std::is_base_of_v<TargetManagedT, ManagedT>, 
 			"Cannot convert to an underived type");
 
-		return { m_Ref };
+		return SharedPtr<TargetManagedT>( (typename SharedPtr<TargetManagedT>::ManagedObjectHandle*) m_Ref );
 	}
 
 	template<typename... ConstructorArgT>
