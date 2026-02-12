@@ -4,7 +4,11 @@
 #include <type_traits>
 #include <functional>
 
-#include "core/Memory.h"
+#include "core/Common.h"
+
+
+template<typename T>
+class SharedPtr;
 
 
 /**
@@ -15,6 +19,14 @@ class Event
 {
 public:
 	Event() = default;
+
+	~Event()
+	{
+		for(Listener* listener : m_Connections)
+		{
+			delete listener;
+		}
+	}
 
 	struct Listener
 	{
@@ -62,6 +74,24 @@ public:
 	}
 
 	typedef SharedPtr<Listener> Connection;
+
+	template<typename LambdaT>
+	Listener* Bind(LambdaT lambda)
+	{
+		Listener* newListener = new Listener(this, lambda);
+		m_Connections.push_back(newListener);
+
+		return newListener;
+	}
+
+	template<typename LambdaT>
+	Connection Connect(LambdaT lambda)
+	{
+		SharedPtr<Listener> newListener = SharedPtr<Listener>::CreateTraced("EventListenerLambda", this, lambda);
+		m_Connections.push_back(newListener.GetRaw());
+
+		return newListener;
+	}
 
 	[[nodiscard]] Connection Connect(void (*callback)(EventArgT...))
 	{

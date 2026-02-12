@@ -5,7 +5,7 @@
 #include "core/Memory.h"
 #include "core/Events.h"
 #include "core/Actor.h"
-#include "core/Components.h"
+#include "core/Component.h"
 #include "core/Camera.h"
 
 

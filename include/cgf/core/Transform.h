@@ -33,7 +33,7 @@ struct MatrixTransform
 	{
 		glm::mat4 view (1.0f);
 
-		view = glm::mat4_cast(glm::conjugate(Rotation)) * view;
+		view *= glm::mat4_cast(glm::conjugate(Rotation));
 		
 		view = glm::translate(view, -Position);
   
@@ -42,7 +42,7 @@ struct MatrixTransform
 
 	FORCEINLINE void LookAt(glm::vec3 p)
 	{
-		Rotation = glm::quatLookAt(p, glm::vec3(0, 1, 0));
+		Rotation = glm::quatLookAt(glm::normalize(p - Position), glm::vec3(0, 1, 0));
 	}
 
 	FORCEINLINE glm::vec3 GetRightVector() const

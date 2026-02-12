@@ -13,12 +13,20 @@
 #include "core/Window.h"
 #include "core/Common.h"
 #include "core/Memory.h"
-#include "core/Components.h"
 #include "core/Game.h"
 
 #include "graphics/Diligent.h"
 #include "graphics/Material.h"
 #include "graphics/Shader.h"
+#include "graphics/Mesh.h"
+
+
+struct MeshDrawInfo
+{
+	glm::mat4 Transform;
+	SharedPtr<BaseMesh> Mesh;
+	SharedPtr<MaterialInstance> DrawMaterial;
+};
 
 
 /**

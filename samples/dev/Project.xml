@@ -3,8 +3,19 @@
 		<Name>Green</Name>
 		<ShaderFile>C:/Dev/C++/cgf/samples/dev/shaders/green.hlsl</ShaderFile>
 	</Material>
+	
 	<Mesh>
 		<Name>Icosphere</Name>
 		<File>C:/Dev/C++/cgf/samples/dev/models/Icosphere.fbx</File>
+	</Mesh>
+
+	<Mesh>
+		<Name>Suzanne</Name>
+		<File>C:/Dev/C++/cgf/samples/dev/models/Suzanne.fbx</File>
+	</Mesh>
+
+	<Mesh>
+		<Name>Quad</Name>
+		<File>C:/Dev/C++/cgf/samples/dev/models/Quad.fbx</File>
 	</Mesh>
 </Assets>

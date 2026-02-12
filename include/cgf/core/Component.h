@@ -6,6 +6,9 @@
 #include "core/Transform.h"
 #include "core/AssetLibrary.h"
 
+#include "graphics/Renderer.h"
+#include "graphics/Mesh.h"
+
 
 class Scene;
 
@@ -41,14 +44,6 @@ class SceneComponent : public ActorComponent
 {
 public:
 	MatrixTransform Transform;
-};
-
-
-struct MeshDrawInfo
-{
-	glm::mat4 Transform;
-	SharedPtr<StaticMesh> Mesh;
-	SharedPtr<MaterialInstance> DrawMaterial;
 };
 
 

@@ -14,7 +14,7 @@ public:
 		Projection = orthographic ? GetOrthographicProjection(width, height)
 			: GetPerspectiveProjection(fov, width, height);
 
-		Transform.Position = glm::vec3(0, 0, -10);
+		Transform.Position = glm::vec3(0, 0, -0.5f);
 	}
 	
 	MatrixTransform Transform;

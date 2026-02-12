@@ -6,8 +6,10 @@
 #include <fstream>
 
 #include "core/Memory.h"
+
 #include "graphics/Shader.h"
 #include "graphics/Material.h"
+#include "graphics/Mesh.h"
 
 #include "assimp/Importer.hpp" 
 #include "assimp/scene.h"
@@ -97,20 +99,6 @@ inline SharedPtr<std::string> AssetLibrary::Load(std::string materialName)
 	std::string source (rawSource, rawSourceLength);
 	return SharedPtr<std::string>::CreateTraced(materialName + "_Source", std::move(source));
 }
-
-
-struct StaticMesh
-{
-	StaticMesh(unsigned int indexCount, RefCntAutoPtr<IBuffer> indexBuffer, RefCntAutoPtr<IBuffer> vertexBuffer)
-		: IndexCount(indexCount), IndexBuffer(indexBuffer), VertexBuffer(vertexBuffer)
-	{
-
-	}
-
-	unsigned int IndexCount;
-	RefCntAutoPtr<IBuffer> IndexBuffer;
-	RefCntAutoPtr<IBuffer> VertexBuffer;
-};
 
 
 struct Vertex

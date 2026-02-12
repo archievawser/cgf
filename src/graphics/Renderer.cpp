@@ -67,12 +67,12 @@ void Renderer::Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList)
 	
 	for(SharedPtr<MeshDrawInfo> info : meshDrawList)
 	{
-		IBuffer* vbuffers[] = { info->Mesh->VertexBuffer };
+		IBuffer* vbuffers[] = { info->Mesh->GetVertexBuffer() };
 
 		GraphicsContext* ctx = Game->GetGraphicsContext();
 
 		ctx->GetDeviceContext()->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
-		ctx->GetDeviceContext()->SetIndexBuffer(info->Mesh->IndexBuffer, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		ctx->GetDeviceContext()->SetIndexBuffer(info->Mesh->GetIndexBuffer(), 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 		
 		ctx->UsePipeline(info->DrawMaterial->GetBaseMaterial()->GetPipelineState());
 
@@ -86,7 +86,7 @@ void Renderer::Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList)
 		ctx->GetDeviceContext()->CommitShaderResources(info->DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 		DrawIndexedAttribs drawAttrs;
-		drawAttrs.NumIndices = info->Mesh->IndexCount;
+		drawAttrs.NumIndices = info->Mesh->GetIndexCount();
 		drawAttrs.IndexType = VT_UINT32;
 		ctx->GetDeviceContext()->DrawIndexed(drawAttrs);
 	}

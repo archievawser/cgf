@@ -5,8 +5,10 @@
 #include "core/Memory.h"
 #include "core/Events.h"
 #include "core/Actor.h"
-#include "core/Components.h"
+#include "core/Component.h"
 #include "core/Scene.h"
+
+#include "graphics/Diligent.h"
 
 #include "actors/Spectator.h"
 
@@ -23,13 +25,18 @@ public:
 	MeshActor()
 	{
 		prim = SharedPtr<MeshComponent>::Create();
-		AddComponent(prim);		
+		AddComponent(prim);
 
 		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Green");
 		prim->SetMaterial(material);
 
+		material->GetBaseMaterial()->SetFillMode(Diligent::FILL_MODE_WIREFRAME);
+
 		SharedPtr<StaticMesh> mesh = Game->GetAssetLibrary()->Get<StaticMesh>("Icosphere");
 		prim->SetMesh(mesh);
+
+		prim->Transform.Scale = glm::vec3(1);
+		prim->Transform.Rotation = glm::vec3(-3.1415f / 2.0f, 0.0f, 0.0f);
 	}
 
 	void Tick(double dT) override
@@ -52,6 +59,8 @@ public:
 	{
 		SharedPtr<MeshActor> actor = SharedPtr<MeshActor>::Create();
 		AddActor(actor);
+
+		CurrentCamera->Transform.LookAt(glm::vec3(0));
 
 		SharedPtr<Spectator> e = SharedPtr<Spectator>::Create();
 		AddActor(e);

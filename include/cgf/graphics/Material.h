@@ -120,18 +120,30 @@ public:
 		bufferDesc.Size = sizeof(T);
 		bufferDesc.BindFlags = target;
 
-		Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(bufferDesc, nullptr, &m_Buffer);
+		Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(bufferDesc, 
+			nullptr, 
+			&m_Buffer);
 	}
 
 	void Set(T& value)
 	{
-		Game->GetGraphicsContext()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, sizeof(T), &value, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		Game->GetGraphicsContext()->GetDeviceContext()->UpdateBuffer(m_Buffer, 
+			0, 
+			sizeof(T), 
+			&value, 
+			RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+
 		m_Destination->Set(m_Buffer);
 	}
 
 	void SetRaw(void* data, int size)
 	{
-		Game->GetGraphicsContext()->GetDeviceContext()->UpdateBuffer(m_Buffer, 0, size, data, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		Game->GetGraphicsContext()->GetDeviceContext()->UpdateBuffer(m_Buffer, 
+			0, 
+			size, 
+			data, 
+			RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+
 		m_Destination->Set(m_Buffer);
 	}
 
