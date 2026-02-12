@@ -10,5 +10,5 @@ public:
 	
 
 private:
-	SharedPtr<MeshDrawInfo> m_DrawInfo;
+	SharedPtr<PrimitiveRenderState> m_DrawInfo;
 };

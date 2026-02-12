@@ -54,17 +54,15 @@ public:
 
 	void OnSceneChanged(Scene* newScene) override;
 
-	void Start() override
-	{
-		SubmitDrawInfo();
-	}
+	void Start() override;
 
 	void TickComponent(double dT) override
 	{
-		m_DrawInfo->Transform = Transform.GetMatrix();
+		if(m_RenderState && m_StateInvalid)
+		{
+			m_RenderState->Get().Transform = Transform.GetMatrix();
+		}
 	}
-
-	void SubmitDrawInfo();
 
 	FORCEINLINE SharedPtr<StaticMesh> GetMesh() const
 	{
@@ -74,7 +72,8 @@ public:
 	FORCEINLINE void SetMesh(SharedPtr<StaticMesh> mesh)
 	{
 		m_Mesh = mesh;
-		m_DrawInfo->Mesh = mesh;
+		m_StateInvalid = true;
+		//m_RenderState->Mesh = mesh;
 	}
 
 	FORCEINLINE SharedPtr<MaterialInstance> GetMaterial() const
@@ -85,11 +84,13 @@ public:
 	FORCEINLINE void SetMaterial(SharedPtr<MaterialInstance> material)
 	{
 		m_Material = material;
-		m_DrawInfo->DrawMaterial = material;
+		m_StateInvalid = true;
+		//m_RenderState->DrawMaterial = material;
 	}
 
 private:
-	SharedPtr<MeshDrawInfo> m_DrawInfo;
+	bool m_StateInvalid = false;
+	PoolSharedPtr<PrimitiveRenderState> m_RenderState;
 	SharedPtr<StaticMesh> m_Mesh;
 	SharedPtr<MaterialInstance> m_Material;
 };

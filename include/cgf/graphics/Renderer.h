@@ -21,7 +21,7 @@
 #include "graphics/Mesh.h"
 
 
-struct MeshDrawInfo
+struct PrimitiveRenderState
 {
 	glm::mat4 Transform;
 	SharedPtr<BaseMesh> Mesh;
@@ -69,7 +69,7 @@ class Renderer
 public:
 	void Render();
 	
-	void Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList);
+	void Draw(Pool<PrimitiveRenderState>& meshDrawList);
 
 	void Draw(SharedPtr<Scene> scene);
 	

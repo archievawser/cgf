@@ -51,7 +51,7 @@ public:
 	template<typename ActorT>
 	void AddActor(SharedPtr<ActorT> actor)
 	{
-		static_assert(std::is_base_of_v<Actor, Actor>,
+		static_assert(std::is_base_of_v<Actor, ActorT>,
 			"ActorT must publicly derive Actor");
 
 		if(m_InPlay)
@@ -80,7 +80,7 @@ public:
 
 	Event<> OnStartActors;
 	Event<double> OnTickActors;
-	std::vector<SharedPtr<MeshDrawInfo>> MeshDrawList;
+	Pool<PrimitiveRenderState> PrimitiveRenderStates;
 	SharedPtr<Camera> CurrentCamera;
 
 private:

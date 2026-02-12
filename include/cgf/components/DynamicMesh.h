@@ -19,5 +19,5 @@ public:
 private:
 	SharedPtr<MaterialInstance> m_Material;
 	SharedPtr<DynamicMesh> m_Mesh;
-	SharedPtr<MeshDrawInfo> m_DrawInfo;
+	SharedPtr<PrimitiveRenderState> m_DrawInfo;
 };

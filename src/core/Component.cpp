@@ -37,20 +37,20 @@ void ActorComponent::AttachTo(Actor* actor)
 
 MeshComponent::MeshComponent()
 {	
-	m_DrawInfo = SharedPtr<MeshDrawInfo>::Create();
-	m_DrawInfo->Mesh = m_Mesh;
-	m_DrawInfo->DrawMaterial = m_Material;
-	m_DrawInfo->Transform = Transform.GetMatrix();
+	
 }
 
 
 void MeshComponent::OnSceneChanged(Scene* newScene)
 {
-	
+
 }
 
 
-void MeshComponent::SubmitDrawInfo()
+void MeshComponent::Start()
 {
-	GetScene()->MeshDrawList.push_back(m_DrawInfo);
+	m_RenderState = GetScene()->PrimitiveRenderStates.Create();
+	m_RenderState->Get().Mesh = m_Mesh;
+	m_RenderState->Get().DrawMaterial = m_Material;
+	m_RenderState->Get().Transform = Transform.GetMatrix();
 }

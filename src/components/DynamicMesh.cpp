@@ -4,7 +4,7 @@
 DynamicMeshComponent::DynamicMeshComponent()
 {
 	m_Mesh = SharedPtr<DynamicMesh>::Create();
-	m_DrawInfo = SharedPtr<MeshDrawInfo>::Create();
+	m_DrawInfo = SharedPtr<PrimitiveRenderState>::Create();
 	m_DrawInfo->Mesh = m_Mesh;
 	m_DrawInfo->DrawMaterial = m_Material;
 	m_DrawInfo->Transform = Transform.GetMatrix();

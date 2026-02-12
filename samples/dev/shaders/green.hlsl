@@ -3,6 +3,7 @@ struct PSInput
     float4 Pos   : SV_POSITION;
     float3 WorldPos   : POSITION;
     float3 Normal : NORMAL;
+    float2 UV : TEXCOORD;
 };
 
 
@@ -22,12 +23,14 @@ cbuffer ShaderCommon
 void ProcessVertex(
 	in float3 position : POSITION, 
 	in float3 normal : NORMAL,
+	in float2 uv : TEXCOORD,
 	out PSInput PSIn)
 {
 	float4 xpos = float4(position, 1.0);
 	PSIn.Pos = mul(ModelViewProjection, xpos);
 	PSIn.WorldPos = position;
 	PSIn.Normal = mul(Model, normal);
+	PSIn.UV = uv;
 }
 
 
@@ -37,5 +40,5 @@ void ProcessFragment(in PSInput PSIn, out PSOutput PSOut)
 	float3 lightDir = float3(1, 1, 1);
 	float intensity = max(0.01, dot(normal, lightDir) / pow(distance(PSIn.WorldPos, 2 * -(lightDir)), 2));
 
-    PSOut.Color = float4(float3(intensity, intensity, intensity), 1.0);
+    PSOut.Color = float4(float3(PSIn.UV, intensity), 1.0);
 }

@@ -20,6 +20,17 @@
 #endif	
 
 
+/**
+ * @brief A wrapper for an arbitrarily typed, heap-allocated pointer which
+ * facilitates reference counting for use with smart pointers. Upon losing all
+ * references (a condition checked for every time DecrementRefCnt() is called)
+ * the handle deletes itself and the pointer it references.
+ * 
+ * The handle may store trace information which can be useful for debugging if
+ * the associated preprocessor value is truthy.
+ * 
+ * @tparam ManagedT 
+ */
 template<typename ManagedT>
 struct SharedObjectHandle
 {
@@ -46,6 +57,9 @@ struct SharedObjectHandle
 		delete Object;
 	}
 
+	/**
+	 * @brief Adds one to the pointers's reference count
+	 */
 	void IncrementRefCnt()
 	{
 		CGF_LOG_TRACE(Name, "Gained ref");
@@ -53,11 +67,19 @@ struct SharedObjectHandle
 		RefCount++;
 	}
 
+	/**
+	 * @brief Subtracts one from the pointers's reference count
+	 */
 	void DecrementRefCnt()
 	{
 		CGF_LOG_TRACE(Name, "Lost ref");
 
 		RefCount--;
+
+		if(m_Ref->RefCount <= 0)
+		{
+			delete this;
+		}
 	}
 
 	int RefCount = 0;
@@ -70,6 +92,11 @@ struct SharedObjectHandle
 };
 
 
+/**
+ * @brief
+ * 
+ * @tparam ManagedT 
+ */
 template<typename ManagedT>
 class SharedPtr
 {	
@@ -130,37 +157,50 @@ public:
 	template<typename TargetManagedT>
 	operator SharedPtr<TargetManagedT>() const
 	{
-		//static_assert(std::is_base_of_v<TargetManagedT, ManagedT>, 
-		//	"Cannot convert to an underived type");
+		static_assert(std::is_base_of_v<TargetManagedT, ManagedT>, 
+			"Cannot convert to an underived type");
 
 		return SharedPtr<TargetManagedT>( (SharedObjectHandle<TargetManagedT>*) m_Ref );
 	}
 
+	/**
+	 * @brief see Valid()
+	 */
 	operator bool() const
 	{
 		return Valid();
 	}
 	
+	/**
+	 * @brief Indicates the validity of the raw pointer being managed 
+	 * and whether one exists.
+	 */
 	FORCEINLINE bool Valid() const
 	{
 		return m_Ref;
 	}
 
+	/**
+	 *	
+	 */
 	FORCEINLINE ManagedT* GetRaw()
 	{
 		return m_Ref->Object;
 	}
 
-	FORCEINLINE SharedObjectHandle<ManagedT>* GetManager()
-	{
-		return m_Ref->Object;
-	}
-
+	/**
+	 * Get a reference to the event invoked immediately prior to the
+	 * destruction of the pointer being shared.
+	 */
  	Notifier* GetDestructionEvent()
 	{
 		return &m_Ref->OnDestruction;
 	}
 
+	/**
+	 * @brief Constructs a shared pointer, passing the provided arguments
+	 * to the constructor of the value type.
+	 */
 	template<typename... ConstructorArgT>
 	static SharedPtr<ManagedT> Create(ConstructorArgT&&... args)
 	{
@@ -169,6 +209,9 @@ public:
 	}
 
 #if ENABLE_SMART_PTR_TRACING
+	/**
+	 *	
+	 */
 	template<typename... ConstructorArgT>
 	static SharedPtr<ManagedT> CreateTraced(std::string&& name, ConstructorArgT&&... args)
 	{
@@ -178,6 +221,9 @@ public:
 		return managedRef;
 	}
 #else
+	/**
+	 *	
+	 */
 	template <typename... ConstructorArgT>
 	static SharedPtr<ManagedT> CreateTraced(std::string &&name, ConstructorArgT &&...args)
 	{
@@ -193,21 +239,23 @@ public:
 	}
 
 protected:
+	/**
+	 * Detach from the current shared object and decrease the object's
+	 * reference count.
+	 */
 	void Detach()
 	{
 		if(m_Ref)
 		{
 			m_Ref->DecrementRefCnt();
-
-			if(m_Ref->RefCount <= 0)
-			{
-				delete m_Ref;
-			}
-
 			m_Ref = nullptr;
 		}
 	}
 
+	/**
+	 * Attach to a new shared object, detaching from the current one
+	 * if it exists, and increasing its reference count.
+	 */
 	void Attach(SharedObjectHandle<ManagedT>* handle)
 	{
 		if(m_Ref) 
@@ -228,6 +276,16 @@ private:
 };
 
 
+/**
+ * @brief Constructs a dynamically sized, contiguous array of T. Objects within the array are
+ * accessed through a PoolSharedPtr<T>, and their existence with the array is tied to the lifespan
+ * of their corresponding PoolSharedPtr.
+ * 
+ * The PoolSharedPtr type is a shorthand alias for the type SharedPtr<typename Pool<T>::PoolObject>.
+ * The PoolObject type references its object in its pool array by index instead of pointer, as pointers to
+ * pool array members would be invalidated upon resizing / reallocation. As expected, it also removes its
+ * referenced object upon destruction.
+ */
 template<typename T>
 class Pool
 {
@@ -327,3 +385,7 @@ private:
 	T* m_Data = new T;
 	PoolObject** m_PoolObjects = new PoolObject*;
 };
+
+
+template<typename T>
+using PoolSharedPtr = SharedPtr<typename Pool<T>::PoolObject>;

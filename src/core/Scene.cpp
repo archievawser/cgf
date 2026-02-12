@@ -3,7 +3,7 @@
 
 Scene::Scene()
 {
-	CurrentCamera = SharedPtr<Camera>::Create(false, 70.f, 1920.f, 1080.f);
+	CurrentCamera = SharedPtr<Camera>::Create(true, 70.f, 1920.f, 1080.f);
 	AddActor(CurrentCamera);
 }
 

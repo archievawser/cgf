@@ -60,33 +60,33 @@ void Renderer::Render()
 }
 
 
-void Renderer::Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList)
+void Renderer::Draw(Pool<PrimitiveRenderState>& meshDrawList)
 {
 	SharedPtr<Camera> camera = Game->GetCurrentScene()->CurrentCamera;
 	glm::mat4 pv = camera->Projection * camera->Transform.GetViewMatrix();
 	
-	for(SharedPtr<MeshDrawInfo> info : meshDrawList)
+	for(PrimitiveRenderState& info : meshDrawList)
 	{
-		IBuffer* vbuffers[] = { info->Mesh->GetVertexBuffer() };
+		IBuffer* vbuffers[] = { info.Mesh->GetVertexBuffer() };
 
 		GraphicsContext* ctx = Game->GetGraphicsContext();
 
 		ctx->GetDeviceContext()->SetVertexBuffers(0, 1, vbuffers, 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION, SET_VERTEX_BUFFERS_FLAG_RESET);
-		ctx->GetDeviceContext()->SetIndexBuffer(info->Mesh->GetIndexBuffer(), 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		ctx->GetDeviceContext()->SetIndexBuffer(info.Mesh->GetIndexBuffer(), 0, RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 		
-		ctx->UsePipeline(info->DrawMaterial->GetBaseMaterial()->GetPipelineState());
+		ctx->UsePipeline(info.DrawMaterial->GetBaseMaterial()->GetPipelineState());
 
-		glm::mat4 pvm = pv * info->Transform;
+		glm::mat4 pvm = pv * info.Transform;
 		ShaderCommonData data;
-		std::memcpy(data.Model, glm::value_ptr(info->Transform), sizeof(data.Model));
+		std::memcpy(data.Model, glm::value_ptr(info.Transform), sizeof(data.Model));
 		std::memcpy(data.MVP, glm::value_ptr(pvm), sizeof(data.MVP));
 
-		info->DrawMaterial->ShaderCommon.Set(data);
+		info.DrawMaterial->ShaderCommon.Set(data);
 
-		ctx->GetDeviceContext()->CommitShaderResources(info->DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
+		ctx->GetDeviceContext()->CommitShaderResources(info.DrawMaterial->GetResourceBinding(), RESOURCE_STATE_TRANSITION_MODE_TRANSITION);
 
 		DrawIndexedAttribs drawAttrs;
-		drawAttrs.NumIndices = info->Mesh->GetIndexCount();
+		drawAttrs.NumIndices = info.Mesh->GetIndexCount();
 		drawAttrs.IndexType = VT_UINT32;
 		ctx->GetDeviceContext()->DrawIndexed(drawAttrs);
 	}
@@ -95,5 +95,5 @@ void Renderer::Draw(std::vector<SharedPtr<MeshDrawInfo>>& meshDrawList)
 
 void Renderer::Draw(SharedPtr<Scene> scene)
 {
-	Draw(scene->MeshDrawList);
+	Draw(scene->PrimitiveRenderStates);
 }

@@ -30,20 +30,17 @@ public:
 		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Green");
 		prim->SetMaterial(material);
 
-		material->GetBaseMaterial()->SetFillMode(Diligent::FILL_MODE_WIREFRAME);
-
-		SharedPtr<StaticMesh> mesh = Game->GetAssetLibrary()->Get<StaticMesh>("Icosphere");
+		SharedPtr<StaticMesh> mesh = Game->GetAssetLibrary()->Get<StaticMesh>("Quad");
 		prim->SetMesh(mesh);
 
-		prim->Transform.Scale = glm::vec3(1);
-		prim->Transform.Rotation = glm::vec3(-3.1415f / 2.0f, 0.0f, 0.0f);
+		prim->Transform.Scale = glm::vec3(100);
 	}
 
 	void Tick(double dT) override
 	{
 		float speed = 1.f;
 
-		prim->Transform.Rotate(0, speed * dT, 0);
+		//prim->Transform.Rotate(0, speed * dT, 0);
 
 		Actor::Tick(dT);
 	}
@@ -62,8 +59,8 @@ public:
 
 		CurrentCamera->Transform.LookAt(glm::vec3(0));
 
-		SharedPtr<Spectator> e = SharedPtr<Spectator>::Create();
-		AddActor(e);
+		//SharedPtr<Spectator> e = SharedPtr<Spectator>::Create();
+		//AddActor(e);
 	}
 };
 
