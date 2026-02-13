@@ -39,11 +39,13 @@ void DynamicMesh::SetVertexData(void* vertexData, unsigned int vertexByteSize, u
 		return;
 	}
 
+	m_VertexBuffer = nullptr;
+
 	BufferData vertexBufferData (vertexData, newVertexBufferSize);
 	BufferDesc vertexBufferDesc;
 	vertexBufferDesc.Name = "Vertex Buffer";
 	vertexBufferDesc.Size = newVertexBufferSize;
-	vertexBufferDesc.Usage = USAGE_DYNAMIC;
+	vertexBufferDesc.Usage = USAGE_DEFAULT;
 	vertexBufferDesc.BindFlags = BIND_VERTEX_BUFFER;
 
 	Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(vertexBufferDesc, &vertexBufferData, &m_VertexBuffer);
@@ -54,6 +56,8 @@ void DynamicMesh::SetVertexData(void* vertexData, unsigned int vertexByteSize, u
 void DynamicMesh::SetIndexData(unsigned int* indices, unsigned int numIndices)
 {
 	const int newIndexBufferSize = sizeof(unsigned int) * numIndices;
+
+	m_IndexCount = numIndices;
 
 	if (newIndexBufferSize == m_CurrentIndexBufferSize)
 	{
@@ -66,12 +70,14 @@ void DynamicMesh::SetIndexData(unsigned int* indices, unsigned int numIndices)
 		return;
 	}
 
+	m_IndexBuffer = nullptr;
+
 	BufferData idata(indices, newIndexBufferSize);
 
 	BufferDesc ibufferDesc;
 	ibufferDesc.Name = "Index Buffer";
 	ibufferDesc.Size = newIndexBufferSize;
-	ibufferDesc.Usage = USAGE_DYNAMIC;
+	ibufferDesc.Usage = USAGE_DEFAULT;
 	ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
 
 	Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &m_IndexBuffer);

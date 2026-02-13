@@ -63,6 +63,23 @@ public:
 		
 		GetActorsOfType<ActorT>().push_back(actor);
 	}
+
+	template<typename ActorT>
+	void RemoveActor(SharedPtr<ActorT> actor)
+	{
+		static_assert(std::is_base_of_v<Actor, ActorT>,
+			"ActorT must publicly derive Actor");
+
+		actor->AttachTo(nullptr);
+		
+		std::vector<SharedPtr<ActorT>> actors = GetActorsOfType<ActorT>();
+		auto iterator = std::find(actors.begin(), actors.end(), actor);
+
+		CGF_ASSERT(iterator != actors.end(),
+			"An actor may only be removed from a scene it has been added to.");
+
+		actors.erase(iterator);
+	}
 	
 	template<typename ActorT>
 	std::vector<SharedPtr<ActorT>>& GetActorsOfType()

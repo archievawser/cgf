@@ -51,6 +51,7 @@ public:
 	Event<Scene*> OnSceneChanged;
 
 private:
+	bool m_ShouldTick = true;
 	Scene* m_Scene = nullptr;
 	std::vector<bool> m_ComponentBitset;
 	OnTickEvent::Connection m_TickListener;

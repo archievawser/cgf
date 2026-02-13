@@ -60,6 +60,6 @@ public:
 	void SetIndexData(unsigned int* indices, unsigned int numIndices);
 
 private:
-	int m_CurrentVertexBufferSize;
-	int m_CurrentIndexBufferSize;
+	int m_CurrentVertexBufferSize = 0;
+	int m_CurrentIndexBufferSize = 0;
 };

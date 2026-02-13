@@ -24,7 +24,7 @@ public:
 
 	virtual void OnSceneChanged(Scene* newScene);
 
-	void AttachTo(Actor* entity);
+	virtual void AttachTo(Actor* entity);
 
 	FORCEINLINE Scene* GetScene() const
 	{
@@ -47,33 +47,38 @@ public:
 };
 
 
-class MeshComponent : public SceneComponent
+class BaseMeshComponent : public SceneComponent
 {
 public:
-	MeshComponent();
+	BaseMeshComponent();
 
 	void OnSceneChanged(Scene* newScene) override;
 
 	void Start() override;
 
+	void AttachTo(Actor* entity) override;
+
 	void TickComponent(double dT) override
 	{
-		if(m_RenderState && m_StateInvalid)
+		if(m_RenderState)
 		{
-			m_RenderState->Get().Transform = Transform.GetMatrix();
+			m_RenderState->Transform = Transform.GetMatrix();
 		}
 	}
 
-	FORCEINLINE SharedPtr<StaticMesh> GetMesh() const
+	FORCEINLINE SharedPtr<BaseMesh> GetMesh() const
 	{
 		return m_Mesh;
 	}
 	
-	FORCEINLINE void SetMesh(SharedPtr<StaticMesh> mesh)
+	FORCEINLINE void SetMesh(SharedPtr<BaseMesh> mesh)
 	{
 		m_Mesh = mesh;
-		m_StateInvalid = true;
-		//m_RenderState->Mesh = mesh;
+		
+		if(m_RenderState)
+		{
+			m_RenderState->Mesh = mesh;
+		}
 	}
 
 	FORCEINLINE SharedPtr<MaterialInstance> GetMaterial() const
@@ -84,13 +89,16 @@ public:
 	FORCEINLINE void SetMaterial(SharedPtr<MaterialInstance> material)
 	{
 		m_Material = material;
-		m_StateInvalid = true;
-		//m_RenderState->DrawMaterial = material;
+		
+		if(m_RenderState)
+		{
+			m_RenderState->DrawMaterial = material;
+		}
 	}
 
 private:
 	bool m_StateInvalid = false;
-	PoolSharedPtr<PrimitiveRenderState> m_RenderState;
-	SharedPtr<StaticMesh> m_Mesh;
+	PooledPtr<PrimitiveRenderState> m_RenderState;
+	SharedPtr<BaseMesh> m_Mesh;
 	SharedPtr<MaterialInstance> m_Material;
 };

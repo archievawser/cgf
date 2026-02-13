@@ -1,23 +1,19 @@
-#include "components/DynamicMesh.h"
+#include "components/DynamicMeshComponent.h"
 
 
 DynamicMeshComponent::DynamicMeshComponent()
 {
-	m_Mesh = SharedPtr<DynamicMesh>::Create();
-	m_DrawInfo = SharedPtr<PrimitiveRenderState>::Create();
-	m_DrawInfo->Mesh = m_Mesh;
-	m_DrawInfo->DrawMaterial = m_Material;
-	m_DrawInfo->Transform = Transform.GetMatrix();
+	SetMesh(SharedPtr<DynamicMesh>::Create());
 }
 
 
 void DynamicMeshComponent::SetVertexData(void* vertexData, unsigned int vertexByteSize, unsigned int numVertices)
 {
-
+	((SharedPtr<DynamicMesh>)GetMesh())->SetVertexData(vertexData, vertexByteSize, numVertices);
 }
 
 
 void DynamicMeshComponent::SetIndexData(unsigned int* indices, unsigned int numIndices)
 {
-
+	((SharedPtr<DynamicMesh>)GetMesh())->SetIndexData(indices, numIndices);
 }

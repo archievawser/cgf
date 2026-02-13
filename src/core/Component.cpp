@@ -35,22 +35,30 @@ void ActorComponent::AttachTo(Actor* actor)
 }
 
 
-MeshComponent::MeshComponent()
+BaseMeshComponent::BaseMeshComponent()
 {	
 	
 }
 
 
-void MeshComponent::OnSceneChanged(Scene* newScene)
+void BaseMeshComponent::OnSceneChanged(Scene* newScene)
+{
+	m_RenderState = newScene->PrimitiveRenderStates.Create();
+	m_RenderState->Mesh = m_Mesh;
+	m_RenderState->DrawMaterial = m_Material;
+	m_RenderState->Transform = Transform.GetMatrix();
+}
+
+
+void BaseMeshComponent::Start()
 {
 
 }
 
 
-void MeshComponent::Start()
+void BaseMeshComponent::AttachTo(Actor* actor)
 {
-	m_RenderState = GetScene()->PrimitiveRenderStates.Create();
-	m_RenderState->Get().Mesh = m_Mesh;
-	m_RenderState->Get().DrawMaterial = m_Material;
-	m_RenderState->Get().Transform = Transform.GetMatrix();
+
+
+	ActorComponent::AttachTo(actor);
 }

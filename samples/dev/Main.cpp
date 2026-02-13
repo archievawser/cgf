@@ -8,6 +8,8 @@
 #include "core/Component.h"
 #include "core/Scene.h"
 
+#include "components/SpriteComponent.h"
+
 #include "graphics/Diligent.h"
 
 #include "actors/Spectator.h"
@@ -24,28 +26,37 @@ class MeshActor : public Actor
 public:
 	MeshActor()
 	{
-		prim = SharedPtr<MeshComponent>::Create();
+		prim = SharedPtr<SpriteBatchComponent>::Create();
 		AddComponent(prim);
 
 		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Green");
 		prim->SetMaterial(material);
 
-		SharedPtr<StaticMesh> mesh = Game->GetAssetLibrary()->Get<StaticMesh>("Quad");
-		prim->SetMesh(mesh);
+		//material->GetBaseMaterial()->SetCullMode(Diligent::CULL_MODE_NONE);
 
-		prim->Transform.Scale = glm::vec3(100);
+		//SharedPtr<StaticMesh> mesh = Game->GetAssetLibrary()->Get<StaticMesh>("Quad");
+		//prim->SetMesh(mesh);
+
+		sprite = prim->CreateSprite();
+		
+
+		
+		prim->Transform.Scale = glm::vec3(1);
 	}
 
 	void Tick(double dT) override
 	{
-		float speed = 1.f;
+		float speed = 100.f;
+
+		sprite->SetPosition(sprite->GetPosition() + glm::vec2(speed * dT, 0));
 
 		//prim->Transform.Rotate(0, speed * dT, 0);
 
 		Actor::Tick(dT);
 	}
 
-	SharedPtr<MeshComponent> prim;
+	PooledPtr<SpriteState> sprite;
+	SharedPtr<SpriteBatchComponent> prim;
 };
 
 

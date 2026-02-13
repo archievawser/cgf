@@ -7,7 +7,7 @@
 #include "graphics/Renderer.h"
 
 
-class DynamicMeshComponent : public SceneComponent
+class DynamicMeshComponent : public BaseMeshComponent
 {
 public:
 	DynamicMeshComponent();
@@ -16,8 +16,8 @@ public:
 
 	void SetIndexData(unsigned int* indices, unsigned int numIndices);
 
-private:
-	SharedPtr<MaterialInstance> m_Material;
-	SharedPtr<DynamicMesh> m_Mesh;
-	SharedPtr<PrimitiveRenderState> m_DrawInfo;
+	SharedPtr<DynamicMesh> GetMesh() const
+	{
+		return (SharedPtr<DynamicMesh>)(BaseMeshComponent::GetMesh());
+	}
 };

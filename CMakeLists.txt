@@ -23,8 +23,8 @@ set(SOURCE
 	"src/core/Component.cpp"
 	"src/utility/Timer.cpp"
 	"src/actors/Spectator.cpp"
-	"src/actors/SpriteBatch.cpp"
-	"src/components/DynamicMesh.cpp"
+	"src/components/SpriteComponent.cpp"
+	"src/components/DynamicMeshComponent.cpp"
 )
 
 add_library(cgf ${SOURCE})

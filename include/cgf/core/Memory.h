@@ -76,7 +76,7 @@ struct SharedObjectHandle
 
 		RefCount--;
 
-		if(m_Ref->RefCount <= 0)
+		if(RefCount <= 0)
 		{
 			delete this;
 		}
@@ -89,6 +89,20 @@ struct SharedObjectHandle
 #if ENABLE_SMART_PTR_TRACING
 	std::string Name = "?";
 #endif
+};
+
+
+template <typename T, typename = void> 
+struct overloads_arrow_operator 
+{
+    enum { value = 0 };
+};
+
+
+template <typename T> 
+struct overloads_arrow_operator<T, std::void_t<decltype(std::declval<T>().operator->())>> 
+{
+    enum { value = 1 };
 };
 
 
@@ -109,6 +123,11 @@ public:
 	explicit SharedPtr(ManagedT* object)
 	{
 		Attach(new SharedObjectHandle<ManagedT>(object));
+	}
+
+	SharedPtr(nullptr_t ptr)
+	{
+		
 	}
 
 #if ENABLE_SMART_PTR_TRACING
@@ -157,8 +176,8 @@ public:
 	template<typename TargetManagedT>
 	operator SharedPtr<TargetManagedT>() const
 	{
-		static_assert(std::is_base_of_v<TargetManagedT, ManagedT>, 
-			"Cannot convert to an underived type");
+		static_assert(std::is_base_of_v<TargetManagedT, ManagedT> || std::is_base_of_v<ManagedT, TargetManagedT>, 
+			"Cannot convert to or from an underived type");
 
 		return SharedPtr<TargetManagedT>( (SharedObjectHandle<TargetManagedT>*) m_Ref );
 	}
@@ -231,11 +250,28 @@ public:
 	}
 #endif
 
-	ManagedT* operator->() const
+	/**
+	 * <!--
+	 * Although ugly, SFINAE is applied here to allow arrow operator chaining when ManagedT
+	 * implements the arrow operator, which makes cases where ManagedT is another nonprimitive 
+	 * reference type a lot less ugly. For example, members of Pool<T> objects would otherwise
+	 * have to be referenced like 'PooledPtr<T>()->Get().SomeMember'.
+	 * -->
+	 */
+	template<typename _ManagedT = ManagedT>
+	typename std::enable_if_t<!overloads_arrow_operator<_ManagedT>::value, _ManagedT*> operator->() const
 	{
 		CGF_ASSERT(Valid(), "Cannot dereference nullptr");
 		
 		return m_Ref->Object;
+	}
+
+	template<typename _ManagedT = ManagedT>
+	typename std::enable_if_t<overloads_arrow_operator<_ManagedT>::value, _ManagedT&> operator->() const
+	{
+		CGF_ASSERT(Valid(), "Cannot dereference nullptr");
+		
+		return *(m_Ref->Object);
 	}
 
 protected:
@@ -275,13 +311,12 @@ private:
 	SharedObjectHandle<ManagedT>* m_Ref = nullptr;
 };
 
-
 /**
  * @brief Constructs a dynamically sized, contiguous array of T. Objects within the array are
- * accessed through a PoolSharedPtr<T>, and their existence with the array is tied to the lifespan
- * of their corresponding PoolSharedPtr.
+ * accessed through a PooledPtr<T>, and their existence with the array is tied to the lifespan
+ * of their corresponding PooledPtr.
  * 
- * The PoolSharedPtr type is a shorthand alias for the type SharedPtr<typename Pool<T>::PoolObject>.
+ * The PooledPtr type is a shorthand alias for the type SharedPtr<typename Pool<T>::PoolObject>.
  * The PoolObject type references its object in its pool array by index instead of pointer, as pointers to
  * pool array members would be invalidated upon resizing / reallocation. As expected, it also removes its
  * referenced object upon destruction.
@@ -314,6 +349,11 @@ public:
 			}
 		}
 
+		T* operator->() const
+		{
+			return &(Owner->At(Index));
+		}
+
 		T& Get()
 		{
 			return Owner->At(Index);
@@ -326,9 +366,19 @@ public:
 
 	Pool() = default;
 
+	T& operator[](int index)
+	{
+		return At(index);
+	}
+
 	T& At(int index)
 	{
 		return m_Data[index];
+	}
+
+	FORCEINLINE int GetCount() const
+	{
+		return m_Count;
 	}
 
 	void Remove(int index)
@@ -388,4 +438,4 @@ private:
 
 
 template<typename T>
-using PoolSharedPtr = SharedPtr<typename Pool<T>::PoolObject>;
+using PooledPtr = SharedPtr<typename Pool<T>::PoolObject>;
