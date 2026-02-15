@@ -9,6 +9,7 @@
 #include "buildtool/Assets.h"
 #include "buildtool/AssetTypes.h"
 #include "cgfb/CGFB.h"
+#include "stb/stb_image.h"
 
 #define LOG(x) std::cout << x << std::endl;
 
@@ -105,6 +106,26 @@ int main(int argc, char* argv[])
 
 		dataWriter.Write(meshDataSize);
 		dataWriter.Write(meshData, meshDataSize);
+	}
+		
+	stbi_set_flip_vertically_on_load(true);
+	
+	std::vector<TextureAsset> textureList;
+	GetAssetListOfType<TextureAsset>(&textureList, doc);
+	for (TextureAsset& v : textureList)
+	{
+		LOG(v.Name);
+		assetNameToDataLocation[v.Name] = dataWriter.GetBuffer().size();
+
+		int x, y, channels;
+		stbi_uc* data = stbi_load(v.Path.c_str(),  &x, &y, &channels, 4);
+
+		int dataSize = sizeof(int) * 3 + (x * y * 4);
+		dataWriter.Write(dataSize);
+		dataWriter.Write(x);
+		dataWriter.Write(y);
+		dataWriter.Write(4);
+		dataWriter.Write((char*)data, x * y * 4);
 	}
 
 	LOG("------------------");

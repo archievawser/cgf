@@ -7,7 +7,8 @@ project(buildtool)
 add_library(buildtool 
 	"src/Assets.cpp" 
 	"src/cgfb/CGFB.cpp" 
-	"src/Utility.cpp")
+	"src/Utility.cpp"
+	"src/stb_image.cpp")
 
 FetchContent_Declare(
 	pugixml

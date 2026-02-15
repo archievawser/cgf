@@ -11,6 +11,7 @@
 #include "components/SpriteComponent.h"
 
 #include "graphics/Diligent.h"
+#include "graphics/Texture.h"
 
 #include "actors/Spectator.h"
 
@@ -29,7 +30,7 @@ public:
 		prim = SharedPtr<SpriteBatchComponent>::Create();
 		AddComponent(prim);
 
-		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Green");
+		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Sprite");
 		prim->SetMaterial(material);
 
 		//material->GetBaseMaterial()->SetCullMode(Diligent::CULL_MODE_NONE);
@@ -39,7 +40,9 @@ public:
 
 		sprite = prim->CreateSprite();
 		
-
+		texture = Game->GetAssetLibrary()->Get<Texture2D>("Atlas");
+		
+		material->GetFragmentShaderVariable("g_Texture")->Set(texture->GetHandle()->GetDefaultView(TEXTURE_VIEW_SHADER_RESOURCE));
 		
 		prim->Transform.Scale = glm::vec3(1);
 	}
@@ -55,6 +58,7 @@ public:
 		Actor::Tick(dT);
 	}
 
+	SharedPtr<Texture2D> texture;
 	PooledPtr<SpriteState> sprite;
 	SharedPtr<SpriteBatchComponent> prim;
 };

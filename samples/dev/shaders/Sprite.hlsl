@@ -20,6 +20,10 @@ cbuffer ShaderCommon
 };
 
 
+Texture2D    g_Texture;
+SamplerState g_Texture_sampler;
+
+
 void ProcessVertex(
 	in float3 position : POSITION, 
 	in float3 normal : NORMAL,
@@ -40,5 +44,5 @@ void ProcessFragment(in PSInput PSIn, out PSOutput PSOut)
 	float3 lightDir = float3(1, 1, 1);
 	float intensity = max(0.01, dot(normal, lightDir) / pow(distance(PSIn.WorldPos, 2 * -(lightDir)), 2));
 
-    PSOut.Color = float4(float3(PSIn.UV, intensity), 1.0);
-}
+    PSOut.Color = g_Texture.Sample(g_Texture_sampler, PSIn.UV);
+}	

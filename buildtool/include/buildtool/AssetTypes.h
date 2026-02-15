@@ -52,4 +52,21 @@ struct MeshAsset : public BaseAsset
 	std::string Path;
 };
 
+
+struct TextureAsset : public BaseAsset
+{
+	void ConsumeXml(pugi::xml_node& xmlNode) override
+	{
+		Name = xmlNode.child("Name").child_value();
+		Path = xmlNode.child("File").child_value();
+	}
+
+	inline const char* GetXmlRootNodeName() const override
+	{
+		return "Texture";
+	}
+
+	std::string Path;
+};
+
 }

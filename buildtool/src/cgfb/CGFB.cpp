@@ -44,11 +44,18 @@ void CgfbMemoryWriter::WriteToStream(char *data, int count)
 }
 
 
+CgfbMemoryReader::CgfbMemoryReader(char* buffer)
+	: m_Buffer(buffer)
+{
+
+}
+
+
 void CgfbMemoryReader::ReadFromStream(char *data, int count)
 {
 	static int pos = 0;
 
-	std::memcpy(data, m_Buffer.data() + pos, count);
+	std::memcpy(data, m_Buffer + pos, count);
 
 	pos += count; 
 }

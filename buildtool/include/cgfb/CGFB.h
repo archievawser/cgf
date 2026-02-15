@@ -298,7 +298,7 @@ private:
 class CgfbMemoryReader : public CgfbReader
 {
 public:
-	CgfbMemoryReader() = default;
+	CgfbMemoryReader(char* buffer);
 
 	inline void SetPosition(int position) override
 	{
@@ -313,7 +313,7 @@ protected:
 	void ReadFromStream(char *data, int count) override;
 
 private:
-	std::vector<char> m_Buffer;
+	char* m_Buffer;
 };
 
 }

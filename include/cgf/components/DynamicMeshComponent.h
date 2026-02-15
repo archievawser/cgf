@@ -15,9 +15,4 @@ public:
 	void SetVertexData(void* vertexData, unsigned int vertexByteSize, unsigned int numVertices);
 
 	void SetIndexData(unsigned int* indices, unsigned int numIndices);
-
-	SharedPtr<DynamicMesh> GetMesh() const
-	{
-		return (SharedPtr<DynamicMesh>)(BaseMeshComponent::GetMesh());
-	}
 };

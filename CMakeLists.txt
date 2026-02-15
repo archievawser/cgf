@@ -10,6 +10,7 @@ set(SOURCE
 	"src/graphics/Material.cpp"
 	"src/graphics/Context.cpp"
 	"src/graphics/Mesh.cpp"
+	"src/graphics/Texture.cpp"
 	"src/core/Game.cpp"
 	"src/core/AssetLibrary.cpp"
 	"src/core/Window.cpp"
@@ -25,6 +26,7 @@ set(SOURCE
 	"src/actors/Spectator.cpp"
 	"src/components/SpriteComponent.cpp"
 	"src/components/DynamicMeshComponent.cpp"
+	"src/stb/stb_image.cpp"
 )
 
 add_library(cgf ${SOURCE})
@@ -54,6 +56,7 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(glfw)
 
 target_include_directories(cgf 
+	PUBLIC include/
 	PUBLIC include/cgf
 	PUBLIC buildtool/include
 	PUBLIC ${dcore_SOURCE_DIR} 

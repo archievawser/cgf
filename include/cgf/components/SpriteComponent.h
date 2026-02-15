@@ -8,6 +8,8 @@
 #include "core/AssetLibrary.h"
 #include "core/Common.h"
 
+#include "graphics/Texture.h"
+
 #include "components/DynamicMeshComponent.h"
 
 
@@ -62,6 +64,14 @@ class SpriteBatchComponent : public DynamicMeshComponent
 {
 public:
 	SpriteBatchComponent() = default;
+
+	void Start() override
+	{
+		m_SpriteMaterial = Game->GetAssetLibrary()->Get<MaterialInstance>("Sprite");
+		SetMaterial(m_SpriteMaterial);
+
+		m_Atlas = Game->GetAssetLibrary()->Get<Texture2D>("Atlas");
+	}
 
 	void TickComponent(double dT)
 	{
@@ -128,4 +138,6 @@ private:
 	std::vector<Vertex> m_Vertices;
 	std::vector<unsigned int> m_Indices;
 	Pool<SpriteState> m_SpriteStatePool;
+	SharedPtr<MaterialInstance> m_SpriteMaterial;
+	SharedPtr<Texture2D> m_Atlas;
 };

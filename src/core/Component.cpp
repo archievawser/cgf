@@ -54,11 +54,3 @@ void BaseMeshComponent::Start()
 {
 
 }
-
-
-void BaseMeshComponent::AttachTo(Actor* actor)
-{
-
-
-	ActorComponent::AttachTo(actor);
-}

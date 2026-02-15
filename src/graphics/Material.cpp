@@ -32,6 +32,22 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 		PSOCreateInfo.GraphicsPipeline.RTVFormats[i] = m_RenderTargetFormats[i];
 	}
 
+	SamplerDesc SamLinearClampDesc;
+	SamLinearClampDesc.MinFilter = FILTER_TYPE_LINEAR;
+	SamLinearClampDesc.MagFilter = FILTER_TYPE_LINEAR;
+	SamLinearClampDesc.MipFilter = FILTER_TYPE_LINEAR;
+	SamLinearClampDesc.AddressU  = TEXTURE_ADDRESS_CLAMP;
+	SamLinearClampDesc.AddressV  = TEXTURE_ADDRESS_CLAMP;
+	SamLinearClampDesc.AddressW  = TEXTURE_ADDRESS_CLAMP;
+
+	ImmutableSamplerDesc ImtblSamplers[] =
+	{
+		{SHADER_TYPE_PIXEL, "g_Texture", SamLinearClampDesc}
+	};
+
+	PSOCreateInfo.PSODesc.ResourceLayout.ImmutableSamplers = ImtblSamplers;
+	PSOCreateInfo.PSODesc.ResourceLayout.NumImmutableSamplers = _countof(ImtblSamplers);
+
 	PSOCreateInfo.GraphicsPipeline.DSVFormat = m_DepthStencilFormat;
 	PSOCreateInfo.GraphicsPipeline.PrimitiveTopology = m_PrimitiveType;
 	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FillMode = m_FillMode;

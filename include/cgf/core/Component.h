@@ -56,8 +56,6 @@ public:
 
 	void Start() override;
 
-	void AttachTo(Actor* entity) override;
-
 	void TickComponent(double dT) override
 	{
 		if(m_RenderState)
