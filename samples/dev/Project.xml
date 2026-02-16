@@ -1,6 +1,7 @@
 <Assets>
 	<Material>
 		<Name>Sprite</Name>
+		<Domain>Translucent</Domain>
 		<ShaderFile>C:/Dev/C++/cgf/samples/dev/shaders/Sprite.hlsl</ShaderFile>
 	</Material>
 	
@@ -21,6 +22,6 @@
 
 	<Texture>
 		<Name>Atlas</Name>
-		<File>C:/Dev/C++/cgf/samples/dev/textures/images.jpg</File>
+		<File>C:/Dev/C++/cgf/samples/dev/textures/SpriteAtlas.png</File>
 	</Texture>
 </Assets>

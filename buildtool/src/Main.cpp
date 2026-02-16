@@ -54,15 +54,22 @@ std::string GetAbsoluteFilePath(const char* pathRelativeToContentDir)
 #define CGFB_WRITE
 #define CGFB_READ
 
+#define RUN_IN_DEBUG
+
 
 int main(int argc, char* argv[])
 {
 	LOG("Compiling project into binary");
-	LOG("Project file: " + std::string(argv[1]));
-	LOG("Binary file: " + std::string(argv[2]));
+	//LOG("Project file: " + std::string(argv[1]));
+	//LOG("Binary file: " + std::string(argv[2]));
 
+#ifdef RUN_IN_DEBUG
+	const char* contentFilePath = (char*)"C:\\Dev\\C++\\cgf\\samples\\dev\\Project.xml";
+	const char* contentBinaryOutputPath = (char*)"C:\\Dev\\C++\\cgf\\samples\\dev\\Content.cgfb";
+#else
 	char* contentFilePath = argv[1];
 	char* contentBinaryOutputPath = argv[2];
+#endif
 
 	pugi::xml_document doc;
 	doc.load_file(contentFilePath);
@@ -88,7 +95,8 @@ int main(int argc, char* argv[])
 
 		ReadFileContents(v.ShaderPath.c_str(), &materialData, &materialDataSize);
 
-		dataWriter.Write(materialDataSize);
+		dataWriter.Write(materialDataSize + sizeof(int) + v.Domain.size());
+		dataWriter.Write(v.Domain);
 		dataWriter.Write(materialData, materialDataSize);
 	}
 	

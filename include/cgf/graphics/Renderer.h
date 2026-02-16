@@ -26,6 +26,7 @@ struct PrimitiveRenderState
 	glm::mat4 Transform;
 	SharedPtr<BaseMesh> Mesh;
 	SharedPtr<MaterialInstance> DrawMaterial;
+	bool Translucent;
 };
 
 
@@ -46,13 +47,6 @@ struct RenderPass
 class RenderGraphBuilder
 {
 public:
-	RefCntAutoPtr<ITexture> MakeTexture2D(
-		std::string name, 
-		unsigned int width, 
-		unsigned int height, 
-		TEXTURE_FORMAT format,
-		TextureData* data = nullptr);
-
 	void QueuePass(SharedPtr<RenderPass> pass);
 
 private:

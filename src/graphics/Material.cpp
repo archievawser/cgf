@@ -4,8 +4,8 @@
 #include "core/Game.h"
 
 
-Material::Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps)
-	: m_PixelShader(ps), m_VertexShader(vs)
+Material::Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps, MaterialDomain domain)
+	: m_PixelShader(ps), m_VertexShader(vs), m_Domain(domain)
 {
 	auto swapChain = Game->GetGraphicsContext()->GetSwapChain();
 	std::fill_n(m_RenderTargetFormats, _countof(m_RenderTargetFormats), swapChain->GetCurrentBackBufferRTV()->GetDesc().Format);
@@ -26,6 +26,24 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 	PSOCreateInfo.PSODesc.PipelineType = PIPELINE_TYPE_GRAPHICS;
 	PSOCreateInfo.PSODesc.ResourceLayout.DefaultVariableType = SHADER_RESOURCE_VARIABLE_TYPE_MUTABLE;
 	PSOCreateInfo.GraphicsPipeline.NumRenderTargets = m_RenderTargetCount;
+
+	BlendStateDesc &BSDesc = PSOCreateInfo.GraphicsPipeline.BlendDesc;
+
+	// Optional: enable independent blending if you have multiple simultaneous RTs
+	BSDesc.IndependentBlendEnable = True;
+
+	// Configure blending for render target 0
+	auto &RT0 = BSDesc.RenderTargets[0];
+	RT0.BlendEnable        = True;
+	RT0.RenderTargetWriteMask = COLOR_MASK_ALL;
+	RT0.SrcBlend           = BLEND_FACTOR_SRC_ALPHA;
+	RT0.DestBlend          = BLEND_FACTOR_INV_SRC_ALPHA;
+	RT0.BlendOp            = BLEND_OPERATION_ADD;
+
+	// Optionally blend alpha similarly
+	RT0.SrcBlendAlpha      = BLEND_FACTOR_SRC_ALPHA;
+	RT0.DestBlendAlpha     = BLEND_FACTOR_INV_SRC_ALPHA;
+	RT0.BlendOpAlpha       = BLEND_OPERATION_ADD;
 	
 	for(int i = 0; i < m_RenderTargetCount; i++)
 	{
@@ -33,9 +51,9 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 	}
 
 	SamplerDesc SamLinearClampDesc;
-	SamLinearClampDesc.MinFilter = FILTER_TYPE_LINEAR;
-	SamLinearClampDesc.MagFilter = FILTER_TYPE_LINEAR;
-	SamLinearClampDesc.MipFilter = FILTER_TYPE_LINEAR;
+	SamLinearClampDesc.MinFilter = FILTER_TYPE_POINT;
+	SamLinearClampDesc.MagFilter = FILTER_TYPE_POINT;
+	SamLinearClampDesc.MipFilter = FILTER_TYPE_POINT;
 	SamLinearClampDesc.AddressU  = TEXTURE_ADDRESS_CLAMP;
 	SamLinearClampDesc.AddressV  = TEXTURE_ADDRESS_CLAMP;
 	SamLinearClampDesc.AddressW  = TEXTURE_ADDRESS_CLAMP;
@@ -54,6 +72,12 @@ RefCntAutoPtr<IPipelineState> Material::BuildPipeline()
 	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.CullMode = m_CullMode;
 	PSOCreateInfo.GraphicsPipeline.RasterizerDesc.FrontCounterClockwise = true;
 	PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthEnable = m_UseDepth;
+	
+	if(m_Domain == MaterialDomain::Translucent)
+	{
+		PSOCreateInfo.GraphicsPipeline.DepthStencilDesc.DepthWriteEnable = false;
+	}
+
 	PSOCreateInfo.GraphicsPipeline.InputLayout.LayoutElements = m_VertexLayout.data();
 	PSOCreateInfo.GraphicsPipeline.InputLayout.NumElements = m_VertexLayout.size();
 	PSOCreateInfo.pVS = m_VertexShader->GetHandle();

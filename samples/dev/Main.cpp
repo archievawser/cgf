@@ -7,6 +7,7 @@
 #include "core/Actor.h"
 #include "core/Component.h"
 #include "core/Scene.h"
+#include "core/Input.h"
 
 #include "components/SpriteComponent.h"
 
@@ -33,33 +34,29 @@ public:
 		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Sprite");
 		prim->SetMaterial(material);
 
-		//material->GetBaseMaterial()->SetCullMode(Diligent::CULL_MODE_NONE);
-
-		//SharedPtr<StaticMesh> mesh = Game->GetAssetLibrary()->Get<StaticMesh>("Quad");
-		//prim->SetMesh(mesh);
-
-		sprite = prim->CreateSprite();
+		static auto ball2 = prim->CreateSprite();
+		ball = prim->CreateSprite();
 		
 		texture = Game->GetAssetLibrary()->Get<Texture2D>("Atlas");
 		
 		material->GetFragmentShaderVariable("g_Texture")->Set(texture->GetHandle()->GetDefaultView(TEXTURE_VIEW_SHADER_RESOURCE));
-		
-		prim->Transform.Scale = glm::vec3(1);
+
+		ball->SetSize({ 640, 480 });
+		ball2->SetSize({ 640, 480 });
+		ball2->SetPosition({ 10, 10 });
 	}
 
 	void Tick(double dT) override
 	{
-		float speed = 100.f;
 
-		sprite->SetPosition(sprite->GetPosition() + glm::vec2(speed * dT, 0));
-
-		//prim->Transform.Rotate(0, speed * dT, 0);
 
 		Actor::Tick(dT);
 	}
 
+	float ballXVelocity = 1.0f;
+	float ballYVelocity = 0.0f;
 	SharedPtr<Texture2D> texture;
-	PooledPtr<SpriteState> sprite;
+	PooledPtr<SpriteState> ball;
 	SharedPtr<SpriteBatchComponent> prim;
 };
 

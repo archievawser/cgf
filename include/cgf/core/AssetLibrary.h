@@ -69,14 +69,30 @@ inline SharedPtr<Material> AssetLibrary::Load(std::string materialName)
 	int rawSourceLength;
 	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
 
+	cgfb::CgfbMemoryReader reader(rawSource);
+
+	std::string domainName;
+	reader.Read(&domainName);
+
+	MaterialDomain domain = MaterialDomain::Invalid;
+
+	if(domainName == "Translucent")
+	{
+		domain = MaterialDomain::Translucent;
+	}
+	else if(domainName == "Opaque")
+	{
+		domain = MaterialDomain::Opaque;
+	}
+
 	CGF_ASSERT(success, "Failed to load " + materialName);
 
-	std::string source (rawSource, rawSourceLength);
+	std::string source (rawSource + sizeof(int) + domainName.size(), rawSourceLength - (sizeof(int) + domainName.size()));
 
 	auto fs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_PIXEL);
 	auto vs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_VERTEX);
 
-	return SharedPtr<Material>::CreateTraced(materialName + "_Material", vs, fs);
+	return SharedPtr<Material>::CreateTraced(materialName + "_Material", vs, fs, domain);
 }
 
 

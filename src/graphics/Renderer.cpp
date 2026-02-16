@@ -13,28 +13,6 @@
 #include "graphics/Diligent.h"
 
 
-RefCntAutoPtr<ITexture> RenderGraphBuilder::MakeTexture2D(
-	std::string name, 
-	unsigned int width, 
-	unsigned int height, 
-	TEXTURE_FORMAT format, 
-	TextureData *data)
-{
-	TextureDesc textureDesc;
-	textureDesc.Width = width;
-	textureDesc.Height = height;
-	textureDesc.Name = name.c_str();
-	textureDesc.Format = format;
-	textureDesc.Type = RESOURCE_DIMENSION::RESOURCE_DIM_TEX_2D;
-	textureDesc.BindFlags = BIND_UNORDERED_ACCESS | BIND_DEPTH_STENCIL | BIND_RENDER_TARGET | BIND_SHADER_RESOURCE;
-
-	RefCntAutoPtr<ITexture> output;
-	Game->GetGraphicsContext()->GetRenderDevice()->CreateTexture(textureDesc, data, &output);
-
-	return output;
-}
-
-
 void RenderGraphBuilder::QueuePass(SharedPtr<RenderPass> pass)
 {
 	

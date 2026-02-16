@@ -25,6 +25,7 @@ struct MaterialAsset : public BaseAsset
 	{
 		Name = xmlNode.child("Name").child_value();
 		ShaderPath = xmlNode.child("ShaderFile").child_value();
+		Domain = xmlNode.child("Domain").child_value();
 	}
 
 	inline const char* GetXmlRootNodeName() const override
@@ -33,6 +34,7 @@ struct MaterialAsset : public BaseAsset
 	}
 	
 	std::string ShaderPath;
+	std::string Domain;
 };
 
 

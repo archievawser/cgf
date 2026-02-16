@@ -145,7 +145,7 @@ public:
 	 * @brief Reads a standard string from the current CGFB file
 	 */
 	template <typename T>
-	std::enable_if_t<std::is_same_v<T, std::string>> Read(std::string* out)
+	std::enable_if_t<std::is_same_v<T, std::string>> Read(T* out)
 	{
 		int len;
 		Read(&len);

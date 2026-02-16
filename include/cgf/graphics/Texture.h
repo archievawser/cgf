@@ -62,11 +62,13 @@ inline SharedPtr<Texture2D> AssetLibrary::Load(std::string textureName)
 	
 	CGF_INFO(channels);
 
+	//TEX_FORMAT_RGBA8_UNORM_SRGB
+
 
 	Texture2D* newTexture = new Texture2D(textureName,
 		x,
 		y,
-		TEX_FORMAT_RGBA8_TYPELESS,
+		TEX_FORMAT_RGBA8_UNORM_SRGB,
 		pixelData,
 		channels * bytesPerChannel);
 

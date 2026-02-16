@@ -13,13 +13,21 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
+enum class MaterialDomain : int
+{
+	Invalid,
+	Opaque,
+	Translucent
+};
+
+
 /**
  * @brief A Material object defines the manner and context in which related draw calls are performed
  */
 class Material
 {
 public:
-	Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps);
+	Material(std::shared_ptr<Shader> vs, std::shared_ptr<Shader> ps, MaterialDomain domain);
 
 	/**
 	 * @return The material's current graphics pipeline
@@ -79,6 +87,7 @@ protected:
 	}
 
 private:
+	MaterialDomain m_Domain;
 	std::vector<LayoutElement> m_VertexLayout;
 	RefCntAutoPtr<IPipelineState> m_PipelineState;
 	TEXTURE_FORMAT m_RenderTargetFormats[8];
