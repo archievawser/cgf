@@ -69,7 +69,7 @@ inline SharedPtr<Material> AssetLibrary::Load(std::string materialName)
 	int rawSourceLength;
 	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
 
-	cgfb::CgfbMemoryReader reader(rawSource);
+	cgfb::CgfbMemoryReader reader(std::move(rawSource));
 
 	std::string domainName;
 	reader.Read(&domainName);

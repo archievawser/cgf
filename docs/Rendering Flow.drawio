@@ -1,0 +1,64 @@
+<mxfile host="65bd71144e">
+    <diagram id="Ng7zflWZM0fudbhMTZTJ" name="Page-1">
+        <mxGraphModel dx="992" dy="1075" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="13" style="edgeStyle=none;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="10" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
+                    <mxGeometry x="80" y="70" width="30" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" style="edgeStyle=none;html=1;" parent="1" source="11" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="420" y="100" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="11" value="NewObject&amp;lt;Mesh&amp;gt;()&lt;div&gt;(new renderable)&lt;/div&gt;" style="whiteSpace=wrap;html=1;autosize=1;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="70" width="140" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" target="19">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="630" y="100" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="17" value="CurrentScene.Add(newMesh)" style="whiteSpace=wrap;html=1;autosize=1;" parent="1" vertex="1">
+                    <mxGeometry x="430" y="85" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="19" target="21">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="800" y="195" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="newMesh.OnSceneChanged(newScene)" style="whiteSpace=wrap;html=1;autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="730" y="85" width="240" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="DrawCmdHandle = newScene.PushDrawCommand(myDrawCmd)" style="whiteSpace=wrap;html=1;autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="660" y="210" width="380" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="24" target="25">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Game.Render()" style="whiteSpace=wrap;html=1;autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="330" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="25" target="27">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="ExecuteRenderGraph()" style="whiteSpace=wrap;html=1;autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="265" y="330" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="" style="edgeStyle=none;html=1;" edge="1" parent="1" source="27" target="29">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="ExampleForwardRenderPass" style="whiteSpace=wrap;html=1;autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="330" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="newScene.DrawCmdList.ForEach =&amp;gt; ProcessDrawCmd" style="whiteSpace=wrap;html=1;autosize=1;" vertex="1" parent="1">
+                    <mxGeometry x="720" y="330" width="320" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

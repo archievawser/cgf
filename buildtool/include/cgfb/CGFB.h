@@ -3,11 +3,19 @@
 #include <unordered_map>
 #include <type_traits>
 #include <fstream>
+#include <cassert>
 #include <string>
 
 
 namespace cgfb
 {
+struct BlockInfo
+{
+	const char* Name = nullptr;
+	int StartIndex;
+	int Size;
+};
+
 
 class AbstractStream
 {
@@ -88,6 +96,16 @@ public:
 	}
 
 	/**
+	 * @brief Writes a standard string
+	 */
+	template <typename T>
+	std::enable_if_t<std::is_same_v<T, BlockInfo>> Write(T value)
+	{
+		Write(value.StartIndex);
+		Write(value.Size);
+	}
+
+	/**
 	 * @brief Writes unordered maps if the map's key and value types are writable
 	 */
 	template <typename KT, typename VT>
@@ -156,6 +174,16 @@ public:
 	}
 
 	/**
+	 * @brief Reads a standard string from the current CGFB file
+	 */
+	template <typename T>
+	std::enable_if_t<std::is_same_v<T, BlockInfo>> Read(T* out)
+	{
+		Read(&out->StartIndex);
+		Read(&out->Size);
+	}
+
+	/**
 	 * @brief Reads a string of bytes
 	 */
 	void Read(char* buff, int count)
@@ -208,60 +236,6 @@ protected:
 
 
 /**
- * @brief Formats and writes compatible values into a CGFB file
- */
-class CgfbFileWriter : public CgfbWriter
-{
-public:
-	CgfbFileWriter(const char* filePath);
-
-	inline void SetPosition(int position) override
-	{
-		
-	}
-
-	inline int GetPosition() override
-	{
-		return m_File.tellp();
-	}
-	
-protected:
-	void WriteToStream(char* data, int count) override;
-
-private:
-	std::ofstream m_File;
-};
-
-
-/**
- * @brief Reads compatible values from a CGFB file
- */
-class CgfbFileReader : public CgfbReader
-{
-public:
-	CgfbFileReader(const char* filePath);
-	
-	void SeekStreamPosition(int position, std::ios_base::seekdir way = std::ios_base::beg);	
-	
-	inline void SetPosition(int position) override
-	{
-		
-	}
-
-	inline int GetPosition() override
-	{
-		return m_File.tellg();
-	}
-
-protected:
-	void ReadFromStream(char *data, int count) override;
-
-private:
-	std::ifstream m_File;
-};
-
-
-/**
  * @brief Formats and writes compatible values into a block of memory containing CGFB data
  */
 class CgfbMemoryWriter : public CgfbWriter
@@ -298,10 +272,17 @@ private:
 class CgfbMemoryReader : public CgfbReader
 {
 public:
-	CgfbMemoryReader(char* buffer);
+	CgfbMemoryReader(char* buffer, int bufferSize);
+
+	CgfbMemoryReader(char*&& buffer);
+
+	CgfbMemoryReader(const CgfbMemoryReader& other) = delete;
+
+	~CgfbMemoryReader();
 
 	inline void SetPosition(int position) override
 	{
+
 	}
 
 	inline int GetPosition() override
@@ -314,6 +295,114 @@ protected:
 
 private:
 	char* m_Buffer;
+};
+
+
+/**
+ * @brief Formats and writes compatible values into a CGFB file
+ */
+class CgfbFileWriter : public CgfbWriter
+{
+public:
+	CgfbFileWriter(const char* filePath);
+
+	void StartBlock(const char* name)
+	{
+		if (m_WithinBlock)
+		{
+			EndBlock();
+		}
+
+		m_WithinBlock = true;
+		m_CurrentBlockName = name;
+		m_CurrentBlockStart = GetStreamSize();
+	}
+
+	void EndBlock()
+	{
+		m_WithinBlock = false;
+
+		BlockInfo newBlock;
+		newBlock.StartIndex = m_CurrentBlockStart;
+		newBlock.Size = GetStreamSize() - m_CurrentBlockStart;
+		newBlock.Name = m_CurrentBlockName;
+
+		assert(newBlock.Size > 0);
+
+		m_BlockData[m_CurrentBlockName] = newBlock;
+	}
+
+	int GetStreamSize() const 
+	{
+		return m_DataStream.GetBuffer().size();
+	}
+
+	inline void SetPosition(int position) override
+	{
+		
+	}
+
+	inline int GetPosition() override
+	{
+		return m_File.tellp();
+	}
+
+	void Flush()
+	{
+		if(m_WithinBlock)
+		{
+			EndBlock();
+		}
+
+		CgfbMemoryWriter fileData;
+		fileData.Write(m_BlockData);
+		fileData.Write((char*)m_DataStream.GetBuffer().data(), (int)m_DataStream.GetBuffer().size());
+
+		m_File.write(fileData.GetBuffer().data(), fileData.GetBuffer().size());
+	}
+	
+protected:
+	void WriteToStream(char* data, int count) override;
+
+private:
+	bool m_WithinBlock = false;
+	const char* m_CurrentBlockName;
+	int m_CurrentBlockStart;
+	CgfbMemoryWriter m_DataStream;
+	std::unordered_map<std::string, BlockInfo> m_BlockData;
+	std::ofstream m_File;
+};
+
+
+/**
+ * @brief Reads compatible values from a CGFB file
+ */
+class CgfbFileReader : public CgfbReader
+{
+public:
+	CgfbFileReader(const char* filePath);
+	
+	void SeekStreamPosition(int position, std::ios_base::seekdir way = std::ios_base::beg);	
+
+	void ReadBlock(const char* blockName, char** buffer, int* bufferSize);
+
+	inline void SetPosition(int position) override
+	{
+		
+	}
+
+	inline int GetPosition() override
+	{
+		return m_File.tellg();
+	}
+
+protected:
+	void ReadFromStream(char *data, int count) override;
+
+private:
+	int m_BlockDataOffset = 0;
+	std::unordered_map<std::string, BlockInfo> m_BlockData;
+	std::ifstream m_File;
 };
 
 }

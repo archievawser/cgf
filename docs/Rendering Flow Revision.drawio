@@ -1,0 +1,55 @@
+<mxfile host="65bd71144e">
+    <diagram id="Ng7zflWZM0fudbhMTZTJ" name="Page-1">
+        <mxGraphModel dx="1354" dy="936" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="0" pageScale="1" pageWidth="1100" pageHeight="850" background="light-dark(#FFFFFF, #0d0d0d)" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="26" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="24" target="25" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="Game.Render()" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="268" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="25" target="27" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="ExecuteRenderGraph()" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="255" y="268" width="150" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="27" target="29" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="ExampleForwardRenderPass" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="470" y="268" width="180" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" value="newScene.DrawCmdList.ForEach =&amp;gt; ProcessDrawCmd" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="268" width="320" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="33" target="35" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="MeshComponent" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="45" width="110" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="35" target="37" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="OnRenderGraphBeingBuilt(RenderGraphBuilder&amp;amp; builder)&lt;div&gt;NOTE Renderer.OnBuildRenderGraph&lt;/div&gt;" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="198" y="40" width="330" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="builder.PushDrawInfo(ibuff, vbuff, mat)" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="45" width="230" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" value="" style="edgeStyle=none;html=1;rounded=0;" parent="1" source="39" target="40" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="RenderGraph builder.Compile()" style="whiteSpace=wrap;html=1;autosize=1;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="150" width="190" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" value="RenderGraph builder.Compile()" style="whiteSpace=wrap;html=1;autosize=1;glass=0;rounded=0;shadow=0;fillColor=none;strokeColor=#36393d;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="150" width="190" height="30" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

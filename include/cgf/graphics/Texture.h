@@ -49,7 +49,7 @@ inline SharedPtr<Texture2D> AssetLibrary::Load(std::string textureName)
 	int x, y, channels;
 	char* pixelData;
 
-	cgfb::CgfbMemoryReader reader (rawSource);
+	cgfb::CgfbMemoryReader reader (std::move(rawSource));
 	reader.Read(&x);
 	reader.Read(&y);
 	reader.Read(&channels);
