@@ -34,7 +34,7 @@ public:
 		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Sprite");
 		prim->SetMaterial(material);
 
-		static auto ball2 = prim->CreateSprite();
+		///static auto ball2 = prim->CreateSprite();
 		ball = prim->CreateSprite();
 		
 		texture = Game->GetAssetLibrary()->Get<Texture2D>("Atlas");
@@ -42,8 +42,8 @@ public:
 		material->GetFragmentShaderVariable("g_Texture")->Set(texture->GetHandle()->GetDefaultView(TEXTURE_VIEW_SHADER_RESOURCE));
 
 		ball->SetSize({ 640, 480 });
-		ball2->SetSize({ 640, 480 });
-		ball2->SetPosition({ 10, 10 });
+		//ball2->SetSize({ 640, 480 });
+		//ball2->SetPosition({ 10, 10 });
 	}
 
 	void Tick(double dT) override

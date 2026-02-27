@@ -15,6 +15,12 @@ CgfbFileWriter::CgfbFileWriter(const char *filePath)
 }
 
 
+cgfb::CgfbFileWriter::~CgfbFileWriter()
+{
+	Flush();
+}
+
+
 void CgfbFileWriter::WriteToStream(char* data, int count)
 {
 	assert(m_WithinBlock);
@@ -45,7 +51,7 @@ void CgfbFileReader::SeekStreamPosition(int position, std::ios_base::seekdir way
 }
 
 
-void CgfbFileReader::ReadBlock(const char *blockName, char **buffer, int *bufferSize)
+void CgfbFileReader::ReadBlock(std::string blockName, CgfbBlock& out)
 {
 	BlockInfo& info = m_BlockData[blockName];
 
@@ -56,11 +62,10 @@ void CgfbFileReader::ReadBlock(const char *blockName, char **buffer, int *buffer
 	LOG(info.StartIndex);
 	LOG(m_BlockDataOffset + info.StartIndex);
 	LOG(info.Size);
-
-	*buffer = new char[info.Size];
-	*bufferSize = info.Size;
-
-	Read(*buffer, *bufferSize);
+	
+	out.Data = new char[info.Size];
+	out.Count = info.Size;
+	Read(out.Data, out.Count);
 }
 
 
@@ -76,10 +81,11 @@ CgfbMemoryReader::CgfbMemoryReader(char* buffer, int bufferSize)
 }
 
 
-CgfbMemoryReader::CgfbMemoryReader(char*&& buffer)
-	: m_Buffer(buffer)
+CgfbMemoryReader::CgfbMemoryReader(CgfbBlock &&block)
+	: m_Buffer(block.Data)
 {
-
+	block.Data = nullptr;
+	block.Count = 0;
 }
 
 
@@ -91,9 +97,20 @@ CgfbMemoryReader::~CgfbMemoryReader()
 
 void CgfbMemoryReader::ReadFromStream(char *data, int count)
 {
-	static int pos = 0;
+	std::memcpy(data, m_Buffer + m_Position, count);
 
-	std::memcpy(data, m_Buffer + pos, count);
+	m_Position += count;
+}
 
-	pos += count; 
+
+cgfb::CgfbBlock::CgfbBlock(char *data, size_t count)
+	: Data(data), Count(count)
+{
+
+}
+
+
+cgfb::CgfbBlock::~CgfbBlock()
+{
+	delete[] Data;
 }

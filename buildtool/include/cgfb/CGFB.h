@@ -7,11 +7,16 @@
 #include <string>
 
 
+/**
+ * @brief The current CGFB implementation is a bit of a hack job as unforeseen functionality kept arising.
+ * It will be overhauled in the future, once the performance hit is non-negligible. 
+ * 
+ */
 namespace cgfb
 {
 struct BlockInfo
 {
-	const char* Name = nullptr;
+	std::string Name;
 	int StartIndex;
 	int Size;
 };
@@ -274,7 +279,7 @@ class CgfbMemoryReader : public CgfbReader
 public:
 	CgfbMemoryReader(char* buffer, int bufferSize);
 
-	CgfbMemoryReader(char*&& buffer);
+	CgfbMemoryReader(struct CgfbBlock&& block);
 
 	CgfbMemoryReader(const CgfbMemoryReader& other) = delete;
 
@@ -282,11 +287,12 @@ public:
 
 	inline void SetPosition(int position) override
 	{
-
+		throw;
 	}
 
 	inline int GetPosition() override
 	{
+		throw;
 		return 0;
 	}
 
@@ -294,6 +300,7 @@ protected:
 	void ReadFromStream(char *data, int count) override;
 
 private:
+	int m_Position = 0;
 	char* m_Buffer;
 };
 
@@ -306,7 +313,9 @@ class CgfbFileWriter : public CgfbWriter
 public:
 	CgfbFileWriter(const char* filePath);
 
-	void StartBlock(const char* name)
+	~CgfbFileWriter();
+
+	void StartBlock(std::string name)
 	{
 		if (m_WithinBlock)
 		{
@@ -366,11 +375,28 @@ protected:
 
 private:
 	bool m_WithinBlock = false;
-	const char* m_CurrentBlockName;
+	std::string m_CurrentBlockName;
 	int m_CurrentBlockStart;
 	CgfbMemoryWriter m_DataStream;
 	std::unordered_map<std::string, BlockInfo> m_BlockData;
 	std::ofstream m_File;
+};
+
+
+struct CgfbBlock
+{
+	CgfbBlock() = default;
+
+	CgfbBlock(char* data, size_t count);
+
+	CgfbBlock(const CgfbBlock& other) = delete;
+	
+	~CgfbBlock();
+
+	CgfbBlock& operator=(const CgfbBlock& other) = delete;
+	
+	char* Data = nullptr;
+	size_t Count = 0;
 };
 
 
@@ -384,7 +410,7 @@ public:
 	
 	void SeekStreamPosition(int position, std::ios_base::seekdir way = std::ios_base::beg);	
 
-	void ReadBlock(const char* blockName, char** buffer, int* bufferSize);
+	void ReadBlock(std::string blockName, CgfbBlock& out);
 
 	inline void SetPosition(int position) override
 	{

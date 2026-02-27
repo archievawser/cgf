@@ -26,7 +26,7 @@ void btools::ReadFileContents(const char* filePath, char** buff, int* buffSize)
 		readBuffer = resizedReadBuffer;
 		readBufferSize = resizedReadBufferSize;
 	} 
-	while (!file.eof());
+	while (file.is_open() && !file.eof());
 
 	*buff = readBuffer;
 	*buffSize = readBufferSize;

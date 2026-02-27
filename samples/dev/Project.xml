@@ -2,26 +2,26 @@
 	<Material>
 		<Name>Sprite</Name>
 		<Domain>Translucent</Domain>
-		<ShaderFile>C:/Dev/C++/cgf/samples/dev/shaders/Sprite.hlsl</ShaderFile>
+		<ShaderFile>D:/Dev/C++/cgf/samples/dev/shaders/Sprite.hlsl</ShaderFile>
 	</Material>
 	
 	<Mesh>
 		<Name>Icosphere</Name>
-		<File>C:/Dev/C++/cgf/samples/dev/models/Icosphere.fbx</File>
+		<File>D:/Dev/C++/cgf/samples/dev/models/Icosphere.fbx</File>
 	</Mesh>
 
 	<Mesh>
 		<Name>Suzanne</Name>
-		<File>C:/Dev/C++/cgf/samples/dev/models/Suzanne.fbx</File>
+		<File>D:/Dev/C++/cgf/samples/dev/models/Suzanne.fbx</File>
 	</Mesh>
 
 	<Mesh>
 		<Name>Quad</Name>
-		<File>C:/Dev/C++/cgf/samples/dev/models/Quad.fbx</File>
+		<File>D:/Dev/C++/cgf/samples/dev/models/Quad.fbx</File>
 	</Mesh>
 
 	<Texture>
 		<Name>Atlas</Name>
-		<File>C:/Dev/C++/cgf/samples/dev/textures/SpriteAtlas.png</File>
+		<File>D:/Dev/C++/cgf/samples/dev/textures/SpriteAtlas.png</File>
 	</Texture>
 </Assets>

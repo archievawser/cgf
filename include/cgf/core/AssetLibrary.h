@@ -17,7 +17,7 @@
 
 #include "glm/glm.hpp"
 
-#include "buildtool/Assets.h"
+#include "cgfb/CGFB.h"
 
 
 /**
@@ -56,7 +56,7 @@ public:
 	}
 
 private:
-	btools::AssetDataLoader m_AssetDataLoader;
+	cgfb::CgfbFileReader m_AssetFile;
 	char* m_AssetData;
 	int m_AssetDataSize;
 };
@@ -65,14 +65,14 @@ private:
 template<>
 inline SharedPtr<Material> AssetLibrary::Load(std::string materialName)
 {
-	char* rawSource;
-	int rawSourceLength;
-	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
+	cgfb::CgfbBlock block;
+	m_AssetFile.ReadBlock(materialName.c_str(), block);
 
-	cgfb::CgfbMemoryReader reader(std::move(rawSource));
+	std::string domainName, source;
 
-	std::string domainName;
+	cgfb::CgfbMemoryReader reader ( std::move(block) );
 	reader.Read(&domainName);
+	reader.Read(&source);
 
 	MaterialDomain domain = MaterialDomain::Invalid;
 
@@ -80,14 +80,11 @@ inline SharedPtr<Material> AssetLibrary::Load(std::string materialName)
 	{
 		domain = MaterialDomain::Translucent;
 	}
-	else if(domainName == "Opaque")
+	else
+	if(domainName == "Opaque")
 	{
 		domain = MaterialDomain::Opaque;
 	}
-
-	CGF_ASSERT(success, "Failed to load " + materialName);
-
-	std::string source (rawSource + sizeof(int) + domainName.size(), rawSourceLength - (sizeof(int) + domainName.size()));
 
 	auto fs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_PIXEL);
 	auto vs = std::make_shared<Shader>(materialName, source, SHADER_TYPE_VERTEX);
@@ -103,20 +100,6 @@ inline SharedPtr<MaterialInstance> AssetLibrary::Load(std::string materialName)
 }
 
 
-template<>
-inline SharedPtr<std::string> AssetLibrary::Load(std::string materialName)
-{
-	char* rawSource;
-	int rawSourceLength;
-	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
-
-	CGF_ASSERT(success, "Failed to load " + materialName);
-
-	std::string source (rawSource, rawSourceLength);
-	return SharedPtr<std::string>::CreateTraced(materialName + "_Source", std::move(source));
-}
-
-
 struct Vertex
 {
 	glm::vec3 Position;
@@ -126,17 +109,19 @@ struct Vertex
 
 
 template<>
-inline SharedPtr<StaticMesh> AssetLibrary::Load(std::string materialName)
+inline SharedPtr<StaticMesh> AssetLibrary::Load(std::string meshName)
 {
-	char* rawSource;
-	int rawSourceLength;
-	bool success = m_AssetDataLoader.Load(materialName.c_str(), &rawSource, &rawSourceLength);
+	cgfb::CgfbBlock block;
+	m_AssetFile.ReadBlock(meshName.c_str(), block);
 
-	CGF_ASSERT(success, "Failed to load " + materialName);
+	std::string rawSource;
+
+	cgfb::CgfbMemoryReader reader ( std::move(block) );
+	reader.Read(&rawSource);
 
 	Assimp::Importer importer;
 
-	const aiScene *scene = importer.ReadFileFromMemory(rawSource, rawSourceLength, 
+	const aiScene *scene = importer.ReadFileFromMemory(rawSource.c_str(), rawSource.size(), 
 		aiProcess_CalcTangentSpace | 
 		aiProcess_Triangulate | 
 		aiProcess_JoinIdenticalVertices, 
@@ -186,5 +171,5 @@ inline SharedPtr<StaticMesh> AssetLibrary::Load(std::string materialName)
 	ibufferDesc.BindFlags = BIND_INDEX_BUFFER;
 	Game->GetGraphicsContext()->GetRenderDevice()->CreateBuffer(ibufferDesc, &idata, &ibuffer);
 
-	return SharedPtr<StaticMesh>::CreateTraced(materialName + "_Source", indices.size(), ibuffer, vbuffer);
+	return SharedPtr<StaticMesh>::CreateTraced(meshName + "_Source", indices.size(), ibuffer, vbuffer);
 }

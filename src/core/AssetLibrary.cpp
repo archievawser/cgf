@@ -2,7 +2,7 @@
 
 
 AssetLibrary::AssetLibrary(const char* projectFilePath)
-	: m_AssetDataLoader(projectFilePath)
+	: m_AssetFile(projectFilePath)
 {
 	
 }

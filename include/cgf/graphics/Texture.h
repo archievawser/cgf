@@ -42,28 +42,23 @@ private:
 template<>
 inline SharedPtr<Texture2D> AssetLibrary::Load(std::string textureName)
 {
-	char* rawSource;
-	int rawSourceLength;
-	bool success = m_AssetDataLoader.Load(textureName.c_str(), &rawSource, &rawSourceLength);
+	cgfb::CgfbBlock block;
+	m_AssetFile.ReadBlock(textureName.c_str(), block);
 
-	int x, y, channels;
-	char* pixelData;
+	int x, y;
+	const int channels = 4;
+	std::string marker;
+	char* pixelData = nullptr;
 
-	cgfb::CgfbMemoryReader reader (std::move(rawSource));
+	cgfb::CgfbMemoryReader reader ( std::move(block) );
+	reader.Read(&marker);
 	reader.Read(&x);
 	reader.Read(&y);
-	reader.Read(&channels);
 
 	constexpr int bytesPerChannel = sizeof(char);
 	const int pixelDataSize = x * y * channels * bytesPerChannel;
 	pixelData = new char[pixelDataSize];
 	reader.Read(pixelData, pixelDataSize);
-
-	
-	CGF_INFO(channels);
-
-	//TEX_FORMAT_RGBA8_UNORM_SRGB
-
 
 	Texture2D* newTexture = new Texture2D(textureName,
 		x,
