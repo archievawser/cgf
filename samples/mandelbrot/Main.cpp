@@ -28,24 +28,52 @@ class MeshActor : public Actor
 public:
 	MeshActor()
 	{
-		prim = SharedPtr<SpriteBatchComponent>::Create();
+		prim = SharedPtr<DynamicMeshComponent>::Create();
 		AddComponent(prim);
 
-		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Sprite");
+		SharedPtr<MaterialInstance> material = Game->GetAssetLibrary()->Get<MaterialInstance>("Mandelbrot");
 		prim->SetMaterial(material);
-
-		ball = prim->CreateSprite();
 		
-		texture = Game->GetAssetLibrary()->Get<Texture2D>("Atlas");
-		
-		material->GetFragmentShaderVariable("g_Texture")->Set(texture->GetHandle()->GetDefaultView(TEXTURE_VIEW_SHADER_RESOURCE));
+		material->GetBaseMaterial()->SetCullMode(CULL_MODE_NONE);
 
-		ball->SetSize({ 640, 480 });
+		unsigned int* indexData = new unsigned int[] {
+			0, 1, 2,
+			2, 3, 0
+		};
+
+		glm::vec2 screenSize (1920 / 2, 1080 / 2);
+
+		Vertex quadVertices[] 
+		{
+			{
+				.Position = glm::vec3(0, 0, 0) + glm::vec3(-screenSize.x, -screenSize.y, 0),
+				.Normal = glm::vec3(0, 0, 0),
+				.UV0 = glm::vec3(0, 0, 0),
+			},
+			{
+				.Position = glm::vec3(0, 0, 0) + glm::vec3(screenSize.x, -screenSize.y, 0),
+				.Normal = glm::vec3(0, 0, 0),
+				.UV0 = glm::vec3(1, 0, 0),
+			},
+			{
+				.Position = glm::vec3(0, 0, 0) + glm::vec3(screenSize.x, screenSize.y, 0),
+				.Normal = glm::vec3(0, 0, 0),
+				.UV0 = glm::vec3(1, 1, 0),
+			},
+			{
+				.Position = glm::vec3(0, 0, 0) + glm::vec3(-screenSize.x, screenSize.y, 0),
+				.Normal = glm::vec3(0, 0, 0),
+				.UV0 = glm::vec3(0, 1, 0),
+			},
+		};
+
+		prim->SetIndexData(indexData, 6);
+		prim->SetVertexData(quadVertices, sizeof(Vertex), 4);
 	}
 
 	void Tick(double dT) override
 	{
-
+		
 
 		Actor::Tick(dT);
 	}

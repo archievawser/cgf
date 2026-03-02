@@ -1,0 +1,7 @@
+<Assets>
+	<Material>
+		<Name>Mandelbrot</Name>
+		<Domain>Translucent</Domain>
+		<ShaderFile>D:/Dev/C++/cgf/samples/mandelbrot/Mandelbrot.hlsl</ShaderFile>
+	</Material>
+</Assets>

@@ -90,3 +90,5 @@ add_subdirectory(buildtool)
 target_link_libraries(cgf PUBLIC buildtool)
 
 add_subdirectory(samples/dev)
+
+add_subdirectory(samples/mandelbrot)
